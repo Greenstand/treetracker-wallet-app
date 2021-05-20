@@ -16,8 +16,8 @@ const WalletPanel = (props) => {
 
   return (
     <>
-      {width < 750 && <MobileWalletContainer showWallet={showWallet} />}
-      {width >= 750 && <DesktopWalletContainer showWallet={showWallet} />}
+      {width < 775 && <MobileWalletContainer showWallet={showWallet} />}
+      {width >= 775 && <DesktopWalletContainer showWallet={showWallet} />}
     </>
   );
 };
