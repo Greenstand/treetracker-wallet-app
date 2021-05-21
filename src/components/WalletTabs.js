@@ -18,14 +18,7 @@ const useStyles = makeStyles(() => ({
         background: "#ffffff",
         color: "#86C232"
       }
-    },
-    toolBar: {
-      // margin: '2em 30em',
-      // maxWidth: 800,
-      // width: "100%"
-                // <Toolbar className={classes.toolBar}>
-                // </Toolbar>
-    },
+    }
 }));
 
 export default function WalletTabs(props) {
@@ -58,4 +51,4 @@ export default function WalletTabs(props) {
         </TabContext>
       </div>
     );
-} 
+}

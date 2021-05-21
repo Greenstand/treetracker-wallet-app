@@ -33,4 +33,4 @@ export default function TokenChip(props) {
             />
         </div>
     )
-}; 
+};
