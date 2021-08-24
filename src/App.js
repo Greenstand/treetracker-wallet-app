@@ -81,10 +81,9 @@ function Test(){
     {routes.map(({ path, Component }) => (
       <Route key={path} exact path={path}>
       {({ match }) => (
-
         <CSSTransition
         in={match != null}
-        timeout={3000}
+        timeout={300}
         classNames={`fade-${history.action.toLowerCase()}`}
         unmountOnExit
         >
