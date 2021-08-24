@@ -59,6 +59,12 @@ function DetailsPage(){
   );
 }
 
+const routes = [
+  { path: '/home', name: 'Home', Component: LandingPage },
+  { path: '/default', name: 'Default', Component: DefaultPage },
+  { path: '/details', name: 'Details', Component: DetailsPage },
+]
+
 //const routes = [
 //  { path: '/', name: 'Home', Component: LandingPage },
 //  { path: '/default', name: 'Default', Component: DefaultPage },
@@ -71,25 +77,23 @@ function Test(){
   log.debug("!history action:", history.action);
 
   return (
-    <TransitionGroup>
-      <CSSTransition
-        key={location.key}
+    <div>
+    {routes.map(({ path, Component }) => (
+      <Route key={path} exact path={path}>
+      {({ match }) => (
+
+        <CSSTransition
+        in={match != null}
+        timeout={3000}
         classNames={`fade-${history.action.toLowerCase()}`}
-        timeout={8000}
-      >
-        <Switch location={location} >
-          <Route path="/default" >
-            <DefaultPage />
-          </Route>
-          <Route path="/details" >
-            <DetailsPage />
-          </Route>
-          <Route path="/home" >
-            <LandingPage />
-          </Route>
-        </Switch>
-      </CSSTransition>
-    </TransitionGroup>
+        unmountOnExit
+        >
+        <Component />
+        </CSSTransition>
+      )}
+      </Route>
+    ))}
+    </div>
   );
 }
 
