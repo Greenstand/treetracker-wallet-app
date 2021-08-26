@@ -144,7 +144,7 @@ function Home(props) {
           <svg className={classes.svg} viewBox="15 0 380 120" 
           >
             <g id="trees" />
-            <g transform="translate(34, 44)">
+            <g transform="translate(34, 42)">
               <g id="text">
                 <image className={classes.title} href={greenstand} />
               </g>

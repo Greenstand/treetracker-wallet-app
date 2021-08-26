@@ -78,7 +78,7 @@ function Test(){
       {({ match }) => (
         <CSSTransition
         in={match != null}
-        timeout={300}
+        timeout={200}
         classNames={`fade-${history.action.toLowerCase()}`}
         unmountOnExit
         >
