@@ -8,6 +8,7 @@ import * as d3 from 'd3'
 import log from 'loglevel'
 import greenstand from "../images/greenstand.png";
 
+//I don't know how to put this svg code into a file, like logo.svg, and import here
 const logo = (
   <svg
     className="logo"
@@ -119,24 +120,6 @@ function Home(props) {
     load()
   }, [])
 
-//  return (
-//    <>
-//      <Grid container className={classes.welcomeBox} justify="center">
-//        <div className={classes.logoBox} >
-//          <img id="text" className={classes.title} src={greenstand} />
-//          <div className={classes.svgBox} >
-//            <svg className={classes.svg} viewBox="0 0 560 120" >
-//              <g id="trees" />
-//              <g transform="translate(34, 44)">
-//                <image id="text" className={classes.title} href={greenstand} />
-//              </g>
-//            </svg>
-//          </div>
-//        </div>
-//      </Grid>
-//      <div id="logoDiv" style={{display:'none'}}>{logo}</div>
-//    </>
-//  )
   return (
     <>
       <Grid container className={classes.welcomeBox} >
@@ -155,11 +138,6 @@ function Home(props) {
       <div id="logoDiv" style={{display:'none'}}>{logo}</div>
     </>
   )
-//      <svg className={classes.logo} viewBox="0 0 700 200" width="700" height="140">
-//        <g id="trees" />
-//        <g transform="translate(100, 100)">
-//        </g>
-//      </svg>
 }
 
 export default withStyles(style)(Home)
