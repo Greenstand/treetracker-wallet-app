@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import loading from "./images/loading.png";
 import defaultImage from "./images/default.png";
 import detailsImage from "./images/details.png";
+import Home from "./components/Home.js";
 import './App.css';
 import { BrowserRouter as Router, Switch, Route, useHistory, useLocation } from "react-router-dom";
 import log from "loglevel";
@@ -12,20 +13,14 @@ import {   TransitionGroup,CSSTransition } from "react-transition-group";
 function LandingPage(){
   const history = useHistory();
 
-//  React.useEffect(() => {
-//    setTimeout(() => {
-//      log.debug("load finished");
-//      history.push("/default");
-//    }, 1000);
-//  }, []);
   function handleClick(){
       log.debug("load finished");
       history.push("/default");
-  };
+  }
   
   return(
     <div className="App" onClick={handleClick} >
-      <img src={loading} />
+      <Home/>
     </div>
   );
 }
@@ -36,7 +31,7 @@ function DefaultPage(){
   function handleClick(){
       log.debug("load finished");
       history.push("/details");
-  };
+  }
   
   return (
     <div className="App" onClick={handleClick} >
@@ -50,7 +45,7 @@ function DetailsPage(){
   function handleClick(){
       log.debug("load finished");
       history.go(-1);
-  };
+  }
   
   return (
     <div className="App" onClick={handleClick} >
@@ -60,7 +55,7 @@ function DetailsPage(){
 }
 
 const routes = [
-  { path: '/home', name: 'Home', Component: LandingPage },
+  { path: '/', name: 'Home', Component: LandingPage },
   { path: '/default', name: 'Default', Component: DefaultPage },
   { path: '/details', name: 'Details', Component: DetailsPage },
 ]
@@ -83,7 +78,7 @@ function Test(){
       {({ match }) => (
         <CSSTransition
         in={match != null}
-        timeout={300}
+        timeout={200}
         classNames={`fade-${history.action.toLowerCase()}`}
         unmountOnExit
         >
