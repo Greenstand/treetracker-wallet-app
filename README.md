@@ -1,29 +1,5 @@
 # Treetracker Web
 
-## Current Milestones and Issue Topics
-
-**Good first issues** for new contributors can be found here:
-https://github.com/Greenstand/treetracker-web-map-client/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
-
-Developers please see current milestones here:  
-https://github.com/Greenstand/treetracker-web-map/milestones
-
-Big picture UX/UI challenges are tracked at:  
-https://github.com/Greenstand/treetracker-web-map/issues?q=is%3Aissue+is%3Aopen+label%3AUX%2FUI
-
-&nbsp;
-&nbsp;
-
-## Project Description
-
-Displays location and details of all trees that have been tracked.
-
-Live map is at [www.treetracker.org](https://www.treetracker.org)
-
-For more details see the [Tree Tracker Web Map Wiki] (https://github.com/Greenstand/treetracker-web-map-client/wiki)
-
-&nbsp;
-&nbsp;
 
 ## Development Environment Quick Start
 
