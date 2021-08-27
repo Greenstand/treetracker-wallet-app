@@ -1,6 +1,7 @@
 import React from "react";
 import log from "loglevel";
 import Map from "client/src/models/Map";
+import "client/src/style.css";
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-utfgrid/L.UTFGrid.js";
