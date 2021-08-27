@@ -4,6 +4,7 @@ import loading from "./images/loading.png";
 import defaultImage from "./images/default.png";
 import detailsImage from "./images/details.png";
 import Home from "./components/Home.js";
+import MapPage from "./components/MapPage.js";
 import './App.css';
 import { BrowserRouter as Router, Switch, Route, useHistory, useLocation } from "react-router-dom";
 import log from "loglevel";
@@ -58,6 +59,7 @@ const routes = [
   { path: '/', name: 'Home', Component: LandingPage },
   { path: '/default', name: 'Default', Component: DefaultPage },
   { path: '/details', name: 'Details', Component: DetailsPage },
+  { path: '/map', name: 'Map', Component: MapPage },
 ]
 
 //const routes = [
