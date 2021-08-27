@@ -16,7 +16,7 @@ function LandingPage(){
 
   function handleClick(){
       log.debug("load finished");
-      history.push("/default");
+      history.push("/map");
   }
   
   return(

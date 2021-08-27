@@ -25,6 +25,9 @@ const style = (theme) => ({
   drawer: {
     height: 549,
   },
+  box: {
+    justifyContent: "center",
+  }
 })
 
 function MapPage(props){
@@ -52,12 +55,14 @@ function MapPage(props){
     mapRef.current.map = map;
   }, []);
   return(
-    <div  >
+    <div className="App" >
       <div id="map-canvas" className={classes.map} ref={mapRef}/>
       <SwipeableDrawer
         anchor={"bottom"}
         open={true}
         classes={{paper: classes.paper}}
+        BackdropProps={{ open: false }}
+        transitionDuration={0}
       >
         <Paper className={classes.drawer} classes={{rounded: classes.rounded}} >
           <Grid className={classes.box} container >
