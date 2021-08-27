@@ -7,11 +7,23 @@ import 'leaflet/dist/leaflet.css';
 import "leaflet-utfgrid/L.UTFGrid.js";
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Paper from "@material-ui/core/Paper";
+import drawer from "../images/drawer.png";
 
 const style = (theme) => ({
   map: {
     width: "100vw",
-    height: "100vh",
+    height: 288,
+  },
+  paper: {
+    background: "transparent",
+  }, 
+  rounded: {
+    borderRadius: 20,
+  },
+  drawer: {
+    height: 549,
   },
 })
 
@@ -42,6 +54,17 @@ function MapPage(props){
   return(
     <div  >
       <div id="map-canvas" className={classes.map} ref={mapRef}/>
+      <SwipeableDrawer
+        anchor={"bottom"}
+        open={true}
+        classes={{paper: classes.paper}}
+      >
+        <Paper className={classes.drawer} classes={{rounded: classes.rounded}} >
+          <Grid className={classes.box} container >
+            <img src={drawer} />
+          </Grid>
+        </Paper>
+      </SwipeableDrawer>
     </div>
   )
 }
