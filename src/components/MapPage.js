@@ -33,6 +33,8 @@ const style = (theme) => ({
 function MapPage(props){
   const { classes } = props
   const mapRef = React.useRef(null);
+  const containerRef = React.useRef(null);
+  const [isDrawer, setDrawer] = React.useState(false);
 
   //load map
   React.useEffect(() => {
@@ -53,16 +55,22 @@ function MapPage(props){
     });
     map.mount(mapRef.current);
     mapRef.current.map = map;
+    setDrawer(true);
   }, []);
   return(
-    <div className="App" >
+    <div className="App" ref={containerRef} >
       <div id="map-canvas" className={classes.map} ref={mapRef}/>
+      <div ref={containerRef} >
+      {isDrawer &&
       <SwipeableDrawer
         anchor={"bottom"}
         open={true}
         classes={{paper: classes.paper}}
         BackdropProps={{ open: false }}
         transitionDuration={0}
+        ModalProps={{
+          container: containerRef.current,
+        }}
       >
         <Paper className={classes.drawer} classes={{rounded: classes.rounded}} >
           <Grid className={classes.box} container >
@@ -70,6 +78,8 @@ function MapPage(props){
           </Grid>
         </Paper>
       </SwipeableDrawer>
+      }
+      </div>
     </div>
   )
 }
