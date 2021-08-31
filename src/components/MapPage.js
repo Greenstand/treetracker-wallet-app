@@ -35,6 +35,8 @@ const style = (theme) => ({
 function MapPage(props) {
   const { classes } = props;
   const mapRef = React.useRef(null);
+  const containerRef = React.useRef(null);
+  const [isDrawer, setDrawer] = React.useState(false);
 
   //load map
   React.useEffect(() => {
@@ -58,24 +60,28 @@ function MapPage(props) {
     mapRef.current.map = map;
   }, []);
   return (
-    <div className="App">
+    <div className="App" ref={containerRef}>
       <div id="map-canvas" className={classes.map} ref={mapRef} />
-      <SwipeableDrawer
-        anchor={'bottom'}
-        open={true}
-        classes={{ paper: classes.paper }}
-        BackdropProps={{ open: false }}
-        transitionDuration={0}
-      >
-        <Paper
-          className={classes.drawer}
-          classes={{ rounded: classes.rounded }}
-        >
-          <Grid className={classes.box} container>
-            <img src={drawer} />
-          </Grid>
-        </Paper>
-      </SwipeableDrawer>
+      <div ref={containerRef}>
+        {isDrawer && (
+          <SwipeableDrawer
+            anchor={'bottom'}
+            open={true}
+            classes={{ paper: classes.paper }}
+            BackdropProps={{ open: false }}
+            transitionDuration={0}
+          >
+            <Paper
+              className={classes.drawer}
+              classes={{ rounded: classes.rounded }}
+            >
+              <Grid className={classes.box} container>
+                <img src={drawer} />
+              </Grid>
+            </Paper>
+          </SwipeableDrawer>
+        )}
+      </div>
     </div>
   );
 }
