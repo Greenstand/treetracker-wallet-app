@@ -13,8 +13,8 @@ import drawer from '../images/drawer.png';
 
 const style = (theme) => ({
   map: {
-    width: '100vw',
-    height: '100vh',
+    width: "100vw",
+    height: "100vh",
   },
   paper: {
     background: 'transparent',
@@ -24,6 +24,7 @@ const style = (theme) => ({
   },
   drawer: {
     height: 549,
+    width: "100%",
   },
   box: {
     justifyContent: 'center',
@@ -33,6 +34,8 @@ const style = (theme) => ({
 function MapPage(props) {
   const { classes } = props;
   const mapRef = React.useRef(null);
+  const containerRef = React.useRef(null);
+  const [isDrawer, setDrawer] = React.useState(false);
 
   //load map
   React.useEffect(() => {
@@ -54,16 +57,22 @@ function MapPage(props) {
     });
     map.mount(mapRef.current);
     mapRef.current.map = map;
+    setDrawer(true);
   }, []);
-  return (
-    <div className="App">
-      <div id="map-canvas" className={classes.map} ref={mapRef} />
+  return(
+    <div className="App" ref={containerRef} >
+      <div id="map-canvas" className={classes.map} ref={mapRef}/>
+      <div ref={containerRef} >
+      {isDrawer &&
       <SwipeableDrawer
         anchor={'bottom'}
         open={true}
         classes={{ paper: classes.paper }}
         BackdropProps={{ open: false }}
         transitionDuration={0}
+        ModalProps={{
+          container: containerRef.current,
+        }}
       >
         <Paper
           className={classes.drawer}
@@ -74,6 +83,8 @@ function MapPage(props) {
           </Grid>
         </Paper>
       </SwipeableDrawer>
+      }
+      </div>
     </div>
   );
 }

@@ -21,7 +21,7 @@ function LandingPage(){
   
   return(
     <div className="App" onClick={handleClick} >
-      <Home/>
+      <Home loaded={handleClick} />
     </div>
   );
 }
