@@ -5,7 +5,16 @@ import MapDrawer from './MapDrawer.js'
 describe('MapDrawer', () => {
   it('basic', () => {
 
-    mount(<MapDrawer />)
+    mount(
+      <MapDrawer />,
+      {
+        style: `
+          body {
+            margin: 0px;
+          }
+        `
+      }
+    )
     // now use standard Cypress commands
     // cy.contains('Hello World!').should('be.visible')
   })
