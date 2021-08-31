@@ -114,6 +114,10 @@ function Home(props) {
       .duration(1000)
       .ease(d3.easeElasticOut.amplitude(1).period(0.2))
       .attr('transform', `translate(4, 0)`)
+      .on("end",function(){
+        log.debug("fire loaded");
+        props.loaded && props.loaded();
+      });
   }
 
   React.useEffect(() => {

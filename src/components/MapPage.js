@@ -14,7 +14,7 @@ import drawer from "../images/drawer.png";
 const style = (theme) => ({
   map: {
     width: "100vw",
-    height: 288,
+    height: "100vh",
   },
   paper: {
     background: "transparent",
@@ -24,6 +24,7 @@ const style = (theme) => ({
   },
   drawer: {
     height: 549,
+    width: "100%",
   },
   box: {
     justifyContent: "center",
