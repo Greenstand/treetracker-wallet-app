@@ -13,8 +13,8 @@ import drawer from '../images/drawer.png';
 
 const style = (theme) => ({
   map: {
-    width: '100vw',
-    height: 288,
+    width: "100vw",
+    height: "100vh",
   },
   paper: {
     background: 'transparent',
@@ -26,6 +26,7 @@ const style = (theme) => ({
   },
   drawer: {
     height: 549,
+    width: "100%",
   },
   box: {
     justifyContent: 'center',
@@ -58,29 +59,33 @@ function MapPage(props) {
     });
     map.mount(mapRef.current);
     mapRef.current.map = map;
+    setDrawer(true);
   }, []);
-  return (
-    <div className="App" ref={containerRef}>
-      <div id="map-canvas" className={classes.map} ref={mapRef} />
-      <div ref={containerRef}>
-        {isDrawer && (
-          <SwipeableDrawer
-            anchor={'bottom'}
-            open={true}
-            classes={{ paper: classes.paper }}
-            BackdropProps={{ open: false }}
-            transitionDuration={0}
-          >
-            <Paper
-              className={classes.drawer}
-              classes={{ rounded: classes.rounded }}
-            >
-              <Grid className={classes.box} container>
-                <img src={drawer} />
-              </Grid>
-            </Paper>
-          </SwipeableDrawer>
-        )}
+  return(
+    <div className="App" ref={containerRef} >
+      <div id="map-canvas" className={classes.map} ref={mapRef}/>
+      <div ref={containerRef} >
+      {isDrawer &&
+      <SwipeableDrawer
+        anchor={'bottom'}
+        open={true}
+        classes={{ paper: classes.paper }}
+        BackdropProps={{ open: false }}
+        transitionDuration={0}
+        ModalProps={{
+          container: containerRef.current,
+        }}
+      >
+        <Paper
+          className={classes.drawer}
+          classes={{ rounded: classes.rounded }}
+        >
+          <Grid className={classes.box} container>
+            <img src={drawer} />
+          </Grid>
+        </Paper>
+      </SwipeableDrawer>
+      }
       </div>
     </div>
   );
