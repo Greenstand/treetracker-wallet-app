@@ -19,6 +19,8 @@ const style = (theme) => ({
   }, 
   rounded: {
     borderRadius: 20,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   drawer: {
     height: 549,
@@ -32,6 +34,7 @@ const style = (theme) => ({
     position: "fixed",
     bottom: 0,
     boxShadow: "0 -1px 2px rgb(0 0 0 / 30%)",
+    zIndex: 1000,
   },
   bottomBox: {
     height: theme.spacing(6),
@@ -85,6 +88,7 @@ function MapDrawer(props){
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         disableSwipeToOpen={true}
+        BackdropProps={{ open: false }}
       >
         <Paper className={classes.drawer} classes={{rounded: classes.rounded}} >
           <Grid container>
