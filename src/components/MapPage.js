@@ -7,9 +7,8 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-utfgrid/L.UTFGrid.js';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Paper from '@material-ui/core/Paper';
-import drawer from '../images/drawer.png';
+import MapDrawer from "./MapDrawer";
 
 const style = (theme) => ({
   map: {
@@ -66,25 +65,7 @@ function MapPage(props) {
       <div id="map-canvas" className={classes.map} ref={mapRef}/>
       <div ref={containerRef} >
       {isDrawer &&
-      <SwipeableDrawer
-        anchor={'bottom'}
-        open={true}
-        classes={{ paper: classes.paper }}
-        BackdropProps={{ open: false }}
-        transitionDuration={0}
-        ModalProps={{
-          container: containerRef.current,
-        }}
-      >
-        <Paper
-          className={classes.drawer}
-          classes={{ rounded: classes.rounded }}
-        >
-          <Grid className={classes.box} container>
-            <img src={drawer} />
-          </Grid>
-        </Paper>
-      </SwipeableDrawer>
+        <MapDrawer/>
       }
       </div>
     </div>

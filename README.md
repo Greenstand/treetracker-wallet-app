@@ -1,6 +1,5 @@
 # Treetracker Impact Wallet
 
-
 ## Development Environment Quick Start
 
 ### Using online DB (Recommended)
@@ -48,28 +47,28 @@ In .eslintrc.json, there is a set of rules with status **off or warn**. Whenever
 <sub><sup>**Quotes:** Use single quotes unless you are writing JSON</sup></sub>
 
 ```js
-const foo = "bar";
+const foo = 'bar';
 ```
 
 <sub><sup>**Braces:** Opening braces go on the same line as the statement</sup></sub>
 
 ```js
 if (true) {
-  console.log("here");
+  console.log('here');
 }
 ```
 
 <sup><sub>**Variable declaration:** Declare one Variable per statement</sup></sub>
 
 ```js
-const dog = ["bark", "woof"];
-let cat = ["meow", "sleep"];
+const dog = ['bark', 'woof'];
+let cat = ['meow', 'sleep'];
 ```
 
 <sup><sub>**Variable, properties and function names:** Use lowerCamelCase for variables, properties and function names</sup></sub>
 
 ```js
-const adminUser = db.query("SELECT * From users ...");
+const adminUser = db.query('SELECT * From users ...');
 ```
 
 <sup><sub>**Class names:** Use UpperCamelCase for class names</sup></sub>
@@ -77,7 +76,7 @@ const adminUser = db.query("SELECT * From users ...");
 ```js
 class Dog {
   bark() {
-    console.log("woof");
+    console.log('woof');
   }
 }
 ```
@@ -92,10 +91,10 @@ const isValidPassword =
 <sup><sub>**Object/Array creation:** Use trailing commas and put short declarations on a single line. Only quote keys when your interpreter complains:</sup></sub>
 
 ```js
-var a = ["hello", "world"];
+var a = ['hello', 'world'];
 var b = {
-  good: "code",
-  "is generally": "pretty"
+  good: 'code',
+  'is generally': 'pretty',
 };
 ```
 
@@ -140,6 +139,12 @@ To run Cypress unit tests:
 ```
 npm run cyu
 ```
+
+To simulate mobile device in the component tool:
+
+Because that we focus on the mobile device, so when we build component by Cypress component tool, we want to operate the component in simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component took, cuz we have to use big screen to show them all, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
+
+[Video for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
 
 &nbsp;
 &nbsp;
