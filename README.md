@@ -141,6 +141,12 @@ To run Cypress unit tests:
 npm run cyu
 ```
 
+To simulate mobile device in the component tool:
+
+Because that we focus on the mobile device, so when we build component by Cypress component tool, we want to operate the component in simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component took, cuz we have to use big screen to show them all, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
+
+[Video for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
+
 &nbsp;
 &nbsp;
 
