@@ -127,12 +127,19 @@ We use Jest to build tests.
 npm test
 ```
 
-### Alternative development environment for MS Windows (Works on Linux and Mac also)
+### Cypress
 
-On Windows, the easiest way to develop and debug Node.js applications is using Visual Studio Code.
-It comes with Node.js support out of the box.
+To run Cypress integration e2e test:
 
-https://code.visualstudio.com/docs
+```
+npm run cy
+```
+
+To run Cypress unit tests:
+
+```
+npm run cyu
+```
 
 &nbsp;
 &nbsp;
