@@ -1,4 +1,6 @@
 it('load landing page', () => {
-    cy.visit('baseUrl')
-    cy.visit('/')
-})
+  cy.intercept('/api/wallets/stephanie', { fixture: 'Stephanie.json' });
+  cy.visit('baseUrl');
+  cy.visit('/');
+  cy.contains('@Stephanie');
+});
