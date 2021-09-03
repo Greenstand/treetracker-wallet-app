@@ -10,6 +10,7 @@ import avatar from '../images/avatar.png';
 import drawer from '../images/drawer.png';
 import axios from 'axios';
 import log from 'loglevel';
+import WalletInfo from './WalletInfo';
 
 const style = (theme) => ({
   map: {
@@ -109,7 +110,7 @@ function MapDrawer(props) {
           </Grid>
           <Grid className={classes.box} container>
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
-            <img src={drawer} />
+            <WalletInfo />
           </Grid>
         </Paper>
       </SwipeableDrawer>
