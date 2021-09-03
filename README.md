@@ -129,7 +129,7 @@ In package.json, there is a topic called **scripts** that contains many scripts 
 To validate the rules manually, you must run and check that there is no error in your development:
 
 ```
-npm run eslint
+npm run lint
 ```
 
 You will be able to run through this shortcut in VSCode
