@@ -18,7 +18,7 @@ npm start
 
 ### How to build a component
 
-[Video tutorial for building compoent](https://loom.com/share/c750be68ecec4a9b99cb6921d2d2e041)
+[Video tutorial for building component](https://loom.com/share/c750be68ecec4a9b99cb6921d2d2e041)
 
 ### How to mock the API
 
@@ -143,8 +143,8 @@ npm run lint
 You will be able to run through this shortcut in VSCode
 ![IDE VSCode](./public/images/VSCode_NPM_Script.png)
 
-To fix automatic rules
+To fix automatic rules run:
 
 ```
-lint:fix
+npm run lint:fix
 ```
