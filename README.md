@@ -16,6 +16,14 @@ npm start
 
 3. Open the web map in the browser with URL: http://localhost:3000
 
+### How to build a component
+
+[Video tutorial for building compoent](https://loom.com/share/c750be68ecec4a9b99cb6921d2d2e041)
+
+### How to mock the API
+
+[Video tutorial for mock the API](https://www.loom.com/share/48554f0f67314ea78925a627b2142e1b)
+
 ### Cypress
 
 We use Cypress to build the sandbox for component building and mock the server-side API in the integration tests, here are some guide for this:
