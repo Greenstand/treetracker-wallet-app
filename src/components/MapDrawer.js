@@ -12,6 +12,7 @@ import axios from 'axios';
 import log from 'loglevel';
 import WalletInfo from './WalletInfo';
 import CustomizedTabs from './common/CustomizedTabs';
+import TokenCard from './TokenCard';
 
 const style = (theme) => ({
   map: {
@@ -113,6 +114,7 @@ function MapDrawer(props) {
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
+            <TokenCard />
           </Grid>
         </Paper>
       </SwipeableDrawer>

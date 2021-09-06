@@ -49,102 +49,49 @@ Because that we focus on the mobile device, so when we build component by Cypres
 &nbsp;
 &nbsp;
 
-### How to test
-
-We use Jest to build tests.
-
-1. To test client
-
-```
-npm test
-```
-
 ## Code style guide
 
-We follow the Airbnb JavaScript style guide. The superficial aspects of this style are enforced by a pre-commit hook in the project that runs [Prettier](https://prettier.io/) when you commit a change.
+We use [Prettier](https://prettier.io/), [Eslint](https://eslint.org/) along with [husky](https://typicode.github.io/husky/#/) to style our code.
 
-If you are using VSCode as your IDE, please follow [this guide](https://www.digitalocean.com/community/tutorials/how-to-format-code-with-prettier-in-visual-studio-code) to set up Prettier and automatically format your code on file save.
+### Prettier
 
-### Rules
+Prettier reformats the code, but does not do code rule checking. If you are using VSCode as your IDE, please follow [this guide](https://www.digitalocean.com/community/tutorials/how-to-format-code-with-prettier-in-visual-studio-code) to set up Prettier and automatically format your code on file save.
 
-In .eslintrc.json, there is a set of rules with status **off or warn**. Whenever you are developing a new file or an existing file try to correct some warnings, because in the future the rules will be activated.
+You can find the Prettier rules in the .prettierrc file.
 
-**For more information about rules:** https://eslint.org/docs/2.0.0/rules/
+### Eslint
 
-**Airbnb Style Guide:** https://airbnb.io/javascript/
-
-<sub><sup>**Indention:** 2 Spaces for indentation</sup></sub>
-<sub><sup>**Semicolon:** Use semicolons at the end of each line</sup></sub>
-<sub><sup>**Characters:** 80 characters per line</sup></sub>
-<sub><sup>**Equal Equal (eqeqeq):** Good practice to use the type-safe equality operators === and !== instead of their regular counterparts == and !=</sup></sub>
-<sub><sup>**Quotes:** Use single quotes unless you are writing JSON</sup></sub>
-
-```js
-const foo = 'bar';
-```
-
-<sub><sup>**Braces:** Opening braces go on the same line as the statement</sup></sub>
-
-```js
-if (true) {
-  console.log('here');
-}
-```
-
-<sup><sub>**Variable declaration:** Declare one Variable per statement</sup></sub>
-
-```js
-const dog = ['bark', 'woof'];
-let cat = ['meow', 'sleep'];
-```
-
-<sup><sub>**Variable, properties and function names:** Use lowerCamelCase for variables, properties and function names</sup></sub>
-
-```js
-const adminUser = db.query('SELECT * From users ...');
-```
-
-<sup><sub>**Class names:** Use UpperCamelCase for class names</sup></sub>
-
-```js
-class Dog {
-  bark() {
-    console.log('woof');
-  }
-}
-```
-
-<sup><sub>**Descriptive conditions:** Make sure to have a descriptive name that tells the use and meaning of the code</sup></sub>
-
-```js
-const isValidPassword =
-  password.length >= 4 && /^(?=.*\d).{4,}$/.test(password);
-```
-
-<sup><sub>**Object/Array creation:** Use trailing commas and put short declarations on a single line. Only quote keys when your interpreter complains:</sup></sub>
-
-```js
-var a = ['hello', 'world'];
-var b = {
-  good: 'code',
-  'is generally': 'pretty',
-};
-```
-
-### How to test the rules
-
-In package.json, there is a topic called **scripts** that contains many scripts to be executed.
-To validate the rules manually, you must run and check that there is no error in your development:
+To check the coding rules we use Eslint. To validate the rules manually, you must run:
 
 ```
 npm run lint
 ```
-
-You will be able to run through this shortcut in VSCode
-![IDE VSCode](./public/images/VSCode_NPM_Script.png)
 
 To fix automatic rules run:
 
 ```
 npm run lint:fix
 ```
+
+In .eslintrc.js, there is a set of rules with status **off or warn**. Whenever you are developing a new file or an existing file try to correct some warnings, because in the future the rules will be activated.
+
+Once the rules are activated, you can't make a commit until you fix the lint errors!
+
+You can find the Eslint rules in the .eslintrc.js file.
+
+### husky
+
+With husky we can use any git hook. Git Hooks are actions that can be executed if a certain Git event occurs. For example when a developer makes a 'git commit' or a 'git push'.
+To add a command to a pre-commit hook or create a new one, use:
+
+```
+npx husky add .husky/pre-commit "<your command>"
+```
+
+.husky folder contains all our hooks. In this case a pre-commit hook.
+
+```
+npx pretty-quick --staged
+```
+
+The [pretty-quick](https://www.npmjs.com/package/pretty-quick) npm package runs Prettier on your changed files.
