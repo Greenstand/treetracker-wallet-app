@@ -6,6 +6,7 @@ import Avatar from '@material-ui/core/Avatar';
 import avatar from '../images/avatar.png';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { useHistory } from 'react-router-dom';
 
 const style = (theme) => ({
   grid: {
@@ -83,6 +84,16 @@ function TokenCard(props) {
     OwnerName,
     OwnerAvatar,
   } = props;
+  const history = useHistory();
+
+  function handleTreeClick() {
+    history.push('/wallets/stephanie/trees/123');
+  }
+
+  function handlePlanterClick() {
+    history.push('/wallets/stephanie/planters/14');
+  }
+
   return (
     <>
       <Grid container spacing={3} className={classes.grid}>
@@ -99,6 +110,7 @@ function TokenCard(props) {
             value={80}
           />
           <img
+            onClick={handleTreeClick}
             className={classes.img}
             src={`https://www.almrsal.com/wp-content/uploads/2015/03/Plants-Pictures.jpg`}
           />
@@ -122,7 +134,7 @@ function TokenCard(props) {
             </Typography>{' '}
           </Grid>
           <Grid item container direction="row" alignItems="center">
-            <Avatar src={avatar} />
+            <Avatar onClick={handlePlanterClick} src={avatar} />
             <Typography className={classes.tokenOwnerName}>
               By Abayomi
             </Typography>
