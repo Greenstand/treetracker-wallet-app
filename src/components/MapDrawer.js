@@ -116,7 +116,6 @@ function MapDrawer(props) {
             <WalletInfo />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
             <TokenCard />
-            <LinearProgressBar value={70} width="90%" height="24px" />
           </Grid>
         </Paper>
       </SwipeableDrawer>
