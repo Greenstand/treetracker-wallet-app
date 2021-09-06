@@ -11,6 +11,7 @@ import drawer from '../images/drawer.png';
 import axios from 'axios';
 import log from 'loglevel';
 import WalletInfo from './WalletInfo';
+import TokenCard from './TokenCard';
 
 const style = (theme) => ({
   map: {
@@ -111,6 +112,7 @@ function MapDrawer(props) {
           <Grid className={classes.box} container>
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo />
+            <TokenCard />
           </Grid>
         </Paper>
       </SwipeableDrawer>
