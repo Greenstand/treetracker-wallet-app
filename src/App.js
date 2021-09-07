@@ -18,6 +18,8 @@ import {
 } from 'react-router-dom';
 import log from 'loglevel';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import theme from './components/common/theme';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 function LandingPage() {
   const history = useHistory();
@@ -88,13 +90,15 @@ const routes = [
 
 function App() {
   return (
-    <Router>
-      {routes.map(({ path, Component, exact }) => (
-        <Route key={path} path={path} exact={exact || false}>
-          <Component />
-        </Route>
-      ))}
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        {routes.map(({ path, Component, exact }) => (
+          <Route key={path} path={path} exact={exact || false}>
+            <Component />
+          </Route>
+        ))}
+      </Router>
+    </ThemeProvider>
   );
 }
 
