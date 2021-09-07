@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import avatar from '../images/avatar.png';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import LinearProgressBar from './common/LinearProgressBar';
 import { useHistory } from 'react-router-dom';
 
 const style = (theme) => ({
@@ -49,30 +49,10 @@ const style = (theme) => ({
   },
   progress: {
     position: 'absolute',
-    width: '95px',
-    bottom: '4px',
-    left: '4px',
-  },
-});
-
-const BorderLinearProgress = withStyles((theme) => ({
-  root: {
-    height: 8,
-    borderRadius: 5,
-    position: 'absolute',
-    width: '88px',
-    bottom: '12px',
+    bottom: '8px',
     left: '6px',
   },
-  colorPrimary: {
-    backgroundColor:
-      theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-  },
-  bar: {
-    borderRadius: 5,
-    backgroundColor: '#67AC5B',
-  },
-}))(LinearProgress);
+});
 
 function TokenCard(props) {
   const {
@@ -104,11 +84,9 @@ function TokenCard(props) {
           direction="row"
           alignItems="center"
         >
-          <BorderLinearProgress
-            className="progress"
-            variant="determinate"
-            value={80}
-          />
+          <div className={classes.progress}>
+            <LinearProgressBar width="88px" height="8px" value={80} />
+          </div>
           <img
             onClick={handleTreeClick}
             className={classes.img}

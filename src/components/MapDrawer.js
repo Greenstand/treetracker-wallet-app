@@ -13,6 +13,7 @@ import log from 'loglevel';
 import WalletInfo from './WalletInfo';
 import CustomizedTabs from './common/CustomizedTabs';
 import TokenCard from './TokenCard';
+import LinearProgressBar from './common/LinearProgressBar';
 
 const style = (theme) => ({
   map: {
