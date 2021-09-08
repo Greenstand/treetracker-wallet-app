@@ -14,6 +14,7 @@ import WalletInfo from './WalletInfo';
 import CustomizedTabs from './common/CustomizedTabs';
 import TokenCard from './TokenCard';
 import LinearProgressBar from './common/LinearProgressBar';
+import PoweredBy from './PoweredBy';
 
 const style = (theme) => ({
   map: {
@@ -22,6 +23,7 @@ const style = (theme) => ({
   },
   paper: {
     background: 'transparent',
+    overflow: 'visible',
   },
   rounded: {
     borderRadius: 20,
@@ -104,6 +106,7 @@ function MapDrawer(props) {
         disableSwipeToOpen={true}
         BackdropProps={{ open: false }}
       >
+        <PoweredBy />
         <Paper
           className={classes.drawer}
           classes={{ rounded: classes.rounded }}
