@@ -7,3 +7,7 @@ describe('Tab', () => {
     mount(<Tab />);
   });
 });
+// Test case for eslint
+// it('waits for a second', () => {
+//   cy.wait(1000)
+// })
