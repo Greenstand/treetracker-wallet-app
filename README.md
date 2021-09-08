@@ -95,3 +95,9 @@ npx pretty-quick --staged
 ```
 
 The [pretty-quick](https://www.npmjs.com/package/pretty-quick) npm package runs Prettier on your changed files.
+
+### Other resource from Greenstand
+
+We have more tech guides and handbook here:
+
+[Greenstand engineer handbook](https://greenstand.gitbook.io/engineering/)
