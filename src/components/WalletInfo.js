@@ -17,20 +17,15 @@ const style = (theme) => ({
     position: 'absolute',
     top: '8px',
     right: '24px',
-    color: '#86C232',
     height: '32px',
     width: '32px',
   },
   title: {
     width: '100%',
-    color: 'rgba(34, 34, 34, 0.6)',
   },
   avatar: {
     height: '64px',
     width: '64px',
-  },
-  tokenCount: {
-    color: 'rgba(34, 34, 34, 0.6)',
   },
 });
 
@@ -39,9 +34,9 @@ function WalletInfo(props) {
   return (
     <>
       <Grid container className={classes.grid} p={2}>
-        <ShareIcon className={classes.icon} />
+        <ShareIcon className={classes.icon} color="secondary" />
         <Grid item className={classes.title}>
-          <Typography>WALLET</Typography>
+          <Typography color="textSecondary">WALLET</Typography>
         </Grid>
         <Grid item container spacing={1}>
           <Grid item>
@@ -49,7 +44,11 @@ function WalletInfo(props) {
           </Grid>
           <Grid item>
             <Typography variant="h6">@Stephanie</Typography>
-            <Typography variant="body1" className={classes.tokenCount}>
+            <Typography
+              variant="body1"
+              className={classes.tokenCount}
+              color="textSecondary"
+            >
               127 tokens
             </Typography>
           </Grid>
