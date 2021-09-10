@@ -44,6 +44,7 @@ function DetailPage(props) {
     <div>
       <div className={classes.backButton}>
         <ArrowBackIosIcon className={classes.ArrowBackIosIcon} />
+        hello
       </div>
       <SwipeableDrawer
         anchor={'bottom'}
