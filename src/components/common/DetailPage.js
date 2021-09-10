@@ -40,10 +40,6 @@ function DetailPage(props) {
   const [open, setOpen] = React.useState(true);
   const { classes } = props;
 
-  //   function handleClickBottom() {
-  //     setOpen(true);
-  //   }
-
   return (
     <div>
       <div className={classes.backButton}>
