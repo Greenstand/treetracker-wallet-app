@@ -17,6 +17,7 @@ export default createTheme({
     },
     secondary: {
       main: '#86C232',
+      lightGreen: '#f7fbf7',
     },
     textPrimary: {
       main: '#373A3E',
