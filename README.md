@@ -88,13 +88,33 @@ To add a command to a pre-commit hook or create a new one, use:
 npx husky add .husky/pre-commit "<your command>"
 ```
 
-.husky folder contains all our hooks. In this case a pre-commit hook.
+.husky folder contains all our hooks. E.g.:
 
 ```
 npx pretty-quick --staged
 ```
 
 The [pretty-quick](https://www.npmjs.com/package/pretty-quick) npm package runs Prettier on your changed files.
+
+### Commit Message and PR Title Format
+
+We use [commitlint](https://github.com/conventional-changelog/commitlint), to format out commit messages. Commitlint checks if your commit messages meet the conventional commit format.
+
+You need to use a proper commit message format or you will not be able to commit your changes! husky checks your commit messages before every commit.
+
+Your commit messages will need to follow the [Conventional Commits](https://www.conventionalcommits.org/) format, for example:
+
+```
+feat: add new button
+```
+
+```
+chore: run tests on travis ci
+```
+
+```
+fix(server): send cors headers
+```
 
 ### Other resource from Greenstand
 
