@@ -61,13 +61,13 @@ To check the doc in a convenient way, please import it to some API tools like: h
 
 To develop without relying on the work of API team, we set up a mock API server for developing.
 
-The development mock API is here: [mock server](https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io).
+The development mock API server is here: [mock server](https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io).
 
 So you can invoke the API: `/wallets/[name]` by: `https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/[name]`.
 
 ### Config
 
-The config for setting the API server is env variable:
+The config for setting the API server is an env variable:
 
 ```
 REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
