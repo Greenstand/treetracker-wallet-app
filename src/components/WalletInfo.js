@@ -30,7 +30,7 @@ const style = (theme) => ({
 });
 
 function WalletInfo(props) {
-  const { classes } = props;
+  const { classes, wallet } = props;
   return (
     <>
       <Grid container className={classes.grid} p={2}>
@@ -43,7 +43,7 @@ function WalletInfo(props) {
             <Avatar src={avatar} className={classes.avatar} />
           </Grid>
           <Grid item>
-            <Typography variant="h6">@Stephanie</Typography>
+            <Typography variant="h6">@${wallet?.name}</Typography>
             <Typography
               variant="body1"
               className={classes.tokenCount}
