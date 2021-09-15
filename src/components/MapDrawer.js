@@ -89,7 +89,7 @@ function MapDrawer(props) {
 
   React.useEffect(async () => {
     const response = await axios.request({
-      url: '/api/wallets/stephanie',
+      url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun`,
     });
     setWallet(response.data);
     log.warn('loaded wallet:', wallet);
@@ -116,7 +116,7 @@ function MapDrawer(props) {
           </Grid>
           <Grid className={classes.box} container>
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
-            <WalletInfo />
+            <WalletInfo wallet={wallet} />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
             <TokenCard />
           </Grid>
@@ -134,7 +134,7 @@ function MapDrawer(props) {
                   <Avatar src={avatar} className={classes.avatar} />
                 </Grid>
                 <Grid item className={classes.bottomItem}>
-                  <Typography variant="h6">@Stephanie</Typography>
+                  <Typography variant="h6">@${wallet.name}</Typography>
                 </Grid>
                 <Grid item className={classes.bottomItem}>
                   <Typography variant="body1">127 tokens</Typography>

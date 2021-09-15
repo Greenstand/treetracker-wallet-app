@@ -49,6 +49,30 @@ Because that we focus on the mobile device, so when we build component by Cypres
 &nbsp;
 &nbsp;
 
+## API
+
+We got another team working on the API endpoint, so the API spec is evolving. This is the current API specification:
+
+[API spec](/doc/wallet-web-app.yaml)
+
+To check the doc in a convenient way, please import it to some API tools like: http://swagger.io/ or Postman.
+
+### Using our mock API server
+
+To develop without relying on the work of API team, we set up a mock API server for developing.
+
+The development mock API is here: [mock server](https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io).
+
+So you can invoke the API: `/wallets/[name]` by: `https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/[name]`.
+
+### Config
+
+The config for setting the API server is env variable:
+
+```
+REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
+```
+
 ## Code style guide
 
 We use [Prettier](https://prettier.io/), [Eslint](https://eslint.org/) along with [husky](https://typicode.github.io/husky/#/) to style our code.
