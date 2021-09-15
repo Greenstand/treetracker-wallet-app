@@ -15,6 +15,7 @@ import CustomizedTabs from './common/CustomizedTabs';
 import TokenCard from './TokenCard';
 import LinearProgressBar from './common/LinearProgressBar';
 import PoweredBy from './PoweredBy';
+import Fade from '@material-ui/core/Fade';
 
 const style = (theme) => ({
   map: {
@@ -123,26 +124,28 @@ function MapDrawer(props) {
         </Paper>
       </SwipeableDrawer>
       {!open && (
-        <Paper className={classes.bottomPaper} onClick={handleClickBottom}>
-          <Grid container className={classes.bottomBox}>
-            <Grid item className={classes.bottomArrow}>
-              <ExpandLess color="action" />
-            </Grid>
-            <Grid item className={classes.bottomContent}>
-              <Grid container className={classes.box1}>
-                <Grid item className={classes.bottomItem}>
-                  <Avatar src={avatar} className={classes.avatar} />
-                </Grid>
-                <Grid item className={classes.bottomItem}>
-                  <Typography variant="h6">@${wallet.name}</Typography>
-                </Grid>
-                <Grid item className={classes.bottomItem}>
-                  <Typography variant="body1">127 tokens</Typography>
+        <Fade in={true} timeout={500}>
+          <Paper className={classes.bottomPaper} onClick={handleClickBottom}>
+            <Grid container className={classes.bottomBox}>
+              <Grid item className={classes.bottomArrow}>
+                <ExpandLess color="action" />
+              </Grid>
+              <Grid item className={classes.bottomContent}>
+                <Grid container className={classes.box1}>
+                  <Grid item className={classes.bottomItem}>
+                    <Avatar src={avatar} className={classes.avatar} />
+                  </Grid>
+                  <Grid item className={classes.bottomItem}>
+                    <Typography variant="h6">@${wallet.name}</Typography>
+                  </Grid>
+                  <Grid item className={classes.bottomItem}>
+                    <Typography variant="body1">127 tokens</Typography>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </Fade>
       )}
     </>
   );
