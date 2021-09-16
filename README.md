@@ -16,58 +16,65 @@ npm start
 
 3. Open the web map in the browser with URL: http://localhost:3000
 
-### How to build a component
+### How to Build Components
 
-[Video tutorial for building component](https://loom.com/share/c750be68ecec4a9b99cb6921d2d2e041)
+We recommend using Cypress's component tool to build components separately:
 
-### How to mock the API
-
-[Video tutorial for mock the API](https://www.loom.com/share/48554f0f67314ea78925a627b2142e1b)
-
-### Cypress
-
-We use Cypress to build the sandbox for component building and mock the server-side API in the integration tests, here are some guide for this:
-
-To run Cypress integration e2e test:
-
-```
-npm run cy
-```
-
-To run Cypress unit tests:
+To run Cypress unit/component tests:
 
 ```
 npm run cyu
 ```
 
+[Video tutorial for building component](https://loom.com/share/c750be68ecec4a9b99cb6921d2d2e041)
+
 To simulate mobile device in the component tool:
 
-Because that we focus on the mobile device, so when we build component by Cypress component tool, we want to operate the component in simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component took, cuz we have to use big screen to show them all, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
+Because we focus on the mobile device, so when we build component by using Cypress component tool, we want to operate the component in the simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component took, cuz we have to use big screen to show Cypress dashboard, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
 
-[Video for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
+[Video tutorial for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
 
-&nbsp;
-&nbsp;
+### How to Build Pages/Routes
 
-## API
+Glossary:
+
+- Page/Route: every unique path of url on the app is a page or route, like a single tree page: `http://map.treetracker/trees/123`.
+
+#### We need to build integration test for every page
+
+We need to build Cypress integration test for every page/route, the integration tests would be run in CI when merge code and deploy to protect app from breaking.
+
+Also, integration tests bring some benefits for the development workflow, by mocking API requests, we can separately develop every single page, if you'd like to practice Test Driven Develop, you can mock the API and write the tests first, then implement the real page later.
+
+#### To run Cypress integration test
+
+```
+npm run cy
+```
+
+### How to mock the API
+
+[Video tutorial for mock the API](https://www.loom.com/share/48554f0f67314ea78925a627b2142e1b)
+
+## The API
 
 We got another team working on the API endpoint, so the API spec is evolving. This is the current API specification:
 
 [API spec](/doc/wallet-web-app.yaml)
 
-To check the doc in a convenient way, please import it to some API tools like: http://swagger.io/ or Postman.
+To check the doc in a convenient way, please import it to some API tools like: http://editor.swagger.io/ or Postman.
 
 ### Using our mock API server
 
-To develop without relying on the work of API team, we set up a mock API server for developing.
+To develop without relying on the code of API team, we set up a mock API server for development.
 
 The development mock API server is here: [mock server](https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io).
 
-So you can invoke the API: `/wallets/[name]` by: `https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/[name]`.
+So you can call the API `/wallets/[name]` by: `https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/[name]`.
 
 ### Config
 
-The config for setting the API server is an env variable:
+The config to set the API server is an env variable:
 
 ```
 REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
