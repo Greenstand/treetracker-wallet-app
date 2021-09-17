@@ -107,7 +107,6 @@ function MapDrawer(props) {
         disableSwipeToOpen={true}
         BackdropProps={{ open: false }}
       >
-        <PoweredBy />
         <Paper
           className={classes.drawer}
           classes={{ rounded: classes.rounded }}
@@ -126,6 +125,7 @@ function MapDrawer(props) {
       {!open && (
         <Fade in={true} timeout={500}>
           <Paper className={classes.bottomPaper} onClick={handleClickBottom}>
+            <PoweredBy />
             <Grid container className={classes.bottomBox}>
               <Grid item className={classes.bottomArrow}>
                 <ExpandLess color="action" />
