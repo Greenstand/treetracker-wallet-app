@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
-import avatar from '../images/avatar.png';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import LinearProgressBar from './common/LinearProgressBar';
 import { useHistory } from 'react-router-dom';
@@ -12,6 +11,7 @@ import { useHistory } from 'react-router-dom';
 const style = (theme) => ({
   grid: {
     width: '90%',
+    margin: 'auto',
     marginBottom: '4px',
     marginTop: '4px',
   },
@@ -121,13 +121,17 @@ function TokenCard(props) {
           ml={2}
         >
           <div className={classes.progress}>
-            <LinearProgressBar width="100%" height="8px" value={80} />
+            <LinearProgressBar
+              width="100%"
+              height="8px"
+              value={ProgressValue}
+            />
           </div>
           <Paper className={classes.TreeImg} elevation={0}>
             <img
               className={classes.img}
               onClick={handleTreeClick}
-              src={`https://www.almrsal.com/wp-content/uploads/2015/03/Plants-Pictures.jpg`}
+              src={TreeImg}
             />
           </Paper>
         </Grid>
@@ -139,24 +143,24 @@ function TokenCard(props) {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography className={classes.tokenName}>Marula</Typography>
+            <Typography className={classes.tokenName}>{TreeName}</Typography>
             <div className={classes.iconContainer}>
               <ArrowForwardIosIcon className={classes.icon} />
             </div>
           </Grid>
           <Grid item>
             <Typography className={classes.tokenDate}>
-              Claimed on January 29, 2021
+              {`Claimed on ${ClaimedDate}`}
             </Typography>{' '}
           </Grid>
           <Grid item container direction="row" alignItems="center">
             <Avatar
               className={classes.avater}
               onClick={handlePlanterClick}
-              src={avatar}
+              src={OwnerAvatar}
             />
             <Typography className={classes.tokenOwnerName}>
-              By Abayomi
+              {`By ${OwnerName}`}
             </Typography>
           </Grid>
         </Grid>

@@ -16,6 +16,8 @@ import TokenCard from './TokenCard';
 import LinearProgressBar from './common/LinearProgressBar';
 import PoweredBy from './PoweredBy';
 import Fade from '@material-ui/core/Fade';
+import TokensList from './TokensList';
+import Tokens from './TokensArray';
 
 const style = (theme) => ({
   map: {
@@ -34,6 +36,7 @@ const style = (theme) => ({
   drawer: {
     height: 549,
     width: '100%',
+    overflow: 'scroll',
   },
   box: {
     justifyContent: 'center',
@@ -84,17 +87,23 @@ function MapDrawer(props) {
   const [open, setOpen] = React.useState(true);
   const [wallet, setWallet] = React.useState(undefined);
 
+  // console.log("Tokens List", tokens)
+
   function handleClickBottom() {
     setOpen(true);
   }
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
+    getWalletData();
+  }, []);
+
+  const getWalletData = async () => {
     const response = await axios.request({
       url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun`,
     });
     setWallet(response.data);
     log.warn('loaded wallet:', wallet);
-  }, []);
+  };
 
   return (
     <>
@@ -119,7 +128,7 @@ function MapDrawer(props) {
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo wallet={wallet} />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
-            <TokenCard />
+            <TokensList tokens={Tokens} />
           </Grid>
         </Paper>
       </SwipeableDrawer>
