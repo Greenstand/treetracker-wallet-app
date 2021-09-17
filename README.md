@@ -16,6 +16,12 @@ npm start
 
 3. Open the web map in the browser with URL: http://localhost:3000
 
+## Workflow with Github
+
+Our development workflow on Github, go [here](https://github.com/Greenstand/treetracker-web-map-client#workflow-with-github).
+
+## Guide for development
+
 ### How to Build Components
 
 We recommend using Cypress's component tool to build components separately:
@@ -79,6 +85,10 @@ The config to set the API server is an env variable:
 ```
 REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
 ```
+
+### Test
+
+About our test philosaphy and rules, please go [here](https://github.com/Greenstand/treetracker-web-map-client#test).
 
 ## Code style guide
 
