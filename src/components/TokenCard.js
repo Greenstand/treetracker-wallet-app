@@ -14,6 +14,9 @@ const style = (theme) => ({
     margin: 'auto',
     marginBottom: '4px',
     marginTop: '4px',
+    [theme.breakpoints.up('md')]: {
+      marginBottom: '14px',
+    },
   },
   icon: {
     color: theme.palette.primary.main,

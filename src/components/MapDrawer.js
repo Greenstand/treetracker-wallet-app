@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, useTheme } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -18,11 +18,17 @@ import PoweredBy from './PoweredBy';
 import Fade from '@material-ui/core/Fade';
 import TokensList from './TokensList';
 import Tokens from './TokensArray';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const style = (theme) => ({
   map: {
     width: '100vw',
     height: '100vh',
+  },
+  DrawerRoot: {
+    [theme.breakpoints.up('md')]: {
+      width: '400px',
+    },
   },
   paper: {
     background: 'transparent',
@@ -32,14 +38,34 @@ const style = (theme) => ({
     borderRadius: 20,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
+    [theme.breakpoints.up('md')]: {
+      borderRadius: 0,
+    },
   },
   drawer: {
     height: 549,
     width: '100%',
-    overflow: 'scroll',
+    overflow: 'auto',
+    [theme.breakpoints.up('md')]: {
+      height: '100vh',
+      width: '400px',
+      paddingTop: '24px',
+      paddingBottom: '24px',
+    },
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
   box: {
     justifyContent: 'center',
+  },
+  tabsContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    [theme.breakpoints.up('md')]: {
+      borderBottom: '1px solid #E0E0E0',
+    },
   },
   bottomPaper: {
     width: '100%',
@@ -79,6 +105,9 @@ const style = (theme) => ({
     margin: '0 auto',
     width: 24,
     marginTop: 10,
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
   },
 });
 
@@ -87,7 +116,9 @@ function MapDrawer(props) {
   const [open, setOpen] = React.useState(true);
   const [wallet, setWallet] = React.useState(undefined);
 
-  // console.log("Tokens List", tokens)
+  const theme = useTheme();
+  const isDesktopScreen = useMediaQuery(theme.breakpoints.up('md'));
+  console.log('is desktop screen', isDesktopScreen);
 
   function handleClickBottom() {
     setOpen(true);
@@ -108,13 +139,14 @@ function MapDrawer(props) {
   return (
     <>
       <SwipeableDrawer
-        anchor={'bottom'}
+        anchor={isDesktopScreen ? 'left' : 'bottom'}
         open={open}
         classes={{ paper: classes.paper }}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         disableSwipeToOpen={true}
         BackdropProps={{ open: false }}
+        className={classes.DrawerRoot}
       >
         <Paper
           className={classes.drawer}
@@ -126,7 +158,9 @@ function MapDrawer(props) {
           <Grid className={classes.box} container>
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo wallet={wallet} />
-            <CustomizedTabs tab1="Tokens" tab2="Impact" />
+            <div className={classes.tabsContainer}>
+              <CustomizedTabs tab1="Tokens" tab2="Impact" />
+            </div>
             <TokensList tokens={Tokens} />
           </Grid>
         </Paper>
