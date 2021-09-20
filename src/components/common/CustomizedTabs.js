@@ -3,38 +3,24 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-const StyledTab = withStyles((theme) => ({
+const StyledTab = withStyles({
   root: {
     backgroundColor: '#f7fbf7',
     color: '#67AC5B',
     opacity: 1,
     borderRadius: '8px',
-    [theme.breakpoints.up('md')]: {
-      backgroundColor: '#fff',
-      borderRadius: 0,
-      color: '#000',
-    },
   },
   selected: {
     backgroundColor: '#67AC5B',
     color: '#fff',
-    [theme.breakpoints.up('md')]: {
-      backgroundColor: '#fff',
-      color: theme.palette.primary.main,
-      borderBottom: `2px solid ${theme.palette.primary.main}`,
-    },
   },
-}))(Tab);
+})(Tab);
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: '#f7fbf7',
     borderRadius: '8px',
     width: '90%',
-    [theme.breakpoints.up('md')]: {
-      backgroundColor: '#fff',
-      borderRadius: 0,
-    },
   },
 }));
 

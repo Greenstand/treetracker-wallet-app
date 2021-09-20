@@ -13,20 +13,12 @@ const style = (theme) => ({
     position: 'relative',
     padding: '8px 24px',
   },
-  wallet: {
-    [theme.breakpoints.up('md')]: {
-      paddingLeft: 0,
-    },
-  },
   icon: {
     position: 'absolute',
     top: '8px',
     right: '24px',
     height: '32px',
     width: '32px',
-    [theme.breakpoints.up('md')]: {
-      top: '32px',
-    },
   },
   title: {
     width: '100%',
@@ -34,9 +26,6 @@ const style = (theme) => ({
   avatar: {
     height: '64px',
     width: '64px',
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    },
   },
 });
 
@@ -49,12 +38,12 @@ function WalletInfo(props) {
         <Grid item className={classes.title}>
           <Typography color="textSecondary">WALLET</Typography>
         </Grid>
-        <Grid className={classes.wallet} item container spacing={1}>
+        <Grid item container spacing={1}>
           <Grid item>
             <Avatar src={avatar} className={classes.avatar} />
           </Grid>
           <Grid item>
-            <Typography variant="h6">@{wallet?.name}</Typography>
+            <Typography variant="h6">@${wallet?.name}</Typography>
             <Typography
               variant="body1"
               className={classes.tokenCount}
