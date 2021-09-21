@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import avatar from '../images/avatar.png';
-import ShareIcon from '@material-ui/icons/Share';
+import Share from './Share';
 
 const style = (theme) => ({
   grid: {
@@ -13,15 +13,8 @@ const style = (theme) => ({
     position: 'relative',
     padding: '8px 24px',
   },
-  icon: {
-    position: 'absolute',
-    top: '8px',
-    right: '24px',
-    height: '32px',
-    width: '32px',
-  },
   title: {
-    width: '100%',
+    width: '50%',
   },
   avatar: {
     height: '64px',
@@ -34,9 +27,17 @@ function WalletInfo(props) {
   return (
     <>
       <Grid container className={classes.grid} p={2}>
-        <ShareIcon className={classes.icon} color="secondary" />
-        <Grid item className={classes.title}>
-          <Typography color="textSecondary">WALLET</Typography>
+        <Grid
+          item
+          container
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Grid item className={classes.title}>
+            <Typography color="textSecondary">WALLET</Typography>
+          </Grid>
+          <Share />
         </Grid>
         <Grid item container spacing={1}>
           <Grid item>

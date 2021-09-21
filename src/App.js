@@ -20,6 +20,11 @@ import log from 'loglevel';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import theme from './components/common/theme';
 import { ThemeProvider } from '@material-ui/core/styles';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+
+library.add(fab, faCoffee);
 
 function LandingPage() {
   const history = useHistory();
