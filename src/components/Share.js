@@ -21,6 +21,11 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const useStyles = makeStyles((theme) => ({
+  DialogTitle: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '18px',
+    },
+  },
   icon: {
     position: 'absolute',
     top: '8px',
@@ -37,9 +42,13 @@ const useStyles = makeStyles((theme) => ({
   },
   box1: {
     padding: theme.spacing(4),
+    width: '100%',
   },
   box2: {
     padding: theme.spacing(2),
+    [theme.breakpoints.down('xs')]: {
+      width: '25%',
+    },
   },
   code: {
     minWidth: 400,
@@ -146,7 +155,7 @@ function Share(props) {
       <Dialog open={isOpen} onClose={handleClose}>
         <DialogTitle>
           <Grid container justify="space-between" alignItems="center">
-            <Grid item xs={8}>
+            <Grid item xs={8} className={classes.DialogTitle}>
               Share this token
             </Grid>
             <Grid item>
