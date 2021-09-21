@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
 
 const StyledTab = withStyles({
   root: {
@@ -21,10 +22,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f7fbf7',
     borderRadius: '8px',
     width: '90%',
+    margin: 'auto',
   },
 }));
 
-function CustomizedTabs({ tab1, tab2 }) {
+function CustomizedTabs({ tab1, tab2, tab1Veiw, tab2Veiw }) {
   const classes = useStyles();
 
   const [value, setValue] = React.useState(0);
@@ -32,6 +34,22 @@ function CustomizedTabs({ tab1, tab2 }) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`full-width-tabpanel-${index}`}
+        aria-labelledby={`full-width-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box>{children}</Box>}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -45,6 +63,14 @@ function CustomizedTabs({ tab1, tab2 }) {
         <StyledTab label={tab1} />
         <StyledTab label={tab2} />
       </Tabs>
+      <Box>
+        <TabPanel value={value} index={0}>
+          {tab1Veiw}
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          {tab2Veiw}
+        </TabPanel>
+      </Box>
     </>
   );
 }

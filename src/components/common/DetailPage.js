@@ -3,10 +3,12 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import BackButton from '../../components/common/BackButton';
 
 const style = (theme) => ({
   paper: {
     overflow: 'visible',
+    borderRadius: '20px 20px 0 0px',
   },
   rounded: {
     borderRadius: 20,
@@ -16,6 +18,10 @@ const style = (theme) => ({
   drawer: {
     height: '90vh',
     width: '100%',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
   backButton: {
     position: 'absolute',
@@ -38,12 +44,12 @@ const style = (theme) => ({
 
 function DetailPage(props) {
   const [open, setOpen] = React.useState(true);
-  const { classes } = props;
+  const { classes, children } = props;
 
   return (
     <div>
       <div className={classes.backButton}>
-        <ArrowBackIosIcon className={classes.ArrowBackIosIcon} />
+        <BackButton />
       </div>
       <SwipeableDrawer
         anchor={'bottom'}
@@ -57,7 +63,9 @@ function DetailPage(props) {
         <Paper
           className={classes.drawer}
           classes={{ rounded: classes.rounded }}
-        ></Paper>
+        >
+          {children}
+        </Paper>
       </SwipeableDrawer>
     </div>
   );

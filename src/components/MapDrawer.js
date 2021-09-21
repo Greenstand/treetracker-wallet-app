@@ -36,7 +36,10 @@ const style = (theme) => ({
   drawer: {
     height: 549,
     width: '100%',
-    overflow: 'scroll',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
   box: {
     justifyContent: 'center',
