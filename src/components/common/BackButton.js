@@ -25,7 +25,7 @@ const BackButton = () => {
       type="button"
       onClick={() => history.goBack()}
     >
-      <NavigateBeforeIcon style={{ fontSize: 24 }} color="primary" />
+      <NavigateBeforeIcon style={{ fontSize: 32 }} color="primary" />
     </button>
   );
 };

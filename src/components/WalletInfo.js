@@ -44,7 +44,7 @@ function WalletInfo(props) {
             <Avatar src={avatar} className={classes.avatar} />
           </Grid>
           <Grid item>
-            <Typography variant="h6">@${wallet?.name}</Typography>
+            <Typography variant="h6">@{wallet?.name}</Typography>
             <Typography
               variant="body1"
               className={classes.tokenCount}
