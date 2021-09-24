@@ -70,6 +70,8 @@ We got another team working on the API endpoint, so the API spec is evolving. Th
 
 To check the doc in a convenient way, please import it to some API tools like: http://editor.swagger.io/ or Postman.
 
+To import the API doc to Postman or Swagger (both work the same), simply just click on the 'File' tab in the menubar and look for the 'Import' option. Find the API .yaml file in your local repository inside the doc directory and click 'Open'.
+
 ### Using our mock API server
 
 To develop without relying on the code of API team, we set up a mock API server for development.
