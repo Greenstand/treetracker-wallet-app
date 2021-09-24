@@ -50,7 +50,7 @@ function WalletInfo(props) {
               className={classes.tokenCount}
               color="textSecondary"
             >
-              127 tokens
+              {wallet?.token_in_wallet} tokens
             </Typography>
           </Grid>
         </Grid>

@@ -90,6 +90,7 @@ function MapDrawer(props) {
   const { classes } = props;
   const [open, setOpen] = React.useState(true);
   const [wallet, setWallet] = React.useState(undefined);
+  const [tokens, setTokens] = React.useState([]);
 
   // console.log("Tokens List", tokens)
 
@@ -102,10 +103,14 @@ function MapDrawer(props) {
   }, []);
 
   const getWalletData = async () => {
-    const response = await axios.request({
+    let response = await axios.request({
       url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun`,
     });
     setWallet(response.data);
+    response = await axios.request({
+      url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun/tokens`,
+    });
+    setTokens(response.data);
     log.warn('loaded wallet:', wallet);
   };
 
