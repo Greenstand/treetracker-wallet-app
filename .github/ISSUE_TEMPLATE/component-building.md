@@ -2,7 +2,7 @@
 name: Component building
 about: Issue about building component.
 title: ''
-labels: MateriulUI
+labels: ''
 assignees: ''
 
 ---
