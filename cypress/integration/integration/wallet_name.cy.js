@@ -6,12 +6,13 @@ import tokenB from '../../fixtures/tokenB';
 
 describe('/wallets/{walletName}', () => {
   it('/wallets/{walletName}', () => {
+    console.log('env:', Cypress.env());
     cy.intercept(
-      'https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/SustainablyRun',
+      `${Cypress.env('REACT_APP_API_WALLET')}wallets/SustainablyRun`,
       { fixture: 'SustainablyRun.json' },
     );
     cy.intercept(
-      'https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/SustainablyRun/tokens',
+      `${Cypress.env('REACT_APP_API_WALLET')}wallets/SustainablyRun/tokens`,
       { tokens: [tokenA, tokenB] },
     );
     cy.visit('/wallets/SustainablyRun');
