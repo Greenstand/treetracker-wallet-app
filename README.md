@@ -90,7 +90,7 @@ REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
 
 ### Test
 
-About our test philosaphy and rules, please go [here](https://github.com/Greenstand/treetracker-web-map-client#test).
+About our test philosophy and rules, please go [here](https://github.com/Greenstand/treetracker-web-map-client#test).
 
 ## Code style guide
 
