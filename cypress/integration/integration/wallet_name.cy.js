@@ -2,7 +2,7 @@
 import log from 'loglevel';
 import path from 'path';
 import tokenA from '../../fixtures/tokenA';
-import tokenB from '../../fixtures/tokenA';
+import tokenB from '../../fixtures/tokenB';
 
 describe('/wallets/{walletName}', () => {
   it('/wallets/{walletName}', () => {
@@ -15,7 +15,13 @@ describe('/wallets/{walletName}', () => {
       { tokens: [tokenA, tokenB] },
     );
     cy.visit('/wallets/SustainablyRun');
+
+    //the the content has been loaded by API correctly
     cy.contains('SustainablyRun');
     cy.contains('2 tokens');
+    cy.contains(tokenA.capture_id);
+    cy.contains(tokenA.planter_name);
+    cy.contains(tokenB.capture_id);
+    cy.contains(tokenB.planter_name);
   });
 });

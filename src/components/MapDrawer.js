@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import Avatar from '@material-ui/core/Avatar';
-import avatar from '../images/avatar.png';
 import drawer from '../images/drawer.png';
 import axios from 'axios';
 import log from 'loglevel';
@@ -110,7 +109,7 @@ function MapDrawer(props) {
     response = await axios.request({
       url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun/tokens`,
     });
-    setTokens(response.data);
+    setTokens(response.data.tokens);
     log.warn('loaded wallet:', wallet);
   };
 
@@ -136,7 +135,7 @@ function MapDrawer(props) {
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo wallet={wallet} />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
-            <TokensList tokens={Tokens} />
+            <TokensList tokens={tokens} />
           </Grid>
         </Paper>
       </SwipeableDrawer>
@@ -151,13 +150,18 @@ function MapDrawer(props) {
               <Grid item className={classes.bottomContent}>
                 <Grid container className={classes.box1}>
                   <Grid item className={classes.bottomItem}>
-                    <Avatar src={avatar} className={classes.avatar} />
+                    <Avatar
+                      src={wallet?.photo_url}
+                      className={classes.avatar}
+                    />
                   </Grid>
                   <Grid item className={classes.bottomItem}>
                     <Typography variant="h6">@${wallet.name}</Typography>
                   </Grid>
                   <Grid item className={classes.bottomItem}>
-                    <Typography variant="body1">127 tokens</Typography>
+                    <Typography variant="body1">
+                      ${wallet?.token_in_wallet} tokens
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
