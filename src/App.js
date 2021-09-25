@@ -20,6 +20,8 @@ import log from 'loglevel';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import theme from './components/common/theme';
 import { ThemeProvider } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import DesktopPage from './components/DesktopPage';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { faCoffee } from '@fortawesome/free-solid-svg-icons';
@@ -79,7 +81,12 @@ const routes = [
   { path: '/default', name: 'Default', Component: DefaultPage },
   { path: '/details', name: 'Details', Component: DetailsPage },
   { path: '/map', name: 'Map', Component: MapPage },
-  { path: '/wallets', name: 'Map', Component: MapPage },
+  {
+    path: '/wallets',
+    name: 'Map',
+    Component: MapPage,
+    DesktopComponent: DesktopPage,
+  },
   {
     path: '/wallets/:walletId/trees/:treeId',
     name: 'Tree',
@@ -94,13 +101,20 @@ const routes = [
 ];
 
 function App() {
+  const isDesktopScreen = useMediaQuery(theme.breakpoints.up('md'));
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        {routes.map(({ path, Component, exact }) => (
-          <Route key={path} path={path} exact={exact || false}>
-            <Component />
-          </Route>
+        {routes.map(({ path, Component, exact, DesktopComponent }) => (
+          <Route
+            key={path}
+            path={path}
+            exact={exact || false}
+            component={
+              isDesktopScreen && DesktopComponent ? DesktopComponent : Component
+            }
+          />
         ))}
       </Router>
     </ThemeProvider>
