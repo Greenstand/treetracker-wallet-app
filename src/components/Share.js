@@ -116,7 +116,7 @@ function Share(props) {
     setEmbedCode(
       `<iframe width="560" height="315" src="${props.shareUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`,
     );
-    setLink('http://wallet.greenstand/zaven/tokens/1234567890');
+    setLink(`${props.shareUrl}`);
   }, []);
 
   function handleCopy() {
