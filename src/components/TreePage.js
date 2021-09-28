@@ -91,19 +91,20 @@ const style = (theme) => ({
     fontSize: 16,
     fontWeight: 400,
   },
+  overlay: {
+    position: 'absolute',
+    zIndex: 1300,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
 });
 
 function TreePage(props) {
   const { classes } = props;
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        zIndex: 9999,
-        width: '100vw',
-      }}
-    >
+    <div className={classes.overlay}>
       <DetailPage>
         <Paper elevation={0}>
           <Grid className={classes.TreeInfo}>

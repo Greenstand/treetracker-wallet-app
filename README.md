@@ -36,7 +36,7 @@ npm run cyu
 
 To simulate mobile device in the component tool:
 
-Because we focus on the mobile device, so when we build component by using Cypress component tool, we want to operate the component in the simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component took, cuz we have to use big screen to show Cypress dashboard, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
+Because we focus on the mobile device, so when we build component by using Cypress component tool, we want to operate the component in the simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component tool, because we have to use big screen to show Cypress dashboard, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
 
 [Video tutorial for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
 
@@ -70,6 +70,8 @@ We got another team working on the API endpoint, so the API spec is evolving. Th
 
 To check the doc in a convenient way, please import it to some API tools like: http://editor.swagger.io/ or Postman.
 
+To import the API doc to Postman or Swagger (both work the same), simply just click on the 'File' tab in the menubar and look for the 'Import' option. Find the API .yaml file in your local repository inside the doc directory and click 'Open'.
+
 ### Using our mock API server
 
 To develop without relying on the code of API team, we set up a mock API server for development.
@@ -88,7 +90,7 @@ REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
 
 ### Test
 
-About our test philosaphy and rules, please go [here](https://github.com/Greenstand/treetracker-web-map-client#test).
+About our test philosophy and rules, please go [here](https://github.com/Greenstand/treetracker-web-map-client#test).
 
 ## Code style guide
 
