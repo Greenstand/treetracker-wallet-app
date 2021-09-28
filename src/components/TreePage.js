@@ -15,6 +15,7 @@ import Box from '@material-ui/core/Box';
 import LinearProgressBar from './common/LinearProgressBar';
 import DetailPage from '../components/common/DetailPage';
 import CustomizedTabs from './common/CustomizedTabs';
+import TransactionsHistory from './TransactionsHistory';
 import ImpactManagerImg from '../images/Impact-Manager.png';
 import ImpactProducerImg from '../images/Impact-Producer.png';
 
@@ -172,47 +173,50 @@ function TreePage(props) {
             </Typography>
             <img className={classes.ImpactManagerImg} src={ImpactManagerImg} />
           </Grid>
-          <Grid container alignItems="center" justifyContent="space-between">
-            <CustomizedTabs
-              tab1="Details"
-              tab2="History"
-              tab1Veiw={
-                <>
-                  <Grid className={classes.ImpactProducerContainer}>
-                    <Typography className={classes.SubTitle} variant="h6">
-                      Impact Producer
-                      <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
-                        <IconButton>
-                          <InfoOutlinedIcon style={{ fontSize: 18 }} />
-                        </IconButton>
-                      </Tooltip>
-                    </Typography>
-                    <img
-                      className={classes.ImpactProducerImg}
-                      src={ImpactProducerImg}
-                    />
-                  </Grid>
-                  <Grid className={classes.ImpactProducerContainer}>
-                    <Typography className={classes.SubTitle} variant="h6">
-                      Token ID
-                    </Typography>
-                    <p className={classes.TextContent}>
-                      7f22f06f-d665-492e-ab7c-7328d78f6bf9
-                    </p>
-                  </Grid>
-                  <Grid className={classes.ImpactProducerContainer}>
-                    <Typography className={classes.SubTitle} variant="h6">
-                      Meta Data
-                    </Typography>
-                    <p className={classes.TextContent}>
-                      xxxxxxxxxxxxxxxxxxxxxxxx
-                    </p>
-                  </Grid>
-                </>
-              }
-              tab2Veiw={<h1 style={{ padding: '0 24px' }}>History</h1>}
-            />
-          </Grid>
+
+          <CustomizedTabs
+            tab1="Details"
+            tab2="History"
+            tab1Veiw={
+              <>
+                <Grid className={classes.ImpactProducerContainer}>
+                  <Typography className={classes.SubTitle} variant="h6">
+                    Impact Producer
+                    <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
+                      <IconButton>
+                        <InfoOutlinedIcon style={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Tooltip>
+                  </Typography>
+                  <img
+                    className={classes.ImpactProducerImg}
+                    src={ImpactProducerImg}
+                  />
+                </Grid>
+                <Grid className={classes.ImpactProducerContainer}>
+                  <Typography className={classes.SubTitle} variant="h6">
+                    Token ID
+                  </Typography>
+                  <p className={classes.TextContent}>
+                    7f22f06f-d665-492e-ab7c-7328d78f6bf9
+                  </p>
+                </Grid>
+                <Grid className={classes.ImpactProducerContainer}>
+                  <Typography className={classes.SubTitle} variant="h6">
+                    Meta Data
+                  </Typography>
+                  <p className={classes.TextContent}>
+                    xxxxxxxxxxxxxxxxxxxxxxxx
+                  </p>
+                </Grid>
+              </>
+            }
+            tab2Veiw={
+              <p style={{ padding: '0 24px' }}>
+                <TransactionsHistory />
+              </p>
+            }
+          />
         </Paper>
       </DetailPage>
     </div>

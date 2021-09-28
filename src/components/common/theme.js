@@ -24,6 +24,7 @@ export default createTheme({
     },
     textSecondary: {
       main: '#848484',
+      darkGray: '#7A7A7A',
     },
     alternative: {
       main: '#f7fbf7',
