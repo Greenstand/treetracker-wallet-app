@@ -5,8 +5,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import Close from '@material-ui/icons/Close';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
 import Email from '@material-ui/icons/Email';
 import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -19,6 +17,7 @@ import log from 'loglevel';
 import { green } from '@material-ui/core/colors';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CustomShareIcon from './common/CustomShareIcon';
 
 const useStyles = makeStyles((theme) => ({
   DialogTitle: {
@@ -26,28 +25,17 @@ const useStyles = makeStyles((theme) => ({
       fontSize: '18px',
     },
   },
-  icon: {
-    position: 'absolute',
-    top: '8px',
-    left: 'auto',
-    right: '24px',
-    height: '32px',
-    width: '32px',
-  },
   closeIcon: {
     width: '32px',
     height: '32px',
     borderRadius: '4px',
-    backgroundColor: '#F7FBF7',
+    backgroundColor: theme.palette.secondary.lightGreen,
   },
   box1: {
     padding: theme.spacing(4),
     width: '100%',
-  },
-  box2: {
-    padding: theme.spacing(2),
     [theme.breakpoints.down('xs')]: {
-      width: '25%',
+      padding: theme.spacing(2),
     },
   },
   code: {
@@ -97,7 +85,7 @@ function Share(props) {
     );
   }
 
-  const mailString = `mailto:?subject=A tree from Greenstand&body=I want to share this tree from Greenstand with you, please click this linke to check it! ${props.shareUrl}`;
+  const mailString = `mailto:?subject=A tree from Greenstand&body=I want to share this tree from Greenstand with you, please click this link to check it! ${props.shareUrl}`;
 
   function handleEmbed() {
     setIsOpen(false);
@@ -152,7 +140,15 @@ function Share(props) {
           <ShareIcon style={{ color: green[500] }} />
         </IconButton>
       </Tooltip>
-      <Dialog open={isOpen} onClose={handleClose}>
+      <Dialog
+        open={isOpen}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            margin: '8px',
+          },
+        }}
+      >
         <DialogTitle>
           <Grid container justify="space-between" alignItems="center">
             <Grid item xs={8} className={classes.DialogTitle}>
@@ -165,73 +161,20 @@ function Share(props) {
             </Grid>
           </Grid>
         </DialogTitle>
-        <Grid container justify="center" className={classes.box1}>
-          <Grid item className={classes.box2}>
-            <Grid container direction="column" alignItems="center">
-              <Grid item>
-                <IconButton id="EmbedButton" onClick={handleEmbed}>
-                  <Avatar
-                    style={{
-                      backgroundColor: '#F7FBF7',
-                    }}
-                  >
-                    <Code style={{ color: green[500] }} />
-                  </Avatar>
-                </IconButton>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item className={classes.box2}>
-            <Grid container direction="column" alignItems="center">
-              <Grid item>
-                <IconButton onClick={handleFaceBook}>
-                  <Avatar
-                    style={{
-                      backgroundColor: '#F7FBF7',
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={['fab', 'facebook']}
-                      color={green[500]}
-                      size="lg"
-                    />
-                  </Avatar>
-                </IconButton>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item className={classes.box2}>
-            <Grid container direction="column" alignItems="center">
-              <Grid item>
-                <IconButton onClick={handleTwitter}>
-                  <Avatar
-                    style={{
-                      backgroundColor: '#F7FBF7',
-                    }}
-                  >
-                    <TwitterIcon style={{ color: green[500] }} />
-                  </Avatar>
-                </IconButton>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item className={classes.box2}>
-            <Grid container direction="column" alignItems="center">
-              <Grid item>
-                <a href={mailString}>
-                  <IconButton>
-                    <Avatar
-                      style={{
-                        backgroundColor: '#F7FBF7',
-                      }}
-                    >
-                      <Email style={{ color: green[500] }} />
-                    </Avatar>
-                  </IconButton>
-                </a>
-              </Grid>
-            </Grid>
-          </Grid>
+        <Grid container justifyContent="center" className={classes.box1}>
+          <CustomShareIcon handleOnClick={handleEmbed}>
+            <Code />
+          </CustomShareIcon>
+          <CustomShareIcon handleOnClick={handleFaceBook}>
+            <FontAwesomeIcon icon={['fab', 'facebook-f']} />
+          </CustomShareIcon>
+          <CustomShareIcon handleOnClick={handleTwitter}>
+            <TwitterIcon />
+          </CustomShareIcon>
+          <CustomShareIcon mailString={mailString}>
+            <Email />
+          </CustomShareIcon>
+
           <Grid container justify="space-between" alignItems="center">
             <Grid item xs={8} className={classes.linkText}>
               Or this link
