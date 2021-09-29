@@ -37,7 +37,7 @@ function WalletInfo(props) {
           <Grid item className={classes.title}>
             <Typography color="textSecondary">WALLET</Typography>
           </Grid>
-          <Share />
+          <Share shareUrl={window.location.href} />
         </Grid>
         <Grid item container spacing={1}>
           <Grid item>

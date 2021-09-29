@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Box from '@material-ui/core/Box';
+import Share from './Share';
 
 import LinearProgressBar from './common/LinearProgressBar';
 import DetailPage from '../components/common/DetailPage';
@@ -114,7 +115,7 @@ function TreePage(props) {
                 Marula
               </Typography>
               <div>
-                <ShareIcon className={classes.icon} color="secondary" />
+                <Share shareUrl={window.location.href} />
               </div>
             </Grid>
             <Grid>
