@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
-import avatar from '../images/avatar.png';
 import Share from './Share';
 
 const style = (theme) => ({
@@ -41,7 +40,7 @@ function WalletInfo(props) {
         </Grid>
         <Grid item container spacing={1}>
           <Grid item>
-            <Avatar src={avatar} className={classes.avatar} />
+            <Avatar src={wallet?.photo_url} className={classes.avatar} />
           </Grid>
           <Grid item>
             <Typography variant="h6">@{wallet?.name}</Typography>
@@ -50,7 +49,7 @@ function WalletInfo(props) {
               className={classes.tokenCount}
               color="textSecondary"
             >
-              127 tokens
+              {wallet?.token_in_wallet} tokens
             </Typography>
           </Grid>
         </Grid>
