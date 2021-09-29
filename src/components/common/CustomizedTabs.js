@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
     width: '90%',
     margin: 'auto',
   },
+  Box: {
+    width: '100%',
+  },
 }));
 
 function CustomizedTabs({ tab1, tab2, tab1Veiw, tab2Veiw }) {
@@ -46,7 +49,7 @@ function CustomizedTabs({ tab1, tab2, tab1Veiw, tab2Veiw }) {
         aria-labelledby={`full-width-tab-${index}`}
         {...other}
       >
-        {value === index && <Box>{children}</Box>}
+        {value === index && <Box className={classes.Box}>{children}</Box>}
       </div>
     );
   }
