@@ -14,7 +14,13 @@ npm i
 npm start
 ```
 
-3. Open the web map in the browser with URL: http://localhost:3000
+3. Start the mock API
+
+```
+npm run mock-server
+```
+
+4. Open the web map in the browser with URL: http://localhost:3000
 
 ## Workflow with Github
 
