@@ -74,11 +74,7 @@ To import the API doc to Postman or Swagger (both work the same), simply just cl
 
 ### Using our mock API server
 
-To develop without relying on the code of API team, we set up a mock API server for development.
-
-The development mock API server is here: [mock server](https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io).
-
-So you can call the API `/wallets/[name]` by: `https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/wallets/[name]`.
+Refer to [here](https://github.com/Greenstand/treetracker-web-map-client/blob/web-map-site/README.md#using-our-mock-api-server)
 
 ### Config
 
