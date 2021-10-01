@@ -17,6 +17,7 @@ import PoweredBy from './PoweredBy';
 import Fade from '@material-ui/core/Fade';
 import TokensList from './TokensList';
 import Tokens from './TokensArray';
+import TokenGraph from './TokenGraph';
 
 const style = (theme) => ({
   map: {
@@ -135,6 +136,7 @@ function MapDrawer(props) {
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo wallet={wallet} />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
+            <TokenGraph />
             <TokensList tokens={tokens} />
           </Grid>
         </Paper>
