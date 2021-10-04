@@ -7,6 +7,7 @@ import Avatar from '@material-ui/core/Avatar';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import LinearProgressBar from './common/LinearProgressBar';
 import { useHistory } from 'react-router-dom';
+import OptimizedImage from './OptimizedImage';
 
 const style = (theme) => ({
   grid: {
@@ -31,13 +32,6 @@ const style = (theme) => ({
       width: '88px',
       height: '88px',
     },
-  },
-  img: {
-    maxWidth: '100%',
-    maxHeight: '100%',
-    width: '100%',
-    height: '100%',
-    borderRadius: '8px',
   },
   tokenOwnerName: {
     color: 'rgba(34, 34, 34, 0.6)',
@@ -128,11 +122,7 @@ function TokenCard(props) {
             />
           </div>
           <Paper className={classes.TreeImg} elevation={0}>
-            <img
-              className={classes.img}
-              onClick={handleTreeClick}
-              src={TreeImg}
-            />
+            <OptimizedImage src={TreeImg} width={104} height={104} />
           </Paper>
         </Grid>
         <Grid container xs={8}>
