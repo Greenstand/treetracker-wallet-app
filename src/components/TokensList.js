@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withStyles, styled } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 import TokenCard from './TokenCard';
 
 const tokensPerPage = 5;
@@ -19,14 +18,6 @@ const style = (theme) => ({
     color: theme.palette.primary.main,
   },
 });
-
-const CustomButton = styled(Button)(({ theme }) => ({
-  borderRadius: '4px',
-  boxSizing: 'border-box',
-  fontSize: '14px',
-  fontWeight: '700',
-  padding: '10px',
-}));
 
 const TokensList = ({ classes, tokens }) => {
   //  const [tokensToShow, setTokensToShow] = useState([]);
@@ -68,13 +59,12 @@ const TokensList = ({ classes, tokens }) => {
       <div className={classes.ButtonContainer}>
         {tokensToShow.length !== isLastToken ? (
           <CustomButton
-            onClick={handleShowMoreTokens}
+            label="See more tokens"
+            handleClick={handleShowMoreTokens}
             fullWidth
             variant="outlined"
             color="primary"
-          >
-            See more tokens
-          </CustomButton>
+          />
         ) : (
           'You have see it all'
         )}

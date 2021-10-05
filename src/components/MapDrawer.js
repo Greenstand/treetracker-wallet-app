@@ -18,6 +18,7 @@ import Fade from '@material-ui/core/Fade';
 import TokensList from './TokensList';
 import Tokens from './TokensArray';
 import TokenGraph from './TokenGraph';
+import CustomButton from './common/CustomButton';
 
 const style = (theme) => ({
   map: {
