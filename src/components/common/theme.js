@@ -1,7 +1,7 @@
 /*
  * The Material-UI theme for the whole UI
  */
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 
 export default createTheme({
   spacing: 8,
@@ -33,5 +33,15 @@ export default createTheme({
   },
   shape: {
     borderRadius: 8,
+  },
+  components: {
+    MuiAvatarGroup: {
+      styleOverrides: {
+        avatar: {
+          height: '64px',
+          width: '64px',
+        },
+      },
+    },
   },
 });

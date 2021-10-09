@@ -19,7 +19,7 @@ import {
 import log from 'loglevel';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import theme from './components/common/theme';
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DesktopPage from './components/DesktopPage';
 import { library } from '@fortawesome/fontawesome-svg-core';

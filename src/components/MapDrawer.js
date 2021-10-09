@@ -19,6 +19,7 @@ import TokensList from './TokensList';
 import Tokens from './TokensArray';
 import TokenGraph from './TokenGraph';
 import CustomButton from './common/CustomButton';
+import PlanterList from './common/PlanterList';
 
 const style = (theme) => ({
   map: {
@@ -137,7 +138,11 @@ function MapDrawer(props) {
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo wallet={wallet} />
             <CustomizedTabs tab1="Tokens" tab2="Impact" />
+            {/* REMOVE FROM HERE AFTER ADDING THE IMPACT TAB */}
             <TokenGraph />
+            <PlanterList isSocial />
+            <PlanterList />
+            {/* REMOVE UNTIL HERE AFTER ADDING THE IMPACT TAB */}
             <TokensList tokens={tokens} />
           </Grid>
         </Paper>
