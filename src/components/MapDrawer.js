@@ -53,12 +53,12 @@ const style = (theme) => ({
     bottom: 0,
     boxShadow: '0 -1px 2px rgb(0 0 0 / 30%)',
     zIndex: 1000,
+    borderRadius: '8px 8px 0 0 ',
   },
   bottomBox: {
     height: theme.spacing(6),
   },
   bottomArrow: {
-    width: theme.spacing(6),
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
