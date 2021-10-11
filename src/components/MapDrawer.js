@@ -17,9 +17,8 @@ import PoweredBy from './PoweredBy';
 import Fade from '@material-ui/core/Fade';
 import TokensList from './TokensList';
 import Tokens from './TokensArray';
-import TokenGraph from './TokenGraph';
 import CustomButton from './common/CustomButton';
-import PlanterList from './common/PlanterList';
+import ImpactTab from './ImpactTab';
 
 const style = (theme) => ({
   map: {
@@ -138,13 +137,12 @@ function MapDrawer(props) {
           <Grid className={classes.box} container>
             {wallet && <div style={{ display: 'none' }}>@{wallet.name}</div>}
             <WalletInfo wallet={wallet} />
-            <CustomizedTabs tab1="Tokens" tab2="Impact" />
-            {/* REMOVE FROM HERE AFTER ADDING THE IMPACT TAB */}
-            <TokenGraph />
-            <PlanterList isSocial />
-            <PlanterList />
-            {/* REMOVE UNTIL HERE AFTER ADDING THE IMPACT TAB */}
-            <TokensList tokens={tokens} />
+            <CustomizedTabs
+              tab1="Tokens"
+              tab2="Impact"
+              tab1Veiw={<TokensList tokens={tokens} />}
+              tab2Veiw={<ImpactTab />}
+            />
           </Grid>
         </Paper>
       </SwipeableDrawer>
