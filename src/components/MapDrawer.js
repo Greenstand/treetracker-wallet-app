@@ -126,6 +126,7 @@ function MapDrawer(props) {
         onOpen={() => setOpen(true)}
         disableSwipeToOpen={true}
         BackdropProps={{ open: false }}
+        style={{ position: 'relative' }}
       >
         <Paper
           className={classes.drawer}
