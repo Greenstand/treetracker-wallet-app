@@ -2,6 +2,8 @@
 
 ## Development Environment Quick Start
 
+Important Note: You need to use node version 16+ to run this project. You can download node 16 from the [official website](https://nodejs.org/en/).
+
 1. Make sure all npm modules are installed for client.
 
 ```
