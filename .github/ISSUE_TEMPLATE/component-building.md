@@ -4,6 +4,7 @@ about: Issue about building component.
 title: ''
 labels: ''
 assignees: ''
+
 ---
 
 ---
@@ -14,3 +15,4 @@ Some hints for building components:
 - A tutorial of how to use Cypress component tool to build components: https://github.com/Greenstand/treetracker-wallet-web#how-to-build-a-component
 - We are using MaterialUI to build the app: https://material-ui.com/
 - When you are ready to raise PR for the component, please attach the screenshot of the component for review.
+- If you want to join the slack community (some resources need the community member's permission), please leave your email address.

@@ -29,3 +29,6 @@ A clear and concise description of what you expected to happen.
 
 **Additional context**
 Add any other context about the problem here.
+
+---
+- If you want to join the slack community (some resources need the community member's permission), please leave your email address.
