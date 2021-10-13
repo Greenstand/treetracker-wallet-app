@@ -8,27 +8,13 @@ import 'leaflet-utfgrid/L.UTFGrid.js';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import MapDrawer from "./MapDrawer";
+import MapDrawer from './MapDrawer';
+import { useHistory } from 'react-router-dom';
 
-const style = (theme) => ({
+const style = () => ({
   map: {
-    width: "100vw",
-    height: "100vh",
-  },
-  paper: {
-    background: 'transparent',
-  },
-  rounded: {
-    borderRadius: 20,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-  drawer: {
-    height: 549,
-    width: "100%",
-  },
-  box: {
-    justifyContent: 'center',
+    width: '100vw',
+    height: '100vh',
   },
 });
 
@@ -37,6 +23,7 @@ function MapPage(props) {
   const mapRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [isDrawer, setDrawer] = React.useState(false);
+  const history = useHistory();
 
   //load map
   React.useEffect(() => {
@@ -49,9 +36,14 @@ function MapPage(props) {
     const parameters = {
       wallet: 'Malinda51',
     };
+
+    function showPanel(tree) {
+      history.push(`/wallets/${parameters.wallet}/trees/${tree.id}`);
+    }
+
     const map = new Map({
       //      onLoad: loaded,
-      //      onClickTree: showPanel,
+      onClickTree: showPanel,
       //      onFindNearestAt: handleFindNearestAt,
       //      onError: handleError,
       filters: parameters,
@@ -60,14 +52,11 @@ function MapPage(props) {
     mapRef.current.map = map;
     setDrawer(true);
   }, []);
-  return(
-    <div className="App" ref={containerRef} >
-      <div id="map-canvas" className={classes.map} ref={mapRef}/>
-      <div ref={containerRef} >
-      {isDrawer &&
-        <MapDrawer/>
-      }
-      </div>
+
+  return (
+    <div className="App" ref={containerRef}>
+      <div id="map-canvas" className={classes.map} ref={mapRef} />
+      <div ref={containerRef}>{isDrawer && <MapDrawer />}</div>
     </div>
   );
 }
