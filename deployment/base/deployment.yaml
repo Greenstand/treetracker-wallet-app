@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: treetracker-wallet-web
+  labels:
+    app: treetracker-wallet-web 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: treetracker-wallet-web
+  template:
+    metadata:
+      labels:
+        app: treetracker-wallet-web
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: doks.digitalocean.com/node-pool
+                operator: In
+                values:
+                - microservices-node-pool
+      containers:
+      - name: treetracker-wallet-web
+        image: greenstand/treetracker-wallet-web:TAG
+        ports:
+        - containerPort: 80
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: database-connection
+                key: db
+          - name: DATABASE_SCHEMA
+            value: messaging
