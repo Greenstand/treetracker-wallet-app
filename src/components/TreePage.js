@@ -19,6 +19,7 @@ import CustomizedTabs from './common/CustomizedTabs';
 import TransactionsHistory from './TransactionsHistory';
 import ImpactManagerImg from '../images/Impact-Manager.png';
 import ImpactProducerImg from '../images/Impact-Producer.png';
+import Caution from './Caution';
 
 const style = (theme) => ({
   TreeInfo: {
@@ -102,6 +103,7 @@ const style = (theme) => ({
 });
 
 function TreePage(props) {
+  const [isOpen, setIsOpen] = React.useState(false);
   const { classes } = props;
 
   return (
@@ -152,17 +154,22 @@ function TreePage(props) {
               Impact Token Value
             </Typography>
             <LinearProgressBar width="100%" height="24px" value={80} />
-            <a
-              style={{
-                marginTop: '10px',
-                color: '#67AC5B',
-                textDecoration: 'underline',
-                lineHeight: 2,
-              }}
-              href="#"
-            >
-              How is this value calculated?
-            </a>
+            {!isOpen ? (
+              <Typography
+                style={{
+                  marginTop: '10px',
+                  color: '#67AC5B',
+                  textDecoration: 'underline',
+                  lineHeight: 2,
+                }}
+                href="#"
+                onClick={() => setIsOpen(true)}
+              >
+                How is this value calculated?
+              </Typography>
+            ) : (
+              <Caution setIsOpen={setIsOpen} />
+            )}
           </Grid>
           <Grid className={classes.ImpactManagerContainer}>
             <Typography className={classes.SubTitle} variant="h6">
