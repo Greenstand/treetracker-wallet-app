@@ -2,7 +2,6 @@ import React from 'react';
 import logo from './logo.svg';
 import loading from './images/loading.png';
 import defaultImage from './images/default.png';
-import detailsImage from './images/details.png';
 import Home from './components/Home.js';
 import MapPage from './components/MapPage.js';
 import TreePage from './components/TreePage.js';
@@ -59,15 +58,9 @@ function DefaultPage() {
 }
 
 function DetailsPage() {
-  const history = useHistory();
-  function handleClick() {
-    log.debug('load finished');
-    history.go(-1);
-  }
-
   return (
-    <div className="App" onClick={handleClick}>
-      <img src={detailsImage} />
+    <div className="App">
+      <TreePage />
     </div>
   );
 }
