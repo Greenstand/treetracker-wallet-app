@@ -44,7 +44,7 @@ npm run cyu
 
 To simulate mobile device in the component tool:
 
-Because we focus on the mobile device, so when we build component by using Cypress component tool, we want to operate the component in the simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component tool, because we have to use big screen to show Cypress dashboard, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
+As we are focusing on the mobile device, we using the Cypress component tool to build our componets. We want to test the components with devtools in Chrome, the most important feature being the swipe/touch simulator, which can be enabled by changing to mobile view within devtools. This can be tricky if you are using the Cypress component tool because the view portal is too small to work with, so we created a customized device to enable better visibility. Here is a tutoroial showing how to set it up:
 
 [Video tutorial for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
 
