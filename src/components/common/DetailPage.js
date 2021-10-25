@@ -59,6 +59,7 @@ function DetailPage(props) {
         onOpen={() => setOpen(true)}
         disableSwipeToOpen={true}
         BackdropProps={{ open: false }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       >
         <Paper
           className={classes.drawer}
