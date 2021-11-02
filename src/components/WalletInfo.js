@@ -1,8 +1,8 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Avatar from '@material-ui/core/Avatar';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
 import Share from './Share';
 
 const style = (theme) => ({
@@ -10,7 +10,6 @@ const style = (theme) => ({
     height: '112px',
     width: '100%',
     position: 'relative',
-    padding: '8px 24px',
   },
   title: {
     width: '50%',

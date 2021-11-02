@@ -1,11 +1,11 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import Avatar from '@material-ui/core/Avatar';
+import withStyles from '@mui/styles/withStyles';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import Avatar from '@mui/material/Avatar';
 import drawer from '../images/drawer.png';
 import axios from 'axios';
 import log from 'loglevel';
@@ -14,7 +14,7 @@ import CustomizedTabs from './common/CustomizedTabs';
 import TokenCard from './TokenCard';
 import LinearProgressBar from './common/LinearProgressBar';
 import PoweredBy from './PoweredBy';
-import Fade from '@material-ui/core/Fade';
+import Fade from '@mui/material/Fade';
 import TokensList from './TokensList';
 import Tokens from './TokensArray';
 import CustomButton from './common/CustomButton';
@@ -61,6 +61,7 @@ const style = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: theme.spacing(1),
   },
   bottomContent: {
     flexGrow: 1,
@@ -150,7 +151,7 @@ function MapDrawer(props) {
         <Fade in={true} timeout={500}>
           <Paper className={classes.bottomPaper} onClick={handleClickBottom}>
             <PoweredBy />
-            <Grid container className={classes.bottomBox}>
+            <Grid container className={classes.bottomBox} wrap="nowrap" pt={1}>
               <Grid item className={classes.bottomArrow}>
                 <ExpandLess color="action" />
               </Grid>

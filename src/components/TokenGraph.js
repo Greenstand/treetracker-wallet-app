@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TollIcon from '@material-ui/icons/Toll';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import TollIcon from '@mui/icons-material/Toll';
 import { Line } from 'react-chartjs-2';
 import graphData from '../data/TokenGraphFakeData';
 
