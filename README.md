@@ -96,7 +96,7 @@ REACT_APP_API_WALLET=https://4861b9cd-4ac3-460e-b42f-9b14ac00c403.mock.pstmn.io/
 
 About our test philosophy and rules, please go [here](https://github.com/Greenstand/treetracker-web-map-client#test).
 
-## Desgin resource
+## Design resource
 
 Our Figma UI design for the wallet app is here: https://www.figma.com/file/vOCKDnXrejCASuQQyZPYYR/Wallet-Web-App---Master?node-id=7%3A71
 
