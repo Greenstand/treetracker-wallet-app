@@ -32,7 +32,7 @@ function LandingPage() {
 
   function handleClick() {
     log.debug('load finished');
-    history.push('/wallets/stephanie');
+    history.push('/wallets/180Earth');
   }
 
   return (

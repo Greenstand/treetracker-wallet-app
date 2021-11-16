@@ -106,11 +106,11 @@ function MapDrawer(props) {
 
   const getWalletData = async () => {
     let response = await axios.request({
-      url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun`,
+      url: `${process.env.REACT_APP_API_WALLET}/wallets/180Earth`,
     });
     setWallet(response.data);
     response = await axios.request({
-      url: `${process.env.REACT_APP_API_WALLET}/wallets/SustainablyRun/tokens`,
+      url: `${process.env.REACT_APP_API_WALLET}/tokens/query/wallet=180Earth&withPlanter=true&withCapture=true`,
     });
     setTokens(response.data.tokens);
     log.warn('loaded wallet:', wallet);

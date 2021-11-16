@@ -72,17 +72,9 @@ npm run cy
 
 ## The API
 
-We got another team working on the API endpoint, so the API spec is evolving. This is the current API specification:
+Now we are going to combine the API of wallet API with the web map client API, so we deprecated the API and mock server under `doc` folder. Instead, you need to run the mock server from `treetracker-web-map-client` repo. Please download that repo and run the mock server: `npm run mock-server`.
 
-[API spec](/doc/wallet-web-app.yaml)
-
-To check the doc in a convenient way, please import it to some API tools like: http://editor.swagger.io/ or Postman.
-
-To import the API doc to Postman or Swagger (both work the same), simply just click on the 'File' tab in the menubar and look for the 'Import' option. Find the API .yaml file in your local repository inside the doc directory and click 'Open'.
-
-### Using our mock API server
-
-Refer to [here](https://github.com/Greenstand/treetracker-web-map-client/blob/web-map-site/README.md#using-our-mock-api-server)
+The details is here: https://github.com/Greenstand/treetracker-web-map-client#the-api
 
 ### Config
 
