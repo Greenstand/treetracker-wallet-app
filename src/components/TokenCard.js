@@ -1,10 +1,10 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Avatar from '@mui/material/Avatar';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LinearProgressBar from './common/LinearProgressBar';
 import { useHistory } from 'react-router-dom';
 import OptimizedImage from './OptimizedImage';
@@ -20,7 +20,7 @@ const style = (theme) => ({
     color: theme.palette.primary.main,
     height: '16px',
     width: '16px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       height: '14px',
       width: '14px',
     },
@@ -28,7 +28,7 @@ const style = (theme) => ({
   TreeImg: {
     width: '104px',
     height: '104px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       width: '88px',
       height: '88px',
     },
@@ -37,14 +37,14 @@ const style = (theme) => ({
     color: 'rgba(34, 34, 34, 0.6)',
     marginLeft: '8px',
     fontSize: '16px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
     },
   },
   tokenDate: {
     fontWeight: '400',
     fontSize: '16px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
     },
   },
@@ -56,7 +56,7 @@ const style = (theme) => ({
     background: theme.palette.secondary.lightGreen,
     width: '32px',
     height: '32px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       width: '25px',
       height: '25px',
     },
@@ -72,7 +72,7 @@ const style = (theme) => ({
     bottom: '8px',
     left: '6px',
     width: '88px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       width: '80px',
       left: '4px',
     },
@@ -105,7 +105,7 @@ function TokenCard(props) {
 
   return (
     <>
-      <Grid container spacing={3} className={classes.grid}>
+      <Grid container spacing={3} className={classes.grid} wrap="nowrap">
         <Grid
           xs={4}
           className={classes.imgContainer}
@@ -113,6 +113,7 @@ function TokenCard(props) {
           direction="row"
           alignItems="center"
           ml={2}
+          mr={2}
         >
           <div className={classes.progress}>
             <LinearProgressBar

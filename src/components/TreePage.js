@@ -1,16 +1,17 @@
 import React from 'react';
-import { withStyles, useTheme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import ShareIcon from '@material-ui/icons/Share';
-import DoneIcon from '@material-ui/icons/Done';
-import Chip from '@material-ui/core/Chip';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import Box from '@material-ui/core/Box';
+import { useTheme } from '@mui/material/styles';
+import withStyles from '@mui/styles/withStyles';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import ShareIcon from '@mui/icons-material/Share';
+import DoneIcon from '@mui/icons-material/Done';
+import Chip from '@mui/material/Chip';
+import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Box from '@mui/material/Box';
 import Share from './Share';
 
 import LinearProgressBar from './common/LinearProgressBar';
@@ -174,7 +175,7 @@ function TreePage(props) {
             <Typography className={classes.SubTitle} variant="h6">
               Impact Manager
               <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
-                <IconButton>
+                <IconButton size="large">
                   <InfoOutlinedIcon style={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
@@ -191,7 +192,7 @@ function TreePage(props) {
                   <Typography className={classes.SubTitle} variant="h6">
                     Impact Producer
                     <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
-                      <IconButton>
+                      <IconButton size="large">
                         <InfoOutlinedIcon style={{ fontSize: 18 }} />
                       </IconButton>
                     </Tooltip>

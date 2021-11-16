@@ -1,26 +1,28 @@
 import React from 'react';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from '@material-ui/core/Box';
+import makeStyles from '@mui/styles/makeStyles';
+import withStyles from '@mui/styles/withStyles';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import theme from './theme';
 
 const StyledTab = withStyles({
   root: {
-    backgroundColor: '#f7fbf7',
-    color: '#67AC5B',
+    backgroundColor: theme.palette.secondary.lightGreen,
+    color: theme.palette.primary.main,
     opacity: 1,
-    borderRadius: '8px',
+    borderRadius: theme.shape.borderRadius,
   },
   selected: {
-    backgroundColor: '#67AC5B',
-    color: '#fff',
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
   },
 })(Tab);
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: '#f7fbf7',
-    borderRadius: '8px',
+    backgroundColor: theme.palette.secondary.lightGreen,
+    borderRadius: theme.shape.borderRadius,
     width: '90%',
     margin: 'auto',
   },
@@ -61,6 +63,7 @@ function CustomizedTabs({ tab1, tab2, tab1Veiw, tab2Veiw }) {
         onChange={handleChange}
         className={classes.root}
         variant="fullWidth"
+        textColor="inherit"
         TabIndicatorProps={{ style: { display: 'none' } }}
       >
         <StyledTab label={tab1} />

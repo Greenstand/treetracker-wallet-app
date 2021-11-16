@@ -6,10 +6,10 @@ import {
   TimelineConnector,
   TimelineOppositeContent,
   TimelineDot,
-} from '@material-ui/lab';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+} from '@mui/lab';
+import Typography from '@mui/material/Typography';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
 
 // fake data
 const transactions = [

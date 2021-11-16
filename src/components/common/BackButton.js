@@ -1,7 +1,7 @@
 import React from 'react';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   root: {

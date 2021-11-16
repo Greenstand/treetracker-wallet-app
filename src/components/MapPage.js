@@ -5,9 +5,9 @@ import 'client/src/style.css';
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-utfgrid/L.UTFGrid.js';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import Grid from '@mui/material/Grid';
+import withStyles from '@mui/styles/withStyles';
+import Paper from '@mui/material/Paper';
 import MapDrawer from './MapDrawer';
 import { useHistory } from 'react-router-dom';
 

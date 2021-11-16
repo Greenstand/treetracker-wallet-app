@@ -1,13 +1,13 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import { green } from '@material-ui/core/colors';
+import makeStyles from '@mui/styles/makeStyles';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import { green } from '@mui/material/colors';
 
 const useStyles = makeStyles((theme) => ({
   box2: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       width: '25%',
     },
   },
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     height: '64px',
   },
   iconButton: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       paddingLeft: theme.spacing(0),
       paddingRight: theme.spacing(0),
     },
@@ -32,7 +32,11 @@ function CustomShareIcon({ handleOnClick, children, mailString }) {
     <Grid item className={classes.box2}>
       <Grid container direction="column" alignItems="center">
         <Grid item>
-          <IconButton className={classes.iconButton} onClick={handleOnClick}>
+          <IconButton
+            className={classes.iconButton}
+            onClick={handleOnClick}
+            size="large"
+          >
             {mailString ? (
               <a href={mailString}>
                 <Avatar className={classes.avatar}>{children}</Avatar>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import TokenCard from './TokenCard';
 
 const tokensPerPage = 5;
