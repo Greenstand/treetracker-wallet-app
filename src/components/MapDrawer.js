@@ -44,7 +44,6 @@ const style = (theme) => ({
   },
   box: {
     justifyContent: 'center',
-    gridGap: 20,
   },
   bottomPaper: {
     width: '100%',

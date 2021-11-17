@@ -136,7 +136,7 @@ function Share(props) {
   return (
     <>
       <Tooltip title="share tree">
-        <IconButton onClick={handleClick} size="large">
+        <IconButton onClick={handleClick}>
           <ShareIcon style={{ color: green[500] }} />
         </IconButton>
       </Tooltip>
