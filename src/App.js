@@ -75,7 +75,7 @@ const routes = [
   { path: '/details', name: 'Details', Component: DetailsPage },
   { path: '/map', name: 'Map', Component: MapPage },
   {
-    path: '/wallets',
+    path: '/wallets/:walletName',
     name: 'Map',
     Component: MapPage,
     DesktopComponent: DesktopPage,
