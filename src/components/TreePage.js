@@ -21,6 +21,9 @@ import TransactionsHistory from './TransactionsHistory';
 import ImpactManagerImg from '../images/Impact-Manager.png';
 import ImpactProducerImg from '../images/Impact-Producer.png';
 import Caution from './Caution';
+import log from 'loglevel';
+
+import * as utils from './utils';
 
 const style = (theme) => ({
   TreeInfo: {
@@ -99,6 +102,24 @@ const style = (theme) => ({
 function TreePage(props) {
   const [isOpen, setIsOpen] = React.useState(false);
   const { classes } = props;
+  const [tree, setTree] = React.useState({});
+  const [planter, setPlanter] = React.useState({});
+
+  // get tree id from url with the help of react-router
+  const treeId = props.match.params.treeId;
+  // log tree id
+  log.info('tree id: ', treeId);
+
+  async function load() {
+    const tree = await utils.request(`/trees/${treeId}`);
+    setTree(tree);
+    const planter = await utils.request(`/planters/${tree.planter_id}`);
+    setPlanter(planter);
+  }
+
+  React.useEffect(() => {
+    load();
+  }, []);
 
   return (
     <div
@@ -114,7 +135,7 @@ function TreePage(props) {
             <span className={classes.Label}>TREE</span>
             <Grid container alignItems="center" justifyContent="space-between">
               <Typography className={classes.Title} variant="h6">
-                Marula
+                Tree #{tree.id}
               </Typography>
               <div>
                 <Share shareUrl={window.location.href} />
@@ -134,14 +155,8 @@ function TreePage(props) {
             </Grid>
           </Grid>
           <Grid className={classes.TreeImgContainer}>
-            <img
-              className={classes.TreeImg}
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSIUWEWO5Tm1xMXtfiYKhAHoGnywS9h7W5Lw&usqp=CAU"
-            />
-            <Avatar
-              className={classes.avater}
-              src="https://media.gettyimages.com/photos/portrait-of-a-girl-picture-id938709362?s=612x612"
-            />
+            <img className={classes.TreeImg} src={tree.photo_url} />
+            <Avatar className={classes.avater} src={planter.photo_url} />
           </Grid>
           <Grid>
             <p className={classes.ClaimedInfo}>
@@ -206,9 +221,7 @@ function TreePage(props) {
                   <Typography className={classes.SubTitle} variant="h6">
                     Token ID
                   </Typography>
-                  <p className={classes.TextContent}>
-                    7f22f06f-d665-492e-ab7c-7328d78f6bf9
-                  </p>
+                  <p className={classes.TextContent}>{tree.token_id}</p>
                 </Grid>
                 <Grid className={classes.ImpactProducerContainer}>
                   <Typography className={classes.SubTitle} variant="h6">

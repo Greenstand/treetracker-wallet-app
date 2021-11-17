@@ -1,10 +1,7 @@
 import React from 'react';
 import log from 'loglevel';
-import Map from 'client/src/models/Map';
-import 'client/src/style.css';
-import 'leaflet';
+import Map from 'treetracker-web-map-core/src/Map';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-utfgrid/L.UTFGrid.js';
 import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
 import Paper from '@mui/material/Paper';

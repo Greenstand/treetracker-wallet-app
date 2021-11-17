@@ -6,8 +6,9 @@ import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LinearProgressBar from './common/LinearProgressBar';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import OptimizedImage from './OptimizedImage';
+import log from 'loglevel';
 
 const style = (theme) => ({
   grid: {
@@ -84,23 +85,18 @@ const style = (theme) => ({
 });
 
 function TokenCard(props) {
-  const {
-    classes,
-    TreeImg,
-    ProgressValue,
-    TreeName,
-    ClaimedDate,
-    OwnerName,
-    OwnerAvatar,
-  } = props;
+  const { classes, token } = props;
   const history = useHistory();
 
-  function handleTreeClick() {
-    history.push('/wallets/stephanie/trees/123');
+  const params = useParams();
+  log.debug('TokenCard params: ', params);
+
+  function handleTreeClick(treeId) {
+    history.push(`/wallets/${params.walletName}/trees/${treeId}`);
   }
 
-  function handlePlanterClick() {
-    history.push('/wallets/stephanie/planters/14');
+  function handlePlanterClick(planterId) {
+    history.push(`/wallets/${params.walletName}/planters/${planterId}`);
   }
 
   return (
@@ -116,14 +112,14 @@ function TokenCard(props) {
           mr={2}
         >
           <div className={classes.progress}>
-            <LinearProgressBar
-              width="100%"
-              height="8px"
-              value={ProgressValue}
-            />
+            <LinearProgressBar width="100%" height="8px" value={100} />
           </div>
           <Paper className={classes.TreeImg} elevation={0}>
-            <OptimizedImage src={TreeImg} width={104} height={104} />
+            <OptimizedImage
+              src={token.capture_photo_url}
+              width={104}
+              height={104}
+            />
           </Paper>
         </Grid>
         <Grid container xs={8}>
@@ -134,24 +130,32 @@ function TokenCard(props) {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography className={classes.tokenName}>{TreeName}</Typography>
-            <div className={classes.iconContainer}>
+            <Typography className={classes.tokenName}>
+              {token.capture_id}
+            </Typography>
+            <div
+              className={classes.iconContainer}
+              onClick={() => handleTreeClick(token.capture_id)}
+            >
               <ArrowForwardIosIcon className={classes.icon} />
             </div>
           </Grid>
           <Grid item>
             <Typography className={classes.tokenDate}>
-              {`Claimed on ${ClaimedDate}`}
+              {`Claimed on `}
             </Typography>{' '}
           </Grid>
           <Grid item container direction="row" alignItems="center">
             <Avatar
               className={classes.avater}
               onClick={handlePlanterClick}
-              src={OwnerAvatar}
+              src={token.planter_photo_url}
             />
-            <Typography className={classes.tokenOwnerName}>
-              {`By ${OwnerName}`}
+            <Typography
+              onClick={() => handlePlanterClick(token.planter_id)}
+              className={classes.tokenOwnerName}
+            >
+              {`By ${token.planter_first_name}`}
             </Typography>
           </Grid>
         </Grid>

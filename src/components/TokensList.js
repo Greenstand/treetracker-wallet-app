@@ -45,15 +45,7 @@ const TokensList = ({ classes, tokens }) => {
   return (
     <div className={classes.TokensContainer}>
       {tokens.map((token, index) => (
-        <TokenCard
-          key={index}
-          TreeImg={token.capture_photo_url}
-          ProgressValue={token.ProgressValue}
-          TreeName={token.capture_id}
-          ClaimedDate={token.ClaimedDate}
-          OwnerName={token.planter_name}
-          OwnerAvatar={token.planter_photo_url}
-        />
+        <TokenCard key={index} token={token} />
       ))}
       {/*
       <div className={classes.ButtonContainer}>
