@@ -16,13 +16,18 @@ npm i
 npm start
 ```
 
-3. Start the mock API
+3. ~~Start the mock API~~
 
 ```
 npm run mock-server
 ```
 
-4. Open the web map in the browser with URL: http://localhost:3000
+4. Start the mock API (new)
+   Because we are now migrate the API to combine with `web map client` so please run the mock server in that repo:
+   1. Clone the repo: `git clone git@github.com:Greenstand/treetracker-web-map-client.git`
+   2. Install the modules: `npm ci`
+   3. Run the mock server: `npm run mock-server`
+5. Open the web map in the browser with URL: http://localhost:3000
 
 ## Workflow with Github
 
