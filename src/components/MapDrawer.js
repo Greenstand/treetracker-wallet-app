@@ -89,9 +89,8 @@ const style = (theme) => ({
 });
 
 function MapDrawer(props) {
-  const { classes } = props;
-  const [open, setOpen] = React.useState(true);
-  const [wallet, setWallet] = React.useState(undefined);
+  const { classes, open, setOpen } = props;
+  const [wallet, setWallet] = React.useState({});
   const [tokens, setTokens] = React.useState([]);
 
   // console.log("Tokens List", tokens)
