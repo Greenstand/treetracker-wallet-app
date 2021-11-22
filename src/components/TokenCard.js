@@ -101,11 +101,12 @@ function TokenCard(props) {
 
   return (
     <>
-      <Grid container spacing={3} className={classes.grid} wrap="nowrap">
+      <Grid container className={classes.grid} wrap="nowrap">
         <Grid
           xs={4}
           className={classes.imgContainer}
           container
+          item
           direction="row"
           alignItems="center"
           ml={2}
@@ -122,7 +123,7 @@ function TokenCard(props) {
             />
           </Paper>
         </Grid>
-        <Grid container xs={8}>
+        <Grid container item xs={8}>
           <Grid
             item
             container
