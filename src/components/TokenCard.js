@@ -14,8 +14,8 @@ const style = (theme) => ({
   grid: {
     width: '90%',
     margin: 'auto',
-    marginBottom: '4px',
-    marginTop: '4px',
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   icon: {
     color: theme.palette.primary.main,
@@ -43,7 +43,7 @@ const style = (theme) => ({
     },
   },
   tokenDate: {
-    fontWeight: '400',
+    fontWeight: '500',
     fontSize: '16px',
     [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
@@ -61,6 +61,7 @@ const style = (theme) => ({
       width: '25px',
       height: '25px',
     },
+    marginRight: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -109,8 +110,6 @@ function TokenCard(props) {
           item
           direction="row"
           alignItems="center"
-          ml={2}
-          mr={2}
         >
           <div className={classes.progress}>
             <LinearProgressBar width="100%" height="8px" value={100} />

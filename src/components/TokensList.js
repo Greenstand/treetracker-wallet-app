@@ -6,9 +6,6 @@ const tokensPerPage = 5;
 let arrayForHoldingTokens = [];
 
 const style = (theme) => ({
-  TokensContainer: {
-    marginTop: '10px',
-  },
   ButtonContainer: {
     width: '90%',
     margin: 'auto',

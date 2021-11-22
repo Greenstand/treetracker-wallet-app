@@ -24,7 +24,7 @@ function WalletInfo(props) {
   const { classes, wallet } = props;
   return (
     <>
-      <Grid container className={classes.grid} p={2}>
+      <Grid container className={classes.grid} pr={2} pl={2} mb={2}>
         <Grid
           item
           container
@@ -33,7 +33,9 @@ function WalletInfo(props) {
           alignItems="center"
         >
           <Grid item className={classes.title}>
-            <Typography color="textSecondary">WALLET</Typography>
+            <Typography variant="caption" color="textSecondary">
+              WALLET
+            </Typography>
           </Grid>
           <Share shareUrl={window.location.href} />
         </Grid>

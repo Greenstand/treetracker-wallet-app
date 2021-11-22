@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     width: '90%',
     margin: 'auto',
+    marginBottom: theme.spacing(1),
   },
   Box: {
     width: '100%',
