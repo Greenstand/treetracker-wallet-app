@@ -17,6 +17,7 @@ const style = () => ({
 
 function MapPage(props) {
   const { classes } = props;
+  const [open, setOpen] = React.useState(true);
   const mapRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [isDrawer, setDrawer] = React.useState(false);
@@ -53,7 +54,9 @@ function MapPage(props) {
   return (
     <div className="App" ref={containerRef}>
       <div id="map-canvas" className={classes.map} ref={mapRef} />
-      <div ref={containerRef}>{isDrawer && <MapDrawer />}</div>
+      <div ref={containerRef}>
+        {isDrawer && <MapDrawer open={open} setOpen={setOpen} />}
+      </div>
     </div>
   );
 }
