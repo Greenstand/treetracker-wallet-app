@@ -234,9 +234,9 @@ function TreePage(props) {
               </>
             }
             tab2Veiw={
-              <p style={{ padding: '0 24px' }}>
+              <div style={{ padding: '0 24px' }}>
                 <TransactionsHistory tokenId={tree.token_id} />
-              </p>
+              </div>
             }
           />
         </Paper>
