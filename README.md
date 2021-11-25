@@ -16,13 +16,18 @@ npm i
 npm start
 ```
 
-3. Start the mock API
+3. ~~Start the mock API~~
 
 ```
 npm run mock-server
 ```
 
-4. Open the web map in the browser with URL: http://localhost:3000
+4. Start the mock API (new)
+   Because we are now migrate the API to combine with `web map client` so please run the mock server in that repo:
+   1. Clone the repo: `git clone git@github.com:Greenstand/treetracker-web-map-client.git`
+   2. Install the modules: `npm ci`
+   3. Run the mock server: `npm run mock-server`
+5. Open the web map in the browser with URL: http://localhost:3000
 
 ## Workflow with Github
 
@@ -44,7 +49,7 @@ npm run cyu
 
 To simulate mobile device in the component tool:
 
-Because we focus on the mobile device, so when we build component by using Cypress component tool, we want to operate the component in the simulator of mobile device, with the devtools in Chrome, the most important feature is the swipe/touch simulator (you can see it when you open Chrome devtools and switch to any mobile device), but it becomes tricky if you are using the Cypress component tool, because we have to use big screen to show Cypress dashboard, how can we open a big screen and simulate the mobile behavior at the same time, this video is a tutorial showing how to set it up:
+As we are focusing on the mobile device, we using the Cypress tool to build our components. We want to test the them with devtools in Chrome, the most important feature being the swipe/touch simulator, which can be enabled by changing to mobile view within devtools. This can be tricky if you are using the Cypress component tool because the view portal can be too small to work with, so we created a customized device to enable better visibility. Here is a tutoroial showing how to set it up:
 
 [Video tutorial for Cypress setting up](https://www.loom.com/share/a126f0a80c3a4352a3ddf955f88228b9)
 
@@ -72,17 +77,9 @@ npm run cy
 
 ## The API
 
-We got another team working on the API endpoint, so the API spec is evolving. This is the current API specification:
+Now we are going to combine the API of wallet API with the web map client API, so we deprecated the API and mock server under `doc` folder. Instead, you need to run the mock server from `treetracker-web-map-client` repo. Please download that repo and run the mock server: `npm run mock-server`.
 
-[API spec](/doc/wallet-web-app.yaml)
-
-To check the doc in a convenient way, please import it to some API tools like: http://editor.swagger.io/ or Postman.
-
-To import the API doc to Postman or Swagger (both work the same), simply just click on the 'File' tab in the menubar and look for the 'Import' option. Find the API .yaml file in your local repository inside the doc directory and click 'Open'.
-
-### Using our mock API server
-
-Refer to [here](https://github.com/Greenstand/treetracker-web-map-client/blob/web-map-site/README.md#using-our-mock-api-server)
+The details is here: https://github.com/Greenstand/treetracker-web-map-client#the-api
 
 ### Config
 

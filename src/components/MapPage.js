@@ -1,13 +1,10 @@
 import React from 'react';
 import log from 'loglevel';
-import Map from 'client/src/models/Map';
-import 'client/src/style.css';
-import 'leaflet';
+import Map from 'treetracker-web-map-core/src/Map';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-utfgrid/L.UTFGrid.js';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import Grid from '@mui/material/Grid';
+import withStyles from '@mui/styles/withStyles';
+import Paper from '@mui/material/Paper';
 import MapDrawer from './MapDrawer';
 import { useHistory } from 'react-router-dom';
 
@@ -20,6 +17,7 @@ const style = () => ({
 
 function MapPage(props) {
   const { classes } = props;
+  const [open, setOpen] = React.useState(true);
   const mapRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [isDrawer, setDrawer] = React.useState(false);
@@ -56,7 +54,9 @@ function MapPage(props) {
   return (
     <div className="App" ref={containerRef}>
       <div id="map-canvas" className={classes.map} ref={mapRef} />
-      <div ref={containerRef}>{isDrawer && <MapDrawer />}</div>
+      <div ref={containerRef}>
+        {isDrawer && <MapDrawer open={open} setOpen={setOpen} />}
+      </div>
     </div>
   );
 }

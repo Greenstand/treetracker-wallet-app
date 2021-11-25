@@ -1,47 +1,49 @@
 /*
  * The Material-UI theme for the whole UI
  */
-import { createTheme } from '@mui/material/styles';
+import { createTheme, adaptV4Theme } from '@mui/material/styles';
 
-export default createTheme({
-  spacing: 8,
-  typography: {
-    fontSize: 16,
-    fontFamily: ['Lato', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(
-      ',',
-    ),
-  },
-  palette: {
-    primary: {
-      main: '#67AC5B',
-      contrastText: '#ffffff',
+export default createTheme(
+  adaptV4Theme({
+    spacing: 8,
+    typography: {
+      fontSize: 16,
+      fontFamily: ['Lato', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(
+        ',',
+      ),
     },
-    secondary: {
-      main: '#86C232',
-      lightGreen: '#f7fbf7',
+    palette: {
+      primary: {
+        main: '#67AC5B',
+        contrastText: '#ffffff',
+      },
+      secondary: {
+        main: '#86C232',
+        lightGreen: '#f7fbf7',
+      },
+      textPrimary: {
+        main: '#373A3E',
+      },
+      textSecondary: {
+        main: '#848484',
+        darkGray: '#7A7A7A',
+      },
+      alternative: {
+        main: '#f7fbf7',
+      },
     },
-    textPrimary: {
-      main: '#373A3E',
+    shape: {
+      borderRadius: 8,
     },
-    textSecondary: {
-      main: '#848484',
-      darkGray: '#7A7A7A',
-    },
-    alternative: {
-      main: '#f7fbf7',
-    },
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiAvatarGroup: {
-      styleOverrides: {
-        avatar: {
-          height: '64px',
-          width: '64px',
+    components: {
+      MuiAvatarGroup: {
+        styleOverrides: {
+          avatar: {
+            height: '64px',
+            width: '64px',
+          },
         },
       },
     },
-  },
-});
+  }),
+);

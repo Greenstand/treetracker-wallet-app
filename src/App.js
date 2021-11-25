@@ -18,8 +18,8 @@ import {
 import log from 'loglevel';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import theme from './components/common/theme';
-import { ThemeProvider } from '@mui/material/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import DesktopPage from './components/DesktopPage';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -32,7 +32,7 @@ function LandingPage() {
 
   function handleClick() {
     log.debug('load finished');
-    history.push('/wallets/stephanie');
+    history.push('/wallets/180Earth');
   }
 
   return (
@@ -75,7 +75,7 @@ const routes = [
   { path: '/details', name: 'Details', Component: DetailsPage },
   { path: '/map', name: 'Map', Component: MapPage },
   {
-    path: '/wallets',
+    path: '/wallets/:walletName',
     name: 'Map',
     Component: MapPage,
     DesktopComponent: DesktopPage,
@@ -97,20 +97,24 @@ function App() {
   const isDesktopScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        {routes.map(({ path, Component, exact, DesktopComponent }) => (
-          <Route
-            key={path}
-            path={path}
-            exact={exact || false}
-            component={
-              isDesktopScreen && DesktopComponent ? DesktopComponent : Component
-            }
-          />
-        ))}
-      </Router>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <Router>
+          {routes.map(({ path, Component, exact, DesktopComponent }) => (
+            <Route
+              key={path}
+              path={path}
+              exact={exact || false}
+              component={
+                isDesktopScreen && DesktopComponent
+                  ? DesktopComponent
+                  : Component
+              }
+            />
+          ))}
+        </Router>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

@@ -1,27 +1,27 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import ShareIcon from '@material-ui/icons/Share';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Grid from '@material-ui/core/Grid';
-import Close from '@material-ui/icons/Close';
-import Email from '@material-ui/icons/Email';
-import { makeStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import Code from '@material-ui/icons/Code';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import ShareIcon from '@mui/icons-material/Share';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import Grid from '@mui/material/Grid';
+import Close from '@mui/icons-material/Close';
+import Email from '@mui/icons-material/Email';
+import makeStyles from '@mui/styles/makeStyles';
+import Tooltip from '@mui/material/Tooltip';
+import Code from '@mui/icons-material/Code';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 import log from 'loglevel';
-import { green } from '@material-ui/core/colors';
-import TwitterIcon from '@material-ui/icons/Twitter';
+import { green } from '@mui/material/colors';
+import TwitterIcon from '@mui/icons-material/Twitter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CustomShareIcon from './common/CustomShareIcon';
 
 const useStyles = makeStyles((theme) => ({
   DialogTitle: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: '18px',
     },
   },
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   box1: {
     padding: theme.spacing(4),
     width: '100%',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(2),
     },
   },
@@ -150,12 +150,16 @@ function Share(props) {
         }}
       >
         <DialogTitle>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={8} className={classes.DialogTitle}>
               Share this token
             </Grid>
             <Grid item>
-              <IconButton className={classes.closeIcon} onClick={handleClose}>
+              <IconButton
+                className={classes.closeIcon}
+                onClick={handleClose}
+                size="large"
+              >
                 <Close style={{ color: green[500] }} />
               </IconButton>
             </Grid>
@@ -175,7 +179,7 @@ function Share(props) {
             <Email />
           </CustomShareIcon>
 
-          <Grid container justify="space-between" alignItems="center">
+          <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={8} className={classes.linkText}>
               Or this link
             </Grid>
@@ -187,12 +191,12 @@ function Share(props) {
       </Dialog>
       <Dialog open={isEmbedOpen} onClose={handleEmbedClose}>
         <DialogTitle>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={8}>
               Embed Greenstand
             </Grid>
             <Grid item>
-              <IconButton onClick={handleEmbedClose}>
+              <IconButton onClick={handleEmbedClose} size="large">
                 <Close />
               </IconButton>
             </Grid>
@@ -203,7 +207,7 @@ function Share(props) {
           multiline
           variant="outlined"
           value={embedCode}
-          rowsMax={4}
+          maxRows={4}
           onChange={handleChange}
           className={classes.code}
         />
@@ -219,7 +223,11 @@ function Share(props) {
         message={message}
         action={
           <React.Fragment>
-            <IconButton color="primary" onClick={handleMessageClose}>
+            <IconButton
+              color="primary"
+              onClick={handleMessageClose}
+              size="large"
+            >
               <Close />
             </IconButton>
           </React.Fragment>

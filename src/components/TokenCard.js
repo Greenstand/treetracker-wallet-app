@@ -1,26 +1,27 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Avatar from '@mui/material/Avatar';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LinearProgressBar from './common/LinearProgressBar';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import OptimizedImage from './OptimizedImage';
+import log from 'loglevel';
 
 const style = (theme) => ({
   grid: {
     width: '90%',
     margin: 'auto',
-    marginBottom: '4px',
-    marginTop: '4px',
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   icon: {
     color: theme.palette.primary.main,
     height: '16px',
     width: '16px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       height: '14px',
       width: '14px',
     },
@@ -28,7 +29,7 @@ const style = (theme) => ({
   TreeImg: {
     width: '104px',
     height: '104px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       width: '88px',
       height: '88px',
     },
@@ -37,14 +38,14 @@ const style = (theme) => ({
     color: 'rgba(34, 34, 34, 0.6)',
     marginLeft: '8px',
     fontSize: '16px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
     },
   },
   tokenDate: {
-    fontWeight: '400',
+    fontWeight: '500',
     fontSize: '16px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
     },
   },
@@ -56,10 +57,11 @@ const style = (theme) => ({
     background: theme.palette.secondary.lightGreen,
     width: '32px',
     height: '32px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       width: '25px',
       height: '25px',
     },
+    marginRight: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -72,7 +74,7 @@ const style = (theme) => ({
     bottom: '8px',
     left: '6px',
     width: '88px',
-    [theme.breakpoints.down(330)]: {
+    [theme.breakpoints.down('sm')]: {
       width: '80px',
       left: '4px',
     },
@@ -84,48 +86,43 @@ const style = (theme) => ({
 });
 
 function TokenCard(props) {
-  const {
-    classes,
-    TreeImg,
-    ProgressValue,
-    TreeName,
-    ClaimedDate,
-    OwnerName,
-    OwnerAvatar,
-  } = props;
+  const { classes, token } = props;
   const history = useHistory();
 
-  function handleTreeClick() {
-    history.push('/wallets/stephanie/trees/123');
+  const params = useParams();
+  log.debug('TokenCard params: ', params);
+
+  function handleTreeClick(treeId) {
+    history.push(`/wallets/${params.walletName}/trees/${treeId}`);
   }
 
-  function handlePlanterClick() {
-    history.push('/wallets/stephanie/planters/14');
+  function handlePlanterClick(planterId) {
+    history.push(`/wallets/${params.walletName}/planters/${planterId}`);
   }
 
   return (
     <>
-      <Grid container spacing={3} className={classes.grid}>
+      <Grid container className={classes.grid} wrap="nowrap">
         <Grid
           xs={4}
           className={classes.imgContainer}
           container
+          item
           direction="row"
           alignItems="center"
-          ml={2}
         >
           <div className={classes.progress}>
-            <LinearProgressBar
-              width="100%"
-              height="8px"
-              value={ProgressValue}
-            />
+            <LinearProgressBar width="100%" height="8px" value={100} />
           </div>
           <Paper className={classes.TreeImg} elevation={0}>
-            <OptimizedImage src={TreeImg} width={104} height={104} />
+            <OptimizedImage
+              src={token.capture_photo_url}
+              width={104}
+              height={104}
+            />
           </Paper>
         </Grid>
-        <Grid container xs={8}>
+        <Grid container item xs={8}>
           <Grid
             item
             container
@@ -133,24 +130,32 @@ function TokenCard(props) {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography className={classes.tokenName}>{TreeName}</Typography>
-            <div className={classes.iconContainer}>
+            <Typography className={classes.tokenName}>
+              {token.capture_id}
+            </Typography>
+            <div
+              className={classes.iconContainer}
+              onClick={() => handleTreeClick(token.capture_id)}
+            >
               <ArrowForwardIosIcon className={classes.icon} />
             </div>
           </Grid>
           <Grid item>
             <Typography className={classes.tokenDate}>
-              {`Claimed on ${ClaimedDate}`}
+              {`Claimed on `}
             </Typography>{' '}
           </Grid>
           <Grid item container direction="row" alignItems="center">
             <Avatar
               className={classes.avater}
               onClick={handlePlanterClick}
-              src={OwnerAvatar}
+              src={token.planter_photo_url}
             />
-            <Typography className={classes.tokenOwnerName}>
-              {`By ${OwnerName}`}
+            <Typography
+              onClick={() => handlePlanterClick(token.planter_id)}
+              className={classes.tokenOwnerName}
+            >
+              {`By ${token.planter_first_name}`}
             </Typography>
           </Grid>
         </Grid>

@@ -26,6 +26,9 @@ const styles = {
     right: theme.spacing(2),
     color: theme.palette.secondary.main,
   },
+  bold: {
+    fontWeight: 500,
+  },
 };
 
 const Caution = (props) => {
@@ -73,9 +76,7 @@ const Caution = (props) => {
       </List>
       <Typography variant="body2" gutterBottom>
         As well as the matrix version:{' '}
-        <Typography variant="subtitle2" sx={{ display: 'inline' }}>
-          2020.
-        </Typography>
+        <span className={classes.bold}>2020.</span>
       </Typography>
       <Link href="#" variant="subtitle2">
         Learn More

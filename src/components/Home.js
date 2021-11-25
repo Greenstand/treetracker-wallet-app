@@ -1,12 +1,12 @@
-import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
-import { withStyles } from '@material-ui/core/styles'
-import * as d3 from 'd3'
-import log from 'loglevel'
-import greenstand from "../images/greenstand.png";
+import React from 'react';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import withStyles from '@mui/styles/withStyles';
+import * as d3 from 'd3';
+import log from 'loglevel';
+import greenstand from '../images/greenstand.png';
 
 //I don't know how to put this svg code into a file, like logo.svg, and import here
 const logo = (
@@ -36,7 +36,11 @@ const logo = (
         id="filter-2"
       >
         <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1" />
-        <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1" />
+        <feGaussianBlur
+          stdDeviation="0.5"
+          in="shadowOffsetOuter1"
+          result="shadowBlurOuter1"
+        />
         <feColorMatrix
           values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0"
           type="matrix"
@@ -48,28 +52,33 @@ const logo = (
       <g id="Desktop-HD-Copy-5" transform="translate(-39.000000, -50.000000)">
         <g id="logo" transform="translate(40.000000, 51.000000)">
           <g>
-            <use fill="black" fillOpacity="1" filter="url(#filter-2)" xlinkHref="#path-1" />
+            <use
+              fill="black"
+              fillOpacity="1"
+              filter="url(#filter-2)"
+              xlinkHref="#path-1"
+            />
             <use fill="#86C232" fillRule="evenodd" xlinkHref="#path-1" />
           </g>
         </g>
       </g>
     </g>
   </svg>
-)
+);
 
 const style = (theme) => ({
   rightBox: {},
   welcomeBox: {
-    width: "100vw",
-    height: "100vh",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100vw',
+    height: '100vh',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
-    transform: "scale(1.5)",
+    transform: 'scale(1.5)',
   },
   logo: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
   },
@@ -79,33 +88,31 @@ const style = (theme) => ({
     marginTop: -98,
     marginLeft: -15,
   },
-  svg: {
-  },
-})
+  svg: {},
+});
 
 function Home(props) {
-  const { classes } = props
+  const { classes } = props;
 
   async function load() {
-    log.debug("load logo");
-    const logoElement = d3.select('.logo')
-    const g = d3.select('#trees')
-    log.info('g:', g)
-    const htmlCode = d3.select('#logoDiv').node().innerHTML
-
+    log.debug('load logo');
+    const logoElement = d3.select('.logo');
+    const g = d3.select('#trees');
+    log.info('g:', g);
+    const htmlCode = d3.select('#logoDiv').node().innerHTML;
 
     g.append('g')
       .attr('transform', `translate(80 92)`)
       .append('g')
       .html(htmlCode)
       //original size: 58, 73
-      .attr('transform', `translate(${-58/2} ${-73/2}), scale(0)`)
-      .attr('transform-origin', `${58/2} ${73/2} `)
+      .attr('transform', `translate(${-58 / 2} ${-73 / 2}), scale(0)`)
+      .attr('transform-origin', `${58 / 2} ${73 / 2} `)
       .transition()
       .delay(1500)
       .duration(1000)
       .ease(d3.easeElasticOut.amplitude(1).period(0.2))
-      .attr('transform', `translate(${-58/2} ${-73/2}), scale(1.4)`)
+      .attr('transform', `translate(${-58 / 2} ${-73 / 2}), scale(1.4)`);
 
     d3.select('#text')
       .attr('transform', `translate(0 0)`)
@@ -114,22 +121,21 @@ function Home(props) {
       .duration(1000)
       .ease(d3.easeElasticOut.amplitude(1).period(0.2))
       .attr('transform', `translate(4, 0)`)
-      .on("end",function(){
-        log.debug("fire loaded");
+      .on('end', function () {
+        log.debug('fire loaded');
         props.loaded && props.loaded();
       });
   }
 
   React.useEffect(() => {
-    load()
-  }, [])
+    load();
+  }, []);
 
   return (
     <>
-      <Grid container className={classes.welcomeBox} >
-        <div className={classes.svgBox} >
-          <svg className={classes.svg} viewBox="15 0 380 120" 
-          >
+      <Grid container className={classes.welcomeBox}>
+        <div className={classes.svgBox}>
+          <svg className={classes.svg} viewBox="15 0 380 120">
             <g id="trees" />
             <g transform="translate(34, 42)">
               <g id="text">
@@ -139,9 +145,11 @@ function Home(props) {
           </svg>
         </div>
       </Grid>
-      <div id="logoDiv" style={{display:'none'}}>{logo}</div>
+      <div id="logoDiv" style={{ display: 'none' }}>
+        {logo}
+      </div>
     </>
-  )
+  );
 }
 
-export default withStyles(style)(Home)
+export default withStyles(style)(Home);

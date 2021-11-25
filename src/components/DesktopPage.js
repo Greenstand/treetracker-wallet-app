@@ -1,13 +1,12 @@
 import React from 'react';
 import log from 'loglevel';
-import Map from 'client/src/models/Map';
-import 'client/src/style.css';
+import Map from 'treetracker-web-map-core/src/Map';
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-utfgrid/L.UTFGrid.js';
-import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import { Grid } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
+import Drawer from '@mui/material/Drawer';
+import { Grid } from '@mui/material';
 import WalletInfo from './WalletInfo';
 import CustomizedTabs from './common/CustomizedTabs';
 import TokensList from './TokensList';

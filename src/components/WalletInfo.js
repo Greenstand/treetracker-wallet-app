@@ -1,8 +1,8 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Avatar from '@material-ui/core/Avatar';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
 import Share from './Share';
 
 const style = (theme) => ({
@@ -10,7 +10,6 @@ const style = (theme) => ({
     height: '112px',
     width: '100%',
     position: 'relative',
-    padding: '8px 24px',
   },
   title: {
     width: '50%',
@@ -25,7 +24,7 @@ function WalletInfo(props) {
   const { classes, wallet } = props;
   return (
     <>
-      <Grid container className={classes.grid} p={2}>
+      <Grid container className={classes.grid} pr={2} pl={2} mb={2}>
         <Grid
           item
           container
@@ -34,7 +33,9 @@ function WalletInfo(props) {
           alignItems="center"
         >
           <Grid item className={classes.title}>
-            <Typography color="textSecondary">WALLET</Typography>
+            <Typography variant="caption" color="textSecondary">
+              WALLET
+            </Typography>
           </Grid>
           <Share shareUrl={window.location.href} />
         </Grid>

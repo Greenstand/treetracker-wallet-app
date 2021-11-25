@@ -1,8 +1,8 @@
 import React from 'react';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import withStyles from '@mui/styles/withStyles';
+import Paper from '@mui/material/Paper';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import BackButton from '../../components/common/BackButton';
 
 const style = (theme) => ({
@@ -59,6 +59,7 @@ function DetailPage(props) {
         onOpen={() => setOpen(true)}
         disableSwipeToOpen={true}
         BackdropProps={{ open: false }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       >
         <Paper
           className={classes.drawer}

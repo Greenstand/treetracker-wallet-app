@@ -6,10 +6,12 @@ import {
   TimelineConnector,
   TimelineOppositeContent,
   TimelineDot,
-} from '@material-ui/lab';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+} from '@mui/lab';
+import Typography from '@mui/material/Typography';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import * as utils from './utils';
+import log from 'loglevel';
 
 // fake data
 const transactions = [
@@ -70,40 +72,73 @@ const style = (theme) => ({
   },
 });
 
-function index({ classes }) {
+function index({ classes, tokenId }) {
+  const [transactions, setTransactions] = React.useState(undefined);
+  const [histories, setHistories] = React.useState([]);
+  const [token, setToken] = React.useState(undefined);
+
+  async function load() {
+    const token = await utils.request(`/tokens/${tokenId}`);
+    log.info('token: ', token);
+    const transactions = await utils.request(`/transactions?token=${tokenId}`);
+    log.info('transactions: ', transactions);
+    setTransactions(transactions);
+
+    setHistories([
+      ...transactions.transactions.map((t) => ({
+        text: `From ${t.source_wallet_name} to ${t.destination_wallet_name}`,
+        title: 'Token transferred',
+        time: t.processed_at,
+      })),
+      {
+        text: `By tree ${token.capture_id}`,
+        title: 'Token created',
+        time: token.created_at,
+      },
+    ]);
+  }
+
+  React.useEffect(() => {
+    // fetch data
+    load();
+  }, []);
+
   return (
     <div>
       <Timeline className={classes.Timeline}>
-        {transactions.map((transaction, index) => (
-          <TimelineItem key={index}>
-            <TimelineSeparator>
-              <TimelineDot color="secondary" />
-              {index !== transactions.length - 1 ? <TimelineConnector /> : null}
-            </TimelineSeparator>
-            <TimelineOppositeContent
-              style={{ flex: 0.1 }}
-              className={classes.MuiTimelineOppositeContentRoot}
-            >
-              <Grid
-                container
-                justifyContent="space-between"
-                alignItems="center"
+        {histories &&
+          histories.map((history, index) => (
+            <TimelineItem key={index}>
+              <TimelineSeparator>
+                <TimelineDot color="secondary" />
+                {index !== transactions.length - 1 ? (
+                  <TimelineConnector />
+                ) : null}
+              </TimelineSeparator>
+              <TimelineOppositeContent
+                style={{ flex: 0.1 }}
+                className={classes.MuiTimelineOppositeContentRoot}
               >
-                <Typography className={classes.Title} variant="h6">
-                  {transaction.transaction_title}
-                </Typography>
-                <Typography className={classes.Date} variant="h6">
-                  {transaction.transaction_date}
-                </Typography>
-              </Grid>
-              <Grid>
-                <Typography className={classes.User} variant="h6">
-                  {transaction.transaction_by}
-                </Typography>
-              </Grid>
-            </TimelineOppositeContent>
-          </TimelineItem>
-        ))}
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Typography className={classes.Title} variant="h6">
+                    {history.title}
+                  </Typography>
+                  <Typography className={classes.Date} variant="h6">
+                    {history.time}
+                  </Typography>
+                </Grid>
+                <Grid>
+                  <Typography className={classes.User} variant="h6">
+                    {history.text}
+                  </Typography>
+                </Grid>
+              </TimelineOppositeContent>
+            </TimelineItem>
+          ))}
       </Timeline>
     </div>
   );
