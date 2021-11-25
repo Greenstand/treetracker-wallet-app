@@ -1,6 +1,6 @@
 # Treetracker Impact Wallet
 
-## Development Environment Quick Start 
+## Development Environment Quick Start
 
 Important Note: You need to use node version 16+ to run this project. You can download node 16 from the [official website](https://nodejs.org/en/).
 
