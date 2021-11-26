@@ -20,3 +20,23 @@ export const request = async (url, method = 'get', data = null) => {
 
   return result;
 };
+
+//Create a url for optimizing an image
+//Basically it's the same as OptimizedImage.js, just returns a string instead of a component
+//We can use this where we can't insert a component, for example in the MUI avatar's src prop
+export function getOptimizedCDNUrl(src, width) {
+  if (!src) return '';
+
+  const cdnPath = 'https://cdn.statically.io/img';
+  const matches = src.match(/\/\/(.*?)\/(.*)/);
+
+  let cdnUrl;
+
+  if (matches?.length > 1) {
+    const domain = matches[1];
+    const imagePath = matches[2];
+
+    cdnUrl = `${cdnPath}/${domain}/w=${width}/${imagePath}`;
+  }
+  return cdnUrl;
+}
