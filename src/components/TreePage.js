@@ -1,19 +1,18 @@
 import React from 'react';
-import { useTheme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import ShareIcon from '@mui/icons-material/Share';
 import DoneIcon from '@mui/icons-material/Done';
 import Chip from '@mui/material/Chip';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import Box from '@mui/material/Box';
 import Share from './Share';
 
+import OptimizedImage from './OptimizedImage';
+import { getOptimizedCDNUrl } from './utils';
 import LinearProgressBar from './common/LinearProgressBar';
 import DetailPage from '../components/common/DetailPage';
 import CustomizedTabs from './common/CustomizedTabs';
@@ -34,7 +33,7 @@ const style = (theme) => ({
     fontSize: 12,
   },
   Title: {
-    color: '#373A3E',
+    color: theme.palette.textPrimary.main,
     fontSize: 24,
   },
   SubTitle: {
@@ -49,7 +48,7 @@ const style = (theme) => ({
     borderRadius: 4,
     color: 'white',
     fontSize: 12,
-    background: '#67AC5B',
+    background: theme.palette.primary.main,
     marginRight: 4,
   },
   chipIcon: {
@@ -66,7 +65,7 @@ const style = (theme) => ({
     objectFit: 'cover',
     height: '240px',
   },
-  avater: {
+  avatar: {
     width: '128px',
     height: '128px',
     border: '4px solid white',
@@ -105,6 +104,7 @@ function TreePage(props) {
   const { classes } = props;
   const [tree, setTree] = React.useState({});
   const [planter, setPlanter] = React.useState({});
+  const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
 
   // get tree id from url with the help of react-router
   const treeId = props.match.params.treeId;
@@ -156,8 +156,11 @@ function TreePage(props) {
             </Grid>
           </Grid>
           <Grid className={classes.TreeImgContainer}>
-            <img className={classes.TreeImg} src={tree.photo_url} />
-            <Avatar className={classes.avater} src={planter.photo_url} />
+            <OptimizedImage src={tree.photo_url} width={screenWidth * 0.9} />
+            <Avatar
+              className={classes.avatar}
+              src={getOptimizedCDNUrl(planter.photo_url, 128)}
+            />
           </Grid>
           <Grid>
             <p className={classes.ClaimedInfo}>
