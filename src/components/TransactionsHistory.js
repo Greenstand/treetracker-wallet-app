@@ -13,34 +13,6 @@ import Grid from '@mui/material/Grid';
 import * as utils from './utils';
 import log from 'loglevel';
 
-// fake data
-const transactions = [
-  {
-    id: 0,
-    transaction_title: 'Token claimed',
-    transaction_date: 'Feb 18, 2021',
-    transaction_by: 'By Finor X',
-  },
-  {
-    id: 1,
-    transaction_title: 'Token assigned',
-    transaction_date: 'Jan 26, 2021',
-    transaction_by: 'By Freetown City Council',
-  },
-  {
-    id: 2,
-    transaction_title: 'Token verified',
-    transaction_date: 'Jan 26, 2021',
-    transaction_by: 'By Greenstand',
-  },
-  {
-    id: 3,
-    transaction_title: 'Token created',
-    transaction_date: 'Jan 24, 2021',
-    transaction_by: 'By Abayomi',
-  },
-];
-
 const style = (theme) => ({
   Timeline: {
     paddingLeft: 0,
@@ -85,16 +57,16 @@ function index({ classes, tokenId }) {
     setTransactions(transactions);
 
     setHistories([
-      ...transactions.transactions.map((t) => ({
-        text: `From ${t.source_wallet_name} to ${t.destination_wallet_name}`,
-        title: 'Token transferred',
-        time: t.processed_at,
-      })),
       {
         text: `By tree ${token.capture_id}`,
         title: 'Token created',
         time: token.created_at,
       },
+      ...transactions.transactions.map((t) => ({
+        text: `From ${t.source_wallet_name} to ${t.destination_wallet_name}`,
+        title: 'Token transferred',
+        time: t.processed_at,
+      })),
     ]);
   }
 
@@ -106,14 +78,13 @@ function index({ classes, tokenId }) {
   return (
     <div>
       <Timeline className={classes.Timeline}>
+        {/*We need to reverse the array so the dates are in the proper order */}
         {histories &&
-          histories.map((history, index) => (
+          histories.reverse().map((history, index) => (
             <TimelineItem key={index}>
               <TimelineSeparator>
                 <TimelineDot color="secondary" />
-                {index !== transactions.length - 1 ? (
-                  <TimelineConnector />
-                ) : null}
+                {index !== histories.length - 1 ? <TimelineConnector /> : null}
               </TimelineSeparator>
               <TimelineOppositeContent
                 style={{ flex: 0.1 }}
