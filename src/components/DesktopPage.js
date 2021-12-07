@@ -1,6 +1,6 @@
 import React from 'react';
 import log from 'loglevel';
-import Map from 'treetracker-web-map-core/src/Map';
+import { Map } from 'treetracker-web-map-core';
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-utfgrid/L.UTFGrid.js';
