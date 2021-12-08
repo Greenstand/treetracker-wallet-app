@@ -104,7 +104,7 @@ function TreePage(props) {
   const { classes } = props;
   const [tree, setTree] = React.useState({});
   const [planter, setPlanter] = React.useState({});
-  const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
+  const [screenWidth] = React.useState(window.innerWidth);
 
   // get tree id from url with the help of react-router
   const treeId = props.match.params.treeId;

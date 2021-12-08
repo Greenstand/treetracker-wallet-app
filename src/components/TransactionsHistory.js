@@ -45,16 +45,13 @@ const style = (theme) => ({
 });
 
 function index({ classes, tokenId }) {
-  const [transactions, setTransactions] = React.useState(undefined);
   const [histories, setHistories] = React.useState([]);
-  const [token, setToken] = React.useState(undefined);
 
   async function load() {
     const token = await utils.request(`/tokens/${tokenId}`);
     log.info('token: ', token);
     const transactions = await utils.request(`/transactions?token=${tokenId}`);
     log.info('transactions: ', transactions);
-    setTransactions(transactions);
 
     setHistories([
       {

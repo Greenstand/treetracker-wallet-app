@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     height: '48px',
     width: '48px',
     borderRadius: '32px',
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.common.white,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
