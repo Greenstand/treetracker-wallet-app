@@ -21,14 +21,11 @@ const StyledTab = withStyles({
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.secondary.lightGreen,
+    backgroundColor: theme.palette.secondary.main,
     borderRadius: theme.shape.borderRadius,
     width: '90%',
     margin: 'auto',
     marginBottom: theme.spacing(1),
-  },
-  Box: {
-    width: '100%',
   },
 }));
 
@@ -52,7 +49,7 @@ function CustomizedTabs({ tab1, tab2, tab1Veiw, tab2Veiw }) {
         aria-labelledby={`full-width-tab-${index}`}
         {...other}
       >
-        {value === index && <Box className={classes.Box}>{children}</Box>}
+        {value === index && <Box sx={{ width: '100%' }}>{children}</Box>}
       </div>
     );
   }

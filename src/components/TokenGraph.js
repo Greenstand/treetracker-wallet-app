@@ -7,38 +7,9 @@ import { Line } from 'react-chartjs-2';
 import graphData from '../data/TokenGraphFakeData';
 
 const style = () => ({
-  root: {
-    padding: '16px',
-  },
   Title: {
     display: 'flex',
     alignItems: 'center',
-    fontSize: '16px',
-    fontWeight: 700,
-  },
-  Icon: {
-    color: '#22222266',
-    fontSize: '24px',
-    marginRight: '8px',
-  },
-  NumberContainer: {
-    marginLeft: 35,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  TokenTotal: {
-    fontSize: '16px',
-    fontWeight: 700,
-  },
-  tokenChange: {
-    fontSize: '12px',
-    fontWeight: 400,
-    marginLeft: '8px',
-  },
-  tokenChangeLastWeek: {
-    fontSize: '12px',
-    fontWeight: 400,
-    color: '#22222266',
   },
 });
 
@@ -96,25 +67,29 @@ function TokenGraph({ classes }) {
   };
 
   return (
-    <Grid container direction="column" className={classes.root}>
-      <div>
+    <Grid container direction="column" p={2}>
+      <Grid item>
         <Typography variant="h6" className={classes.Title}>
-          <TollIcon className={classes.Icon} />
+          <TollIcon sx={{ fontSize: 24, opacity: 0.4, mr: 1 }} />
           Tokens
         </Typography>
-      </div>
-      <div className={classes.NumberContainer}>
-        <Typography variant="h6" className={classes.TokenTotal}>
-          {graphData.tokenTotal}
-        </Typography>
-        <span className={classes.tokenChange}>
-          {graphData.tokenChangeLastWeek}
-        </span>
-        <span className={classes.tokenChangeLastWeek}>(last week)</span>
-      </div>
-      <div className={classes.NumberContainer}>
-        <Line data={data} options={options} />
-      </div>
+      </Grid>
+      <Grid container item ml={4}>
+        <Grid container item alignItems="flex-end">
+          <Typography variant="h6" sx={{ lineHeight: 1 }} mr={1}>
+            {graphData.tokenTotal}
+          </Typography>
+          <Typography variant="caption" sx={{ lineHeight: 1 }}>
+            {graphData.tokenChangeLastWeek}
+          </Typography>
+          <Typography variant="caption" sx={{ lineHeight: 1, opacity: 0.4 }}>
+            (last week)
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Line data={data} options={options} />
+        </Grid>
+      </Grid>
     </Grid>
   );
 }

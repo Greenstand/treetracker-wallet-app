@@ -14,6 +14,7 @@ import PoweredBy from './PoweredBy';
 import Fade from '@mui/material/Fade';
 import TokensList from './TokensList';
 import ImpactTab from './ImpactTab';
+import Box from '@mui/material/Box';
 
 const style = (theme) => ({
   map: {
@@ -42,9 +43,10 @@ const style = (theme) => ({
   },
   bottomPaper: {
     width: '100%',
+    height: 48,
     position: 'fixed',
     bottom: 0,
-    boxShadow: '0 -1px 2px rgb(0 0 0 / 30%)',
+    boxShadow: '0px -12px 16px rgba(0, 0, 0, 0.25)',
     zIndex: 1000,
     borderRadius: '8px 8px 0 0 ',
   },
@@ -142,32 +144,39 @@ function MapDrawer(props) {
       </SwipeableDrawer>
       {!open && (
         <Fade in={true} timeout={500}>
-          <Paper className={classes.bottomPaper} onClick={handleClickBottom}>
+          <Box sx={{ position: 'relative' }}>
             <PoweredBy />
-            <Grid container className={classes.bottomBox} wrap="nowrap" pt={1}>
-              <Grid item className={classes.bottomArrow}>
-                <ExpandLess color="action" />
-              </Grid>
-              <Grid item className={classes.bottomContent}>
-                <Grid container className={classes.box1}>
-                  <Grid item className={classes.bottomItem}>
-                    <Avatar
-                      src={wallet?.photo_url}
-                      className={classes.avatar}
-                    />
-                  </Grid>
-                  <Grid item className={classes.bottomItem}>
-                    <Typography variant="h6">@${wallet.name}</Typography>
-                  </Grid>
-                  <Grid item className={classes.bottomItem}>
-                    <Typography variant="body1">
-                      ${wallet?.token_in_wallet} tokens
-                    </Typography>
+            <Paper className={classes.bottomPaper} onClick={handleClickBottom}>
+              <Grid
+                container
+                className={classes.bottomBox}
+                wrap="nowrap"
+                pt={1}
+              >
+                <Grid item className={classes.bottomArrow}>
+                  <ExpandLess color="action" />
+                </Grid>
+                <Grid item className={classes.bottomContent}>
+                  <Grid container className={classes.box1}>
+                    <Grid item className={classes.bottomItem}>
+                      <Avatar
+                        src={wallet?.photo_url}
+                        className={classes.avatar}
+                      />
+                    </Grid>
+                    <Grid item className={classes.bottomItem}>
+                      <Typography variant="h5">@${wallet.name}</Typography>
+                    </Grid>
+                    <Grid item className={classes.bottomItem}>
+                      <Typography variant="body1">
+                        ${wallet?.token_in_wallet} tokens
+                      </Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Paper>
+            </Paper>
+          </Box>
         </Fade>
       )}
     </>

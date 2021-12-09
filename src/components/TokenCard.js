@@ -17,15 +17,6 @@ const style = (theme) => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
-  icon: {
-    color: theme.palette.primary.main,
-    height: '16px',
-    width: '16px',
-    [theme.breakpoints.down('sm')]: {
-      height: '14px',
-      width: '14px',
-    },
-  },
   TreeImg: {
     width: '104px',
     height: '104px',
@@ -35,23 +26,11 @@ const style = (theme) => ({
     },
   },
   tokenOwnerName: {
-    color: 'rgba(34, 34, 34, 0.6)',
-    marginLeft: '8px',
-    fontSize: '16px',
+    color: theme.palette.textSecondary.lightGrey,
+    marginLeft: theme.spacing(1),
     [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
     },
-  },
-  tokenDate: {
-    fontWeight: '500',
-    fontSize: '16px',
-    [theme.breakpoints.down('sm')]: {
-      fontSize: 'small',
-    },
-  },
-  tokenName: {
-    fontWeight: '700',
-    fontSize: '16px',
   },
   iconContainer: {
     background: theme.palette.secondary.lightGreen,
@@ -66,9 +45,7 @@ const style = (theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imgContainer: {
-    position: 'relative',
-  },
+
   progress: {
     position: 'absolute',
     bottom: '8px',
@@ -78,10 +55,6 @@ const style = (theme) => ({
       width: '80px',
       left: '4px',
     },
-  },
-  avater: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
   },
 });
 
@@ -105,11 +78,11 @@ function TokenCard(props) {
       <Grid container className={classes.grid} wrap="nowrap">
         <Grid
           xs={4}
-          className={classes.imgContainer}
           container
           item
           direction="row"
           alignItems="center"
+          sx={{ position: 'relative' }}
         >
           <div className={classes.progress}>
             <LinearProgressBar width="100%" height="8px" value={100} />
@@ -130,30 +103,33 @@ function TokenCard(props) {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography className={classes.tokenName}>
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
               {token.capture_id}
             </Typography>
             <div
               className={classes.iconContainer}
               onClick={() => handleTreeClick(token.capture_id)}
             >
-              <ArrowForwardIosIcon className={classes.icon} />
+              <ArrowForwardIosIcon
+                sx={{ fontSize: 24, color: 'primary.main' }}
+              />
             </div>
           </Grid>
           <Grid item>
-            <Typography className={classes.tokenDate}>
+            <Typography variant="body1" className={classes.tokenDate}>
               {`Claimed on `}
-            </Typography>{' '}
+            </Typography>
           </Grid>
           <Grid item container direction="row" alignItems="center">
             <Avatar
-              className={classes.avater}
+              sx={{ height: 32, width: 32 }}
               onClick={handlePlanterClick}
               src={token.planter_photo_url}
             />
             <Typography
               onClick={() => handlePlanterClick(token.planter_id)}
               className={classes.tokenOwnerName}
+              variant="body1"
             >
               {`By ${token.planter_first_name}`}
             </Typography>

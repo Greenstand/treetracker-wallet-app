@@ -15,7 +15,7 @@ function LinearProgressBar({ value, width, height, ...restProps }) {
     },
     bar: {
       borderRadius: 30,
-      backgroundColor: '#67AC5B',
+      backgroundColor: theme.palette.primary.main,
     },
   }))(LinearProgress);
 

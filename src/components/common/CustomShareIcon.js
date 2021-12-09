@@ -3,7 +3,6 @@ import makeStyles from '@mui/styles/makeStyles';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
-import { green } from '@mui/material/colors';
 
 const useStyles = makeStyles((theme) => ({
   box2: {
@@ -12,10 +11,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   avatar: {
-    color: green[500],
-    backgroundColor: theme.palette.secondary.lightGreen,
-    width: '64px',
-    height: '64px',
+    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.main,
+    width: theme.spacing(8),
+    height: theme.spacing(8),
   },
   iconButton: {
     [theme.breakpoints.down('sm')]: {

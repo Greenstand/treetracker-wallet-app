@@ -25,77 +25,26 @@ import log from 'loglevel';
 import * as utils from './utils';
 
 const style = (theme) => ({
-  TreeInfo: {
-    padding: '16px 24px',
-  },
   Label: {
     color: '#22222299',
     fontSize: 12,
   },
-  Title: {
-    color: theme.palette.textPrimary.main,
-    fontSize: 24,
-  },
-  SubTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    marginBottom: 8,
-    alignItems: 'center',
-    display: 'flex',
-  },
-  icon: {},
   chip: {
     borderRadius: 4,
-    color: 'white',
     fontSize: 12,
-    background: theme.palette.primary.main,
-    marginRight: 4,
-  },
-  chipIcon: {
-    fontSize: 24,
-    color: 'white',
   },
   TreeImgContainer: {
     width: '100%',
     height: '240px',
     position: 'relative',
   },
-  TreeImg: {
-    width: '100%',
-    objectFit: 'cover',
-    height: '240px',
-  },
   avatar: {
-    width: '128px',
-    height: '128px',
-    border: '4px solid white',
+    width: theme.spacing(16),
+    height: theme.spacing(16),
+    border: `${theme.spacing(0.5)} solid ${theme.palette.common.white}`,
     position: 'absolute',
     bottom: '-48px',
     left: '24px',
-  },
-  ClaimedInfo: {
-    marginTop: '64px',
-    padding: '0 24px',
-    lineHeight: '24px',
-  },
-  ImpactTokenContainer: {
-    padding: '8px 24px',
-  },
-  ImpactManagerContainer: {
-    padding: '8px 24px',
-  },
-  ImpactManagerImg: {
-    width: '104px',
-  },
-  ImpactProducerContainer: {
-    padding: '8px 24px',
-  },
-  ImpactProducerImg: {
-    width: '104px',
-  },
-  TextContent: {
-    fontSize: 16,
-    fontWeight: 400,
   },
 });
 
@@ -132,27 +81,48 @@ function TreePage(props) {
     >
       <DetailPage>
         <Paper elevation={0}>
-          <Grid className={classes.TreeInfo}>
-            <span className={classes.Label}>TREE</span>
-            <Grid container alignItems="center" justifyContent="space-between">
-              <Typography className={classes.Title} variant="h6">
-                Tree #{tree.id}
-              </Typography>
-              <div>
-                <Share shareUrl={window.location.href} />
-              </div>
+          <Grid
+            container
+            sx={{ height: 112, width: '100%', position: 'relative' }}
+            pr={2}
+            pl={2}
+            mb={2}
+            mt={2}
+          >
+            <Grid
+              item
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid>
+                <Typography variant="caption" color="textSecondary">
+                  TREE
+                </Typography>
+              </Grid>
+              <Share shareUrl={window.location.href} />
             </Grid>
-            <Grid>
-              <Chip
-                className={classes.chip}
-                icon={<DoneIcon className={classes.chipIcon} />}
-                label="Tree verified"
-              />
-              <Chip
-                className={classes.chip}
-                icon={<DoneIcon className={classes.chipIcon} />}
-                label="Token issued"
-              />
+            <Grid item alignItems="center" justifyContent="space-between">
+              <Typography variant="h4">Tree #{tree.id}</Typography>
+            </Grid>
+            <Grid container item spacing={1}>
+              <Grid item>
+                <Chip
+                  className={classes.chip}
+                  color="primary"
+                  icon={<DoneIcon fontSize="small" />}
+                  label="Tree verified"
+                />
+              </Grid>
+              <Grid item>
+                <Chip
+                  color="primary"
+                  className={classes.chip}
+                  icon={<DoneIcon fontSize="small" />}
+                  label="Token issued"
+                />
+              </Grid>
             </Grid>
           </Grid>
           <Grid className={classes.TreeImgContainer}>
@@ -162,87 +132,78 @@ function TreePage(props) {
               src={getOptimizedCDNUrl(planter.photo_url, 128)}
             />
           </Grid>
-          <Grid>
-            <p className={classes.ClaimedInfo}>
-              Claimed on <strong>January 29, 2021</strong>, 2:35 PM By{' '}
-              <strong>Abayomi</strong>, in <strong>Tanzania</strong>
-            </p>
-          </Grid>
-          <Grid className={classes.ImpactTokenContainer}>
-            <Typography className={classes.SubTitle} variant="h6">
-              Impact Token Value
-            </Typography>
-            <LinearProgressBar width="100%" height="24px" value={80} />
-            {!isOpen ? (
-              <Typography
-                style={{
-                  marginTop: '10px',
-                  color: '#67AC5B',
-                  textDecoration: 'underline',
-                  lineHeight: 2,
-                }}
-                href="#"
-                onClick={() => setIsOpen(true)}
-              >
-                How is this value calculated?
+          <Grid container direction="column" p={3}>
+            <Grid>
+              <Typography mt={8} paragraph>
+                Claimed on <strong>January 29, 2021</strong>, 2:35 PM By{' '}
+                <strong>Abayomi</strong>, in <strong>Tanzania</strong>
               </Typography>
-            ) : (
-              <Caution setIsOpen={setIsOpen} />
-            )}
+            </Grid>
+            <Grid>
+              <Typography variant="h6" gutterBottom>
+                Impact Token Value
+              </Typography>
+              <LinearProgressBar width="100%" height="24px" value={80} />
+              {!isOpen ? (
+                <Typography
+                  color="primary"
+                  sx={{
+                    textDecoration: 'underline',
+                    mt: 1,
+                  }}
+                  href="#"
+                  onClick={() => setIsOpen(true)}
+                >
+                  How is this value calculated?
+                </Typography>
+              ) : (
+                <Caution setIsOpen={setIsOpen} />
+              )}
+            </Grid>
+            <Grid>
+              <Typography variant="h6">
+                Impact Manager
+                <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
+                  <IconButton size="large">
+                    <InfoOutlinedIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
+              </Typography>
+              <img width={104} src={ImpactManagerImg} />
+            </Grid>
+            <CustomizedTabs
+              tab1="Details"
+              tab2="History"
+              tab1Veiw={
+                <>
+                  <Grid>
+                    <Typography variant="h6">
+                      Impact Producer
+                      <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
+                        <IconButton size="large">
+                          <InfoOutlinedIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
+                      </Tooltip>
+                    </Typography>
+                    <img width={104} src={ImpactProducerImg} />
+                  </Grid>
+                  <Grid>
+                    <Typography variant="h6">Token ID</Typography>
+                    <Typography>{tree.token_id}</Typography>
+                  </Grid>
+                  <Grid>
+                    <Typography variant="h6">Meta Data</Typography>
+                    <Typography>xxxxxxxxxxxxxxxxxxxxxxxx</Typography>
+                  </Grid>
+                </>
+              }
+              tab2Veiw={
+                <div style={{ padding: '0 24px' }}>
+                  <TransactionsHistory tokenId={tree.token_id} />
+                </div>
+              }
+            />
           </Grid>
-          <Grid className={classes.ImpactManagerContainer}>
-            <Typography className={classes.SubTitle} variant="h6">
-              Impact Manager
-              <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
-                <IconButton size="large">
-                  <InfoOutlinedIcon style={{ fontSize: 18 }} />
-                </IconButton>
-              </Tooltip>
-            </Typography>
-            <img className={classes.ImpactManagerImg} src={ImpactManagerImg} />
-          </Grid>
-
-          <CustomizedTabs
-            tab1="Details"
-            tab2="History"
-            tab1Veiw={
-              <>
-                <Grid className={classes.ImpactProducerContainer}>
-                  <Typography className={classes.SubTitle} variant="h6">
-                    Impact Producer
-                    <Tooltip title="Lorem ipsum dolor sit amet, consectetur adipisicing elit.">
-                      <IconButton size="large">
-                        <InfoOutlinedIcon style={{ fontSize: 18 }} />
-                      </IconButton>
-                    </Tooltip>
-                  </Typography>
-                  <img
-                    className={classes.ImpactProducerImg}
-                    src={ImpactProducerImg}
-                  />
-                </Grid>
-                <Grid className={classes.ImpactProducerContainer}>
-                  <Typography className={classes.SubTitle} variant="h6">
-                    Token ID
-                  </Typography>
-                  <p className={classes.TextContent}>{tree.token_id}</p>
-                </Grid>
-                <Grid className={classes.ImpactProducerContainer}>
-                  <Typography className={classes.SubTitle} variant="h6">
-                    Meta Data
-                  </Typography>
-                  <p className={classes.TextContent}>
-                    xxxxxxxxxxxxxxxxxxxxxxxx
-                  </p>
-                </Grid>
-              </>
-            }
-            tab2Veiw={
-              <div style={{ padding: '0 24px' }}>
-                <TransactionsHistory tokenId={tree.token_id} />
-              </div>
-            }
-          />
         </Paper>
       </DetailPage>
     </div>

@@ -8,9 +8,6 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import PublicIcon from '@mui/icons-material/Public';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
   iconContainer: {
     paddingRight: theme.spacing(1),
     paddingTop: theme.spacing(0.25),
@@ -56,7 +53,7 @@ function PlanterList({ isSocial }) {
   const classes = useStyles();
 
   return (
-    <Grid container className={classes.root}>
+    <Grid container p={2}>
       <Grid item className={classes.iconContainer}>
         {isSocial ? <GroupsIcon /> : <PublicIcon />}
       </Grid>
@@ -67,7 +64,9 @@ function PlanterList({ isSocial }) {
           </Typography>
         </Grid>
         <Grid item>
-          <Typography>{listData.length} planters involved</Typography>
+          <Typography>
+            {listData.length} {isSocial ? 'planters involved' : 'tree species'}
+          </Typography>
         </Grid>
         <AvatarGroup
           max={4}

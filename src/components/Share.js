@@ -14,10 +14,10 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import log from 'loglevel';
-import { green } from '@mui/material/colors';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CustomShareIcon from './common/CustomShareIcon';
+import { Typography } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   DialogTitle: {
@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   closeIcon: {
-    width: '32px',
-    height: '32px',
+    width: theme.spacing(4),
+    height: theme.spacing(4),
     borderRadius: '4px',
-    backgroundColor: theme.palette.secondary.lightGreen,
+    backgroundColor: theme.palette.secondary.main,
   },
   box1: {
     padding: theme.spacing(4),
@@ -38,21 +38,14 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
     },
   },
-  code: {
-    minWidth: 400,
-    margin: 10,
-  },
-  linkText: {
-    fontWeight: 'bold',
-  },
   inputField: {
     width: '100%',
     height: '30px',
     border: 'none',
     borderRadius: '4px',
-    padding: '8px',
-    marginTop: '8px',
-    backgroundColor: '#F5F5F5',
+    padding: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    backgroundColor: theme.palette.grey[100],
   },
 }));
 
@@ -137,7 +130,7 @@ function Share(props) {
     <>
       <Tooltip title="share tree">
         <IconButton onClick={handleClick}>
-          <ShareIcon style={{ color: green[500] }} />
+          <ShareIcon sx={{ color: 'primary.main' }} />
         </IconButton>
       </Tooltip>
       <Dialog
@@ -152,7 +145,7 @@ function Share(props) {
         <DialogTitle>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={8} className={classes.DialogTitle}>
-              Share this token
+              <Typography variant="h6">Share this token</Typography>
             </Grid>
             <Grid item>
               <IconButton
@@ -160,7 +153,7 @@ function Share(props) {
                 onClick={handleClose}
                 size="large"
               >
-                <Close style={{ color: green[500] }} />
+                <Close color="primary" />
               </IconButton>
             </Grid>
           </Grid>
@@ -180,8 +173,8 @@ function Share(props) {
           </CustomShareIcon>
 
           <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item xs={8} className={classes.linkText}>
-              Or this link
+            <Grid item xs={8}>
+              <Typography variant="subtitle2">Or this link</Typography>
             </Grid>
             <Grid item xs={12}>
               <input type="text" className={classes.inputField} value={link} />
@@ -189,15 +182,15 @@ function Share(props) {
           </Grid>
         </Grid>
       </Dialog>
-      <Dialog open={isEmbedOpen} onClose={handleEmbedClose}>
+      <Dialog open={isEmbedOpen} onClose={handleEmbedClose} fullWidth>
         <DialogTitle>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={8}>
-              Embed Greenstand
+              <Typography variant="h5">Embed Greenstand</Typography>
             </Grid>
             <Grid item>
               <IconButton onClick={handleEmbedClose} size="large">
-                <Close />
+                <Close color="primary" />
               </IconButton>
             </Grid>
           </Grid>
@@ -209,7 +202,7 @@ function Share(props) {
           value={embedCode}
           maxRows={4}
           onChange={handleChange}
-          className={classes.code}
+          sx={{ m: 1 }}
         />
         <DialogActions>
           <Button onClick={handleEmbedClose}>Cancel</Button>

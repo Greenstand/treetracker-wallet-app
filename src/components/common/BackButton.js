@@ -5,10 +5,11 @@ import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '48px',
-    width: '48px',
-    borderRadius: '32px',
+    height: theme.spacing(6),
+    width: theme.spacing(6),
+    borderRadius: '50%',
     backgroundColor: theme.palette.common.white,
+    padding: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -25,7 +26,7 @@ const BackButton = () => {
       type="button"
       onClick={() => history.goBack()}
     >
-      <NavigateBeforeIcon style={{ fontSize: 32 }} color="primary" />
+      <NavigateBeforeIcon sx={{ fontSize: 32 }} color="primary" />
     </button>
   );
 };

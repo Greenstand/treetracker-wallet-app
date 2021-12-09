@@ -10,6 +10,7 @@ export default function OptimizedImage(props) {
     imageSizes = [400, 300, 250, 200],
     fixed,
     rotation,
+    borderRadius,
     ...rest
   } = props;
 
@@ -54,7 +55,7 @@ export default function OptimizedImage(props) {
           width: 'calc(100% + 2px)', // width for image rotation
           height: 'calc(100% + 2px)', // height for image rotation
           transform: `rotate(${rotation}deg)`,
-          borderRadius: '8px',
+          borderRadius: `${borderRadius || '8px'}`, //string, for example: '4px'
         }}
         {...rest}
       />

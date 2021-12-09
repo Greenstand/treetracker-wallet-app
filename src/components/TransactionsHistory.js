@@ -13,7 +13,7 @@ import Grid from '@mui/material/Grid';
 import * as utils from './utils';
 import log from 'loglevel';
 
-const style = (theme) => ({
+const style = () => ({
   Timeline: {
     paddingLeft: 0,
     paddingRight: 0,
@@ -26,21 +26,6 @@ const style = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
     paddingRight: 0,
-  },
-  Title: {
-    color: theme.palette.textPrimary,
-    fontSize: 16,
-    fontWeight: 700,
-  },
-  Date: {
-    color: theme.palette.textPrimary,
-    fontSize: 16,
-    fontWeight: 400,
-  },
-  User: {
-    color: theme.palette.textSecondary.darkGray,
-    fontSize: 16,
-    fontWeight: 400,
   },
 });
 
@@ -79,8 +64,8 @@ function index({ classes, tokenId }) {
         {histories &&
           histories.reverse().map((history, index) => (
             <TimelineItem key={index}>
-              <TimelineSeparator>
-                <TimelineDot color="secondary" />
+              <TimelineSeparator sx={{ color: 'text.disabled' }}>
+                <TimelineDot color="primary" />
                 {index !== histories.length - 1 ? <TimelineConnector /> : null}
               </TimelineSeparator>
               <TimelineOppositeContent
@@ -92,15 +77,11 @@ function index({ classes, tokenId }) {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Typography className={classes.Title} variant="h6">
-                    {history.title}
-                  </Typography>
-                  <Typography className={classes.Date} variant="h6">
-                    {history.time}
-                  </Typography>
+                  <Typography variant="h6">{history.title}</Typography>
+                  <Typography>{history.time}</Typography>
                 </Grid>
                 <Grid>
-                  <Typography className={classes.User} variant="h6">
+                  <Typography sx={{ color: 'textSecondary.lightGrey' }}>
                     {history.text}
                   </Typography>
                 </Grid>

@@ -24,10 +24,7 @@ const styles = {
     position: 'absolute',
     top: theme.spacing(2),
     right: theme.spacing(2),
-    color: theme.palette.secondary.main,
-  },
-  bold: {
-    fontWeight: 500,
+    color: theme.palette.primary.main,
   },
 };
 
@@ -46,39 +43,38 @@ const Caution = (props) => {
           onClick={() => setIsOpen(false)}
         />
       </div>
-      <Typography variant="subtitle2" gutterBottom>
+      <Typography variant="subtitle2" gutterBottom component="h6">
         Calculation
       </Typography>
-      <Typography variant="body2">
+      <Typography variant="body1">
         The value of your impact token depends on the criteria it meets.
       </Typography>
       <List>
         <ListItem>
           <ListItemIcon>
-            <CheckIcon sx={{ color: theme.palette.secondary.main }} />
+            <CheckIcon sx={{ color: 'primary.main' }} />
           </ListItemIcon>
-          <Typography variant="subtitle2">Social</Typography>
+          <Typography>Social</Typography>
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <CheckIcon sx={{ color: theme.palette.secondary.main }} />
+            <CheckIcon sx={{ color: 'primary.main' }} />
           </ListItemIcon>
-          <Typography variant="subtitle2">Environmental</Typography>
+          <Typography>Environmental</Typography>
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <ClearIcon sx={{ color: theme.palette.error.light }} />
+            <ClearIcon sx={{ color: 'error.light' }} />
           </ListItemIcon>
-          <Typography variant="body2" color={theme.palette.grey[600]}>
+          <Typography variant="body2" color="textSecondary">
             Economical
           </Typography>
         </ListItem>
       </List>
-      <Typography variant="body2" gutterBottom>
-        As well as the matrix version:{' '}
-        <span className={classes.bold}>2020.</span>
+      <Typography gutterBottom>
+        As well as the matrix version: <strong>2020.</strong>
       </Typography>
-      <Link href="#" variant="subtitle2">
+      <Link href="#" variant="subtitle2" sx={{ fontSize: 14 }}>
         Learn More
       </Link>
     </Paper>

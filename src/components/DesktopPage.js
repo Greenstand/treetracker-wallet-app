@@ -14,9 +14,6 @@ const style = () => ({
     width: '100vw',
     height: '100vh',
   },
-  paper: {
-    background: 'transparent',
-  },
   rounded: {
     borderRadius: 20,
     borderBottomLeftRadius: 0,
@@ -25,9 +22,6 @@ const style = () => ({
   drawer: {
     height: 549,
     width: '100%',
-  },
-  box: {
-    justifyContent: 'center',
   },
 });
 

@@ -33,12 +33,12 @@ const style = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '8px',
+    padding: theme.spacing(1),
     height: '48px',
     width: '48px',
     borderRadius: '32px',
-    top: '8px',
-    left: '8px',
+    top: theme.spacing(1),
+    left: theme.spacing(1),
   },
 });
 

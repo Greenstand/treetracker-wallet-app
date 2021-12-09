@@ -31,10 +31,10 @@ function WalletInfo(props) {
         </Grid>
         <Grid item container spacing={1}>
           <Grid item>
-            <Avatar src={wallet?.photo_url} />
+            <Avatar src={wallet?.photo_url} sx={{ width: 64, height: 64 }} />
           </Grid>
           <Grid item>
-            <Typography variant="h6">@{wallet?.name}</Typography>
+            <Typography variant="h4">@{wallet?.name}</Typography>
             <Typography variant="body1" color="textSecondary">
               {wallet?.token_in_wallet} tokens
             </Typography>

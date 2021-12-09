@@ -22,22 +22,10 @@ const style = (theme) => ({
       display: 'none',
     },
   },
-  backButton: {
+  buttonContainer: {
     position: 'absolute',
-    backgroundColor: theme.palette.common.white,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '8px',
-    height: '48px',
-    width: '48px',
-    borderRadius: '32px',
-    top: '8px',
-    left: '16px',
-  },
-  ArrowBackIosIcon: {
-    height: '32px',
-    width: '32px',
+    top: theme.spacing(2),
+    left: theme.spacing(2),
   },
 });
 
@@ -47,7 +35,7 @@ function DetailPage(props) {
 
   return (
     <div>
-      <div className={classes.backButton}>
+      <div className={classes.buttonContainer}>
         <BackButton />
       </div>
       <SwipeableDrawer
