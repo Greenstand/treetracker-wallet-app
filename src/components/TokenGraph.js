@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import withStyles from '@mui/styles/withStyles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';

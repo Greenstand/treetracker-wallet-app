@@ -2,7 +2,6 @@ import React from 'react';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import withStyles from '@mui/styles/withStyles';
 import Paper from '@mui/material/Paper';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import BackButton from '../../components/common/BackButton';
 
 const style = (theme) => ({
@@ -25,7 +24,7 @@ const style = (theme) => ({
   },
   backButton: {
     position: 'absolute',
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.common.white,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
