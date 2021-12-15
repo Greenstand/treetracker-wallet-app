@@ -14,6 +14,7 @@ import PoweredBy from './PoweredBy';
 import Fade from '@mui/material/Fade';
 import TokensList from './TokensList';
 import ImpactTab from './ImpactTab';
+import { request } from './utils';
 
 const style = (theme) => ({
   map: {
@@ -86,6 +87,8 @@ function MapDrawer(props) {
   const { classes, open, setOpen } = props;
   const [wallet, setWallet] = React.useState({});
   const [tokens, setTokens] = React.useState([]);
+  const [planterData, setPlanterData] = React.useState({});
+  const [organizationData, setOrganizationData] = React.useState({});
 
   // console.log("Tokens List", tokens)
 
@@ -107,7 +110,18 @@ function MapDrawer(props) {
     });
     setTokens(response.data.tokens);
     log.warn('loaded wallet:', wallet);
+
+    const planterID = response.data.tokens[0].planter_id;
+
+    response = await request(`/species/query/planter_id=${planterID}`);
+    setPlanterData(response);
+
+    response = await request(`/planters?organization_id=1&limit=4`);
+    setOrganizationData(response);
   };
+
+  // console.log(planterData);
+  // console.log(organizationData);
 
   return (
     <>
@@ -135,7 +149,12 @@ function MapDrawer(props) {
               tab1="Tokens"
               tab2="Impact"
               tab1Veiw={<TokensList tokens={tokens} />}
-              tab2Veiw={<ImpactTab />}
+              tab2Veiw={
+                <ImpactTab
+                  planterData={planterData}
+                  organizationData={organizationData}
+                />
+              }
             />
           </Grid>
         </Paper>

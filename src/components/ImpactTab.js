@@ -2,12 +2,14 @@ import React from 'react';
 import PlanterList from './common/PlanterList';
 import TokenGraph from './TokenGraph';
 
-function ImpactTab() {
+function ImpactTab(props) {
+  const { organizationData, planterData } = props;
+
   return (
     <>
       <TokenGraph />
-      <PlanterList isSocial />
-      <PlanterList />
+      <PlanterList {...organizationData} />
+      <PlanterList {...planterData} />
     </>
   );
 }
