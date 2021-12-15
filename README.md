@@ -169,3 +169,4 @@ fix(server): send cors headers
 We have more tech guides and handbook here:
 
 [Greenstand engineer handbook](https://greenstand.gitbook.io/engineering/)
+
