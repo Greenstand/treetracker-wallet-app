@@ -9,6 +9,7 @@ import LinearProgressBar from './common/LinearProgressBar';
 import { useHistory, useParams } from 'react-router-dom';
 import OptimizedImage from './OptimizedImage';
 import log from 'loglevel';
+import { getOptimizedCDNUrl } from './utils';
 
 const style = (theme) => ({
   grid: {
@@ -149,7 +150,7 @@ function TokenCard(props) {
             <Avatar
               className={classes.avater}
               onClick={handlePlanterClick}
-              src={token.planter_photo_url}
+              src={getOptimizedCDNUrl(token.planter_photo_url, 128)}
             />
             <Typography
               onClick={() => handlePlanterClick(token.planter_id)}
