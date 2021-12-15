@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import withStyles from '@mui/styles/withStyles';
 import TokenCard from './TokenCard';
-
-const tokensPerPage = 5;
-let arrayForHoldingTokens = [];
 
 const style = (theme) => ({
   ButtonContainer: {
@@ -17,8 +14,8 @@ const style = (theme) => ({
 });
 
 const TokensList = ({ classes, tokens }) => {
-  //  const [tokensToShow, setTokensToShow] = useState([]);
-  //  const [next, setNext] = useState(5);
+  //  const [tokensToShow, setTokensToShow] = React.useState([]);
+  //  const [next, setNext] = React.useState(5);
   //  const isLastToken = tokens.length;
   //
   //  const loopWithSlice = (start, end) => {
@@ -27,7 +24,7 @@ const TokensList = ({ classes, tokens }) => {
   //    setTokensToShow(arrayForHoldingTokens);
   //  };
   //
-  //  useEffect(() => {
+  //  React.useEffect(() => {
   //    loopWithSlice(0, tokensPerPage);
   //  }, []);
   //

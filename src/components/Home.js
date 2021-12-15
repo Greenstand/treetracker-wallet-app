@@ -1,8 +1,5 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
 import withStyles from '@mui/styles/withStyles';
 import * as d3 from 'd3';
 import log from 'loglevel';
@@ -66,8 +63,7 @@ const logo = (
   </svg>
 );
 
-const style = (theme) => ({
-  rightBox: {},
+const style = () => ({
   welcomeBox: {
     width: '100vw',
     height: '100vh',
@@ -88,7 +84,6 @@ const style = (theme) => ({
     marginTop: -98,
     marginLeft: -15,
   },
-  svg: {},
 });
 
 function Home(props) {
@@ -96,7 +91,6 @@ function Home(props) {
 
   async function load() {
     log.debug('load logo');
-    const logoElement = d3.select('.logo');
     const g = d3.select('#trees');
     log.info('g:', g);
     const htmlCode = d3.select('#logoDiv').node().innerHTML;
@@ -135,7 +129,7 @@ function Home(props) {
     <>
       <Grid container className={classes.welcomeBox}>
         <div className={classes.svgBox}>
-          <svg className={classes.svg} viewBox="15 0 380 120">
+          <svg viewBox="15 0 380 120">
             <g id="trees" />
             <g transform="translate(34, 42)">
               <g id="text">

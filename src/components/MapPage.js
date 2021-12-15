@@ -1,10 +1,8 @@
 import React from 'react';
 import log from 'loglevel';
-import Map from 'treetracker-web-map-core/src/Map';
+import { Map } from 'treetracker-web-map-core';
 import 'leaflet/dist/leaflet.css';
-import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
-import Paper from '@mui/material/Paper';
 import MapDrawer from './MapDrawer';
 import { useHistory } from 'react-router-dom';
 

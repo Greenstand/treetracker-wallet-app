@@ -6,18 +6,13 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import Avatar from '@mui/material/Avatar';
-import drawer from '../images/drawer.png';
 import axios from 'axios';
 import log from 'loglevel';
 import WalletInfo from './WalletInfo';
 import CustomizedTabs from './common/CustomizedTabs';
-import TokenCard from './TokenCard';
-import LinearProgressBar from './common/LinearProgressBar';
 import PoweredBy from './PoweredBy';
 import Fade from '@mui/material/Fade';
 import TokensList from './TokensList';
-import Tokens from './TokensArray';
-import CustomButton from './common/CustomButton';
 import ImpactTab from './ImpactTab';
 
 const style = (theme) => ({

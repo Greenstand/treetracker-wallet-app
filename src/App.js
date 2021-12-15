@@ -1,6 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
-import loading from './images/loading.png';
 import defaultImage from './images/default.png';
 import Home from './components/Home.js';
 import MapPage from './components/MapPage.js';
@@ -9,14 +7,11 @@ import PlanterPage from './components/PlanterPage.js';
 import './App.css';
 import {
   BrowserRouter as Router,
-  Switch,
   Route,
   useHistory,
-  useLocation,
   Redirect,
 } from 'react-router-dom';
 import log from 'loglevel';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import theme from './components/common/theme';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';

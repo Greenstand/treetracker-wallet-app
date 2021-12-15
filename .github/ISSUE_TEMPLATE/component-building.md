@@ -16,3 +16,4 @@ Some hints for building components:
 - We are using MaterialUI to build the app: https://material-ui.com/
 - When you are ready to raise PR for the component, please attach the screenshot of the component for review.
 - If you want to join the slack community (some resources need the community member's permission), please leave your email address.
+- More issues in this project: https://github.com/orgs/Greenstand/projects/28

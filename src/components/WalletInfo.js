@@ -1,30 +1,20 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Share from './Share';
 
-const style = (theme) => ({
-  grid: {
-    height: '112px',
-    width: '100%',
-    position: 'relative',
-  },
-  title: {
-    width: '50%',
-  },
-  avatar: {
-    height: '64px',
-    width: '64px',
-  },
-});
-
 function WalletInfo(props) {
-  const { classes, wallet } = props;
+  const { wallet } = props;
   return (
     <>
-      <Grid container className={classes.grid} pr={2} pl={2} mb={2}>
+      <Grid
+        container
+        sx={{ height: 112, width: '100%', position: 'relative' }}
+        pr={2}
+        pl={2}
+        mb={2}
+      >
         <Grid
           item
           container
@@ -32,7 +22,7 @@ function WalletInfo(props) {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Grid item className={classes.title}>
+          <Grid item>
             <Typography variant="caption" color="textSecondary">
               WALLET
             </Typography>
@@ -41,15 +31,11 @@ function WalletInfo(props) {
         </Grid>
         <Grid item container spacing={1}>
           <Grid item>
-            <Avatar src={wallet?.photo_url} className={classes.avatar} />
+            <Avatar src={wallet?.photo_url} />
           </Grid>
           <Grid item>
             <Typography variant="h6">@{wallet?.name}</Typography>
-            <Typography
-              variant="body1"
-              className={classes.tokenCount}
-              color="textSecondary"
-            >
+            <Typography variant="body1" color="textSecondary">
               {wallet?.token_in_wallet} tokens
             </Typography>
           </Grid>
@@ -59,4 +45,4 @@ function WalletInfo(props) {
   );
 }
 
-export default withStyles(style)(WalletInfo);
+export default WalletInfo;

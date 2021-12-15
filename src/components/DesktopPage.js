@@ -1,6 +1,6 @@
 import React from 'react';
 import log from 'loglevel';
-import Map from 'treetracker-web-map-core/src/Map';
+import { Map } from 'treetracker-web-map-core';
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-utfgrid/L.UTFGrid.js';
@@ -8,10 +8,6 @@ import withStyles from '@mui/styles/withStyles';
 import Drawer from '@mui/material/Drawer';
 import { Grid } from '@mui/material';
 import WalletInfo from './WalletInfo';
-import CustomizedTabs from './common/CustomizedTabs';
-import TokensList from './TokensList';
-import Tokens from './TokensArray';
-import axios from 'axios';
 
 const style = () => ({
   map: {
@@ -39,7 +35,7 @@ function DesktopPage(props) {
   const { classes } = props;
   const mapRef = React.useRef(null);
   const containerRef = React.useRef(null);
-  const [wallet, setWallet] = React.useState({ name: 'Stephanie' });
+  const [wallet] = React.useState({ name: 'Stephanie' });
 
   //load map
   React.useEffect(() => {
