@@ -1,10 +1,10 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { Box } from '@material-ui/core';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@mui/styles';
+import Box from '@mui/material/Box';
+// import ArrowForwardIosIcon from '@mui/icons-material';
+import { Typography } from '@mui/material';
 
-const style = (theme) => ({
+const style = () => ({
   row: {
     display: 'flex',
   },
@@ -156,7 +156,7 @@ function GroupListCard(props) {
           <Typography variant="h3" className={classes.country}>
             {country.countryName}
           </Typography>
-          <ArrowForwardIosIcon className={classes.arrow} />
+          {/* <ArrowForwardIosIcon className={classes.arrow} /> */}
         </Box>
         <Typography variant="span" className={classes.token}>
           {`${country.tokens} tokens`}
