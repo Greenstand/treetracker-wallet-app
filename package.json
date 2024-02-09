@@ -1,0 +1,90 @@
+{
+  "name": "treetracker",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "^16",
+    "npm": ">=6.0.0"
+  },
+  "main": "server/server.js",
+  "scripts": {
+    "lint": "npm run eslint",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "eslint": "eslint --report-unused-disable-directives .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "test": "npm run test-unit && npm run test-integration && npm run test-repository",
+    "coverage": "nyc npm run test",
+    "test-unit": "NODE_ENV=test mocha -r dotenv/config --env dotenv_config_path=.env.test --exit ./server/models/**/*.spec.js ./server/routes/**/*.spec.js",
+    "test-repository": "NODE_ENV=test mocha -r dotenv/config --exit ./server/repositories/**/*.spec.js",
+    "server-test": "DEBUG=express:* NODE_LOG_LEVEL=debug nodemon server/serverTest.js",
+    "server": "NODE_ENV=development nodemon server/server.js",
+    "test-seedDB": "NODE_ENV=test mocha -r dotenv/config --env dotenv_config_path=.env.test --timeout 10000 './**/*.spec.js'",
+    "test-integration": "NODE_ENV=test mocha -r dotenv/config --env dotenv_config_path=.env.test --exit --timeout 20000 './__tests__'",
+    "test-watch": "NODE_ENV=test NODE_LOG_LEVEL=info mocha -r dotenv/config --env dotenv_config_path=.env.test --timeout 10000 -w -b --ignore './server/repositories/**/*.spec.js'  './server/setup.js' './server/**/*.spec.js' './__tests__/seed.spec.js' './__tests__/supertest.js'",
+    "test-watch-debug": "NODE_ENV=test NODE_LOG_LEVEL=debug mocha -r dotenv/config --env dotenv_config_path=.env.test --timeout 10000 -w -b --ignore './server/repositories/**/*.spec.js'  './server/setup.js' './server/**/*.spec.js' './__tests__/seed.spec.js' './__tests__/supertest.js'",
+    "prettier-fix": "prettier ./ --write",
+    "db-migrate-ci": "cd database; db-migrate up",
+    "db-migrate-dev": "cd database; db-migrate --env dev up; db-migrate --env integration up",
+    "prepare": "husky install",
+    "pre-commit": "npm run lint",
+    "seed-dev": "NODE_ENV=development knex seed:run"
+  },
+  "keywords": [
+    "ecology"
+  ],
+  "author": "Greenstand Engineers",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@sentry/node": "^5.1.0",
+    "body-parser": "^1.18.2",
+    "chai-like": "^1.1.1",
+    "chai-things": "^0.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "expect": "^26.4.2",
+    "expect-runtime": "^0.7.0",
+    "express": "^4.16.2",
+    "express-async-handler": "^1.1.4",
+    "express-validator": "^6.4.0",
+    "joi": "^17.6.0",
+    "knex": "^0.95.13",
+    "loglevel": "^1.6.8",
+    "pg": "^8.7.1",
+    "uuid": "^8.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "chai": "^4.0.0",
+    "chai-http": "^4.3.0",
+    "database-cleaner": "^1.3.0",
+    "db-migrate": "^0.11.12",
+    "db-migrate-pg": "^1.2.2",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.2.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "husky": "^7.0.2",
+    "mocha": "^8.1.3",
+    "mock-knex": "^0.4.9",
+    "nodemon": "^2.0.4",
+    "nyc": "^15.1.0",
+    "prettier": "^2.7.1",
+    "sinon": "^9.0.3",
+    "sinon-chai": "^3.7.0",
+    "supertest": "^4.0.2"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Greenstand/{project}.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Greenstand/{project}/issues"
+  },
+  "homepage": "https://github.com/Greenstand/{project}#readme"
+}
