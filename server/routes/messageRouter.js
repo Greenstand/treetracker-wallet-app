@@ -1,22 +1,25 @@
 const express = require('express');
+const log = require('loglevel');
 const { handlerWrapper } = require('../utils/utils');
-const { sendJob, fetchJobById } = require('../infra/database/queue');
+const { work, sendJob } = require('../infra/database/queue');
+
 
 const router = express.Router();
 
 router.post(
     '/',
     handlerWrapper(async (req, res) => {
-        const { jobName, payload } = req.body;
-        await sendJob(jobName, payload).then(jobId => {
-            fetchJobById(jobId).then(job => {
-                res.send({ job });
+        const { payload, jobName } = req.body;
+        log.info(`sending job with name" ${jobName} and payload: ${JSON.stringify(payload, null, '\t')}`)
+        await sendJob(jobName, payload).then(async ()=> {
+            await work(jobName, async job=> {
+                log.info("worked on job...", job);
+                res.send({job});
                 res.end();
             })
         })
     })
 );
-
 
 
 module.exports = router;
