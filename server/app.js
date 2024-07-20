@@ -6,7 +6,6 @@ const HttpError = require('./utils/HttpError');
 const { errorHandler } = require('./utils/utils');
 const { handlerWrapper } = require('./utils/utils');
 const messageRouter = require('./routes/messageRouter');
-// const router = require('./routes');
 
 const app = express();
 
@@ -51,6 +50,8 @@ const { version } = require('../package.json');
 const server = app.get('*', function (req, res) {
   res.status(200).send(version);
 });
+
+
 
 process.once('SIGINT', () => {
   console.log('Terminate request received...');
