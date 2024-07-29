@@ -1,9 +1,7 @@
-// components/CustomButton.tsx
-
+'use client';
 import React from "react";
-import Button, { ButtonProps } from "@mui/material/Button";
+import { Button, ButtonProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
-
 interface CustomButtonProps extends ButtonProps {
   text: string;
 }
@@ -12,6 +10,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   width: "273px",
   height: "42px",
   padding: theme.spacing(1, 3),
+  marginBottom: theme.spacing(2),
   borderRadius: theme.shape.borderRadius,
   border: "1px solid",
   transition: theme.transitions.create(["background-color", "border-color", "color"], {

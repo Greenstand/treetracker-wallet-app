@@ -1,5 +1,5 @@
 import CustomButton from "@/components/CustomButton";
-import Input from "@/components/Input";
+import CustomInput from "@/components/CustomInput";
 import LinkComponent from "@/components/LinkComponent";
 import { Typography, Box } from "@mui/material";
 
@@ -25,7 +25,6 @@ export default function LoginPage() {
                 <Typography
                 variant="h5"
                 sx={{
-                    fontFamily: "Roboto",
                     fontSize: "24px",
                     fontWeight: 400,
                     lineHeight: "32.02px",
@@ -36,19 +35,19 @@ export default function LoginPage() {
                 Log in
                 </Typography>
             </Box>
-            <Input/>
-            <Input/>
-            <CustomButton text="Test"/>
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+            <CustomInput placeholderText="Email"/>
+            <CustomInput placeholderText="Password"/>
+            <CustomButton text="LOG IN"/>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Typography variant="body2">
                     Forgot password?&nbsp;
                 </Typography>
                 <LinkComponent href="/reset">Reset</LinkComponent>
             </Box>
-                <Typography variant="body2">or</Typography>
-            <CustomButton text="Test"/>
-            <CustomButton text="Test"/>
-            <CustomButton text="Test"/>
+                <Typography sx={{margin: "12px 0"}} variant="body2">or</Typography>
+            <CustomButton text="LOG IN WITH GMAIL"/>
+            <CustomButton text="LOG IN WITH FACEBOOK"/>
+            <CustomButton text="LOG IN WITH GITHUB"/>
             <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography variant="body2">
                     Don't have an account?&nbsp;
