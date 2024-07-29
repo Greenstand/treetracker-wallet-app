@@ -37,7 +37,7 @@ export default function LoginPage() {
             </Box>
             <CustomInput placeholderText="Email"/>
             <CustomInput placeholderText="Password"/>
-            <CustomButton text="LOG IN"/>
+            <CustomButton variantType="primary">LOG IN</CustomButton>
             <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Typography variant="body2">
                     Forgot password?&nbsp;
@@ -45,9 +45,9 @@ export default function LoginPage() {
                 <LinkComponent href="/reset">Reset</LinkComponent>
             </Box>
                 <Typography sx={{margin: "12px 0"}} variant="body2">or</Typography>
-            <CustomButton text="LOG IN WITH GMAIL"/>
-            <CustomButton text="LOG IN WITH FACEBOOK"/>
-            <CustomButton text="LOG IN WITH GITHUB"/>
+            <CustomButton variantType="social" iconSrc="/icons/gmail.svg">LOG IN WITH GMAIL</CustomButton>
+            <CustomButton variantType="social" iconSrc="/icons/facebook.svg">LOG IN WITH FACEBOOK</CustomButton>
+            <CustomButton variantType="social" iconSrc="/icons/github.svg">LOG IN WITH GITHUB</CustomButton>
             <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography variant="body2">
                     Don't have an account?&nbsp;

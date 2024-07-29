@@ -3,10 +3,11 @@ import React from "react";
 import { Button, ButtonProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
 interface CustomButtonProps extends ButtonProps {
-  text: string;
+  iconSrc?: string;
+  variantType?: 'primary' | 'social';
 }
 
-const StyledButton = styled(Button)(({ theme }) => ({
+const StyledButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'variantType' })<CustomButtonProps>(({ theme, variantType }) => ({
   width: "273px",
   height: "42px",
   padding: theme.spacing(1, 3),
@@ -16,28 +17,25 @@ const StyledButton = styled(Button)(({ theme }) => ({
   transition: theme.transitions.create(["background-color", "border-color", "color"], {
     duration: theme.transitions.duration.short,
   }),
-  "&.MuiButton-containedPrimary": {
-    backgroundColor: "#61892F",
-    color: theme.palette.common.white,
-    borderColor: "#61892F80",
-    "&:hover": {
-      backgroundColor: "#4a6b24",
-    },
+  backgroundColor: variantType === 'primary' ? 'var(--primary-main, #61892F)' : '#FFFFFF',
+  color: variantType === 'primary' ? theme.palette.common.white : '#61892F',
+  borderColor: variantType === 'primary' ? 'var(--primary-main, #61892F)' : '#61892F',
+  "&:hover": {
+    backgroundColor: variantType === 'primary' ? '#4a6b24' : 'rgba(97, 137, 47, 0.1)',
   },
-  "&.MuiButton-outlinedPrimary": {
-    backgroundColor: "transparent",
-    color: "#61892F",
-    borderColor: "#61892F80",
-    "&:hover": {
-      backgroundColor: "rgba(97, 137, 47, 0.1)",
-    },
+  "&.Mui-disabled": {
+    backgroundColor: variantType === 'primary' ? 'var(--action-disabledBackground, #0000001F)' : '#0000001F',
+    color: theme.palette.text.disabled,
+    borderColor: variantType === 'primary' ? 'var(--action-disabledBackground, #0000001F)' : '#0000001F',
   },
 }));
 
 export default function CustomButton({
-  text,
+  children,
+  iconSrc,
   disabled = false,
   onClick,
+   variantType = 'social',
   ...props
 }: CustomButtonProps) {
   return (
@@ -45,10 +43,12 @@ export default function CustomButton({
       variant={disabled ? "outlined" : "contained"}
       color="primary"
       disabled={disabled}
+      variantType={variantType}
       onClick={onClick}
       {...props}
     >
-      {text}
+       {iconSrc && <img src={iconSrc} alt="" style={{ marginRight: '8px' }} />}
+      {children}
     </StyledButton>
   );
 }
