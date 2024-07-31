@@ -5,7 +5,6 @@ export default function LinkComponent ({ href, children, ...props }: LinkProps) 
         <Link
         href={href}
         sx={{
-          fontFamily: "Roboto",
           fontSize: "16px",
           fontWeight: 400,
           color: "#61892F",

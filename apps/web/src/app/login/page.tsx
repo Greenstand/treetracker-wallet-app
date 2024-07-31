@@ -1,6 +1,6 @@
-import CustomButton from "@/components/CustomButton";
-import CustomInput from "@/components/CustomInput";
-import LinkComponent from "@/components/CustomLink";
+import CustomButton from "@/components/common/CustomButton";
+import CustomInput from "@/components/common/CustomInput";
+import LinkComponent from "@/components/common/CustomLink";
 import { Typography, Box } from "@mui/material";
 
 export default function LoginPage() {
