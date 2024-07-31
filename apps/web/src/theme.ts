@@ -9,11 +9,22 @@ const roboto = Roboto({
 });
 
 const theme = createTheme({
+  spacing: 4,
   palette: {
     mode: 'light',
+    primary: {
+      main: '#61892F',
+      contrastText: '#FFFFFF',
+    },
+  },
+  shape: {
+    borderRadius: 8,
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+    button: {
+      textTransform: 'none',
+    },
   },
   components: {
     MuiAlert: {
