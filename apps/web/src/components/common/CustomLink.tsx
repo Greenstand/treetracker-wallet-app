@@ -1,6 +1,6 @@
 import { Link, LinkProps } from "@mui/material";
 
-export default function LinkComponent ({ href, children, ...props }: LinkProps) {
+export default function CustomLink ({ href, children, ...props }: LinkProps) {
     return (
         <Link
         href={href}

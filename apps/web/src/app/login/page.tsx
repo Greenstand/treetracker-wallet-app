@@ -1,59 +1,25 @@
-import CustomButton from "@/components/common/CustomButton";
-import CustomInput from "@/components/common/CustomInput";
-import LinkComponent from "@/components/common/CustomLink";
-import { Typography, Box } from "@mui/material";
+"use client";
+import CustomForm from "@/components/common/CustomForm";
+import { Box } from "@mui/material";
 
 export default function LoginPage() {
-    return(
-        <Box
-        sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100vh",
-            p: 2,
-        }}
-        >
-            <Box
-            sx={{
-            width: "100%",
-            maxWidth: 400,
-            textAlign: "left",
-            }}
-            >
-                <Typography
-                variant="h5"
-                sx={{
-                    fontSize: "24px",
-                    fontWeight: 400,
-                    lineHeight: "32.02px",
-                    color: "#222629DE",
-                    mb: 2,
-                }}
-                >
-                Log in
-                </Typography>
-            </Box>
-            <CustomInput placeholderText="Email"/>
-            <CustomInput placeholderText="Password"/>
-            <CustomButton variantType="primary">LOG IN</CustomButton>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="body2">
-                    Forgot password?&nbsp;
-                </Typography>
-                <LinkComponent href="/reset">Reset</LinkComponent>
-            </Box>
-                <Typography sx={{margin: "12px 0"}} variant="body2">or</Typography>
-            <CustomButton variantType="social" iconSrc="/icons/gmail.svg">LOG IN WITH GMAIL</CustomButton>
-            <CustomButton variantType="social" iconSrc="/icons/facebook.svg">LOG IN WITH FACEBOOK</CustomButton>
-            <CustomButton variantType="social" iconSrc="/icons/github.svg">LOG IN WITH GITHUB</CustomButton>
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <Typography variant="body2">
-                    Don't have an account?&nbsp;
-                </Typography>
-                <LinkComponent href="/signup">Sign up</LinkComponent>
-            </Box>
-        </Box>
-    )
+  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("logged in");
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        margin: "0 auto",
+      }}
+    >
+      <CustomForm variant="login" onSubmit={handleLoginSubmit} />
+    </Box>
+  );
 }

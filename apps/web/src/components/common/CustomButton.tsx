@@ -2,16 +2,18 @@
 import React from "react";
 import { Button, ButtonProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
+
 interface CustomButtonProps extends ButtonProps {
   iconSrc?: string;
   variantType?: 'primary' | 'social';
 }
 
 const StyledButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'variantType' })<CustomButtonProps>(({ theme, variantType }) => ({
-  width: "273px",
+  width: "calc(273px + (227) * ((100vw - 305px) / (550 - 305)))",
+  maxWidth: "400px",
   height: "42px",
   padding: theme.spacing(1, 3),
-  marginBottom: theme.spacing(2),
+  marginBottom: "17px",
   borderRadius: theme.shape.borderRadius,
   border: "1px solid",
   transition: theme.transitions.create(["background-color", "border-color", "color"], {
@@ -35,7 +37,7 @@ export default function CustomButton({
   iconSrc,
   disabled = false,
   onClick,
-   variantType = 'social',
+  variantType = 'social',
   ...props
 }: CustomButtonProps) {
   return (
@@ -47,7 +49,7 @@ export default function CustomButton({
       onClick={onClick}
       {...props}
     >
-       {iconSrc && <img src={iconSrc} alt="" style={{ marginRight: '8px' }} />}
+      {iconSrc && <img src={iconSrc} alt="" style={{ marginRight: '8px' }} />}
       {children}
     </StyledButton>
   );
