@@ -18,7 +18,7 @@ const StyledInput = styled(Input)(({ theme }) => ({
   backgroundColor: "#f0f0f0",
   marginBottom: "20px",
   boxSizing: "border-box",
-  margin: "0 auto", 
+  margin: "0 auto",
   "& .MuiInputBase-input": {
     paddingLeft: "12px",
   },
@@ -47,19 +47,23 @@ export default function CustomInput({
       onChange={props.onChange}
       endAdornment={
         <InputAdornment position="end">
-          {props.value && onClear && (
-            <IconButton  sx={{mr: 1 }} onClick={onClear} edge="end">
-              <img src="/icons/clean_input.svg" alt="Clean Input" />
-            </IconButton>
-          )}
-          {isPasswordField && props.value && props.value.toString().length > 0 && (
-            <IconButton sx={{mr: 1 }} onClick={togglePasswordVisibility} edge="end">
-              <img
-                src={showPassword ? "/icons/visibility_off.svg" : "/icons/visibility.svg"}
-                alt={showPassword ? "Hide Password" : "Show Password"}
-              />
-            </IconButton>
-          )}
+          <>
+            {props.value && onClear && (
+              <IconButton sx={{ mr: 1 }} onClick={onClear} edge="end">
+                <img src="/icons/clean_input.svg" alt="Clean Input" />
+              </IconButton>
+            )}
+            {isPasswordField && props.value && props.value.toString().length > 0 && (
+              <IconButton sx={{ mr: 1 }} onClick={togglePasswordVisibility} edge="end">
+                <img
+                  src={
+                    showPassword ? "/icons/visibility_off.svg" : "/icons/visibility.svg"
+                  }
+                  alt={showPassword ? "Hide Password" : "Show Password"}
+                />
+              </IconButton>
+            )}
+          </>
         </InputAdornment>
       }
       {...props}
