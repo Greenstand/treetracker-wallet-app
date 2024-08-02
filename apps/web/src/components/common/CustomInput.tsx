@@ -7,7 +7,6 @@ interface CustomInputProps extends InputProps {
   placeholderText: string;
   onClear?: () => void;
   showPasswordIcon?: boolean;
-  iconSrc?: string;
 }
 
 const StyledInput = styled(Input)(({ theme }) => ({
@@ -57,7 +56,7 @@ export default function CustomInput({
               <IconButton sx={{ mr: 1 }} onClick={togglePasswordVisibility} edge="end">
                 <img
                   src={
-                    showPassword ? "/icons/visibility_off.svg" : "/icons/visibility.svg"
+                    showPassword ? "/icons/visibility_off.svg" : "/icons/visibility_on.svg"
                   }
                   alt={showPassword ? "Hide Password" : "Show Password"}
                 />
