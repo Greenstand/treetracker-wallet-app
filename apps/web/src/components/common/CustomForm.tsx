@@ -68,6 +68,7 @@ export default function CustomForm({
           <FormControl fullWidth sx={{ mb: 6.5 }}>
             <CustomInput
               placeholderText="Email"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onClear={() => setEmail("")}
@@ -97,12 +98,13 @@ export default function CustomForm({
             <Box
               sx={{
                 display: "flex",
+                gap: "4px",
                 alignItems: "center",
                 marginTop: "8px",
                 justifyContent: "center",
               }}
             >
-              <Typography variant="body2">Forgot password?&nbsp;</Typography>
+              <Typography variant="body2">Forgot password?</Typography>
               <CustomLink href="/reset">Reset</CustomLink>
             </Box>
           )}
@@ -129,6 +131,7 @@ export default function CustomForm({
           <Box
             sx={{
               display: "flex",
+              gap: "4px",
               alignItems: "center",
               marginTop: "16px",
               justifyContent: "center",

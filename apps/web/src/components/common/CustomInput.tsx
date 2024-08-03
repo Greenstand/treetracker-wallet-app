@@ -27,6 +27,7 @@ export default function CustomInput({
   placeholderText,
   onClear,
   showPasswordIcon = false,
+  type = "text",
   ...props
 }: CustomInputProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,8 +36,8 @@ export default function CustomInput({
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const isPasswordField = showPasswordIcon && props.type === "password";
-  const inputType = isPasswordField && showPassword ? "text" : props.type;
+  const isPasswordField = showPasswordIcon && type === "password";
+  const inputType = isPasswordField && showPassword ? "text" : type;
 
   return (
     <StyledInput
@@ -49,7 +50,7 @@ export default function CustomInput({
           <>
             {props.value && onClear && (
               <IconButton sx={{ mr: 1 }} onClick={onClear} edge="end">
-                <img src="/icons/clean_input.svg" alt="Clean Input" />
+                <img src="/icons/clear_input.svg" alt="Clear Input" />
               </IconButton>
             )}
             {isPasswordField && props.value && props.value.toString().length > 0 && (
