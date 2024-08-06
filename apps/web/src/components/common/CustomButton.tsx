@@ -8,29 +8,34 @@ interface CustomButtonProps extends ButtonProps {
   variantType?: 'primary' | 'social';
 }
 
-const StyledButton = styled(Button, { shouldForwardProp: (prop) => prop !== 'variantType' })<CustomButtonProps>(({ theme, variantType }) => ({
-  width: "calc(273px + (227) * ((100vw - 305px) / (550 - 305)))",
-  maxWidth: "400px",
-  height: "42px",
-  padding: theme.spacing(1, 3),
-  marginBottom: "17px",
-  borderRadius: theme.shape.borderRadius,
-  border: "1px solid",
-  transition: theme.transitions.create(["background-color", "border-color", "color"], {
-    duration: theme.transitions.duration.short,
-  }),
-  backgroundColor: variantType === 'primary' ? 'var(--primary-main, #61892F)' : '#FFFFFF',
-  color: variantType === 'primary' ? theme.palette.common.white : '#61892F',
-  borderColor: variantType === 'primary' ? 'var(--primary-main, #61892F)' : '#61892F',
-  "&:hover": {
-    backgroundColor: variantType === 'primary' ? '#4a6b24' : 'rgba(97, 137, 47, 0.1)',
-  },
-  "&.Mui-disabled": {
-    backgroundColor: variantType === 'primary' ? 'var(--action-disabledBackground, #0000001F)' : '#0000001F',
-    color: theme.palette.text.disabled,
-    borderColor: variantType === 'primary' ? 'var(--action-disabledBackground, #0000001F)' : '#0000001F',
-  },
-}));
+const StyledButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'variantType',
+})<CustomButtonProps>(({ theme, variantType }) => {
+  const isPrimary = variantType === 'primary';
+
+  return {
+    width: "calc(273px + (227) * ((100vw - 305px) / (550 - 305)))",
+    maxWidth: "400px",
+    height: "42px",
+    padding: theme.spacing(1, 3),
+    marginBottom: theme.spacing(5),
+    borderRadius: theme.shape.borderRadius,
+    border: "1px solid",
+    transition: theme.transitions.create(["background-color", "border-color", "color"], {
+      duration: theme.transitions.duration.short,
+    }),
+    backgroundColor: isPrimary ? theme.palette.primary.main : theme.palette.common.white,
+    color: variantType === 'primary' ? theme.palette.common.white : theme.palette.primary.main,
+    "&:hover": {
+      backgroundColor: theme.palette.primary.dark,
+    },
+    "&.Mui-disabled": {
+      backgroundColor: isPrimary ? theme.palette.action.disabledBackground : theme.palette.action.disabledBackground,
+      color: theme.palette.text.disabled,
+      borderColor: theme.palette.action.disabledBackground,
+    },
+  };
+});
 
 export default function CustomButton({
   children,
@@ -49,7 +54,7 @@ export default function CustomButton({
       onClick={onClick}
       {...props}
     >
-      {iconSrc && <img src={iconSrc} alt="" style={{ marginRight: '8px' }} />}
+      {iconSrc && <img src={iconSrc} alt="button icon" style={{ marginRight: '8px' }} />}
       {children}
     </StyledButton>
   );

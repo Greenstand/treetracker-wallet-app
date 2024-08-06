@@ -11,10 +11,19 @@ const roboto = Roboto({
 const theme = createTheme({
   spacing: 4,
   palette: {
-    mode: 'light',
     primary: {
       main: '#61892F',
       contrastText: '#FFFFFF',
+      dark: '#4a6b24',
+    },
+    text: {
+      primary: '#222629DE',
+    },
+    secondary: {
+      main: '#FFFFFF',
+    },
+    action: {
+      disabledBackground: '#0000001F',
     },
   },
   shape: {
@@ -22,6 +31,15 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+    h5: {
+      fontSize: '24px',
+      fontWeight: 400,
+      lineHeight: '32px',
+    },
+    body2: {
+      fontSize: '14px',
+      lineHeight: '21px',
+    },
     button: {
       textTransform: 'none',
     },

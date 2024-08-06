@@ -1,6 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { Input, InputProps, IconButton, InputAdornment } from "@mui/material";
+import {
+  Input,
+  InputProps,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 interface CustomInputProps extends InputProps {
@@ -14,12 +19,12 @@ const StyledInput = styled(Input)(({ theme }) => ({
   maxWidth: "400px",
   height: "56px",
   padding: theme.spacing(1, 1),
-  backgroundColor: "#f0f0f0",
-  marginBottom: "20px",
+  backgroundColor: theme.palette.grey[200],
+  marginBottom: theme.spacing(2.5),
   boxSizing: "border-box",
   margin: "0 auto",
   "& .MuiInputBase-input": {
-    paddingLeft: "12px",
+    paddingLeft: theme.spacing(1.5),
   },
 }));
 
@@ -47,23 +52,39 @@ export default function CustomInput({
       onChange={props.onChange}
       endAdornment={
         <InputAdornment position="end">
-          <>
-            {props.value && onClear && (
-              <IconButton sx={{ mr: 1 }} onClick={onClear} edge="end">
-                <img src="/icons/clear_input.svg" alt="Clear Input" />
-              </IconButton>
-            )}
-            {isPasswordField && props.value && props.value.toString().length > 0 && (
-              <IconButton sx={{ mr: 1 }} onClick={togglePasswordVisibility} edge="end">
-                <img
-                  src={
-                    showPassword ? "/icons/visibility_off.svg" : "/icons/visibility_on.svg"
+          {typeof props.value === "string" && props.value.length > 0 && (
+            <>
+              {onClear && (
+                <IconButton
+                  sx={{ mr: 1 }}
+                  onClick={onClear}
+                  edge="end"
+                  aria-label="Clear Input"
+                >
+                  <img src="/icons/clear_input.svg" alt="Clear Input" />
+                </IconButton>
+              )}
+              {isPasswordField && (
+                <IconButton
+                  sx={{ mr: 1 }}
+                  onClick={togglePasswordVisibility}
+                  edge="end"
+                  aria-label={
+                    showPassword ? "Hide Password" : "Show Password"
                   }
-                  alt={showPassword ? "Hide Password" : "Show Password"}
-                />
-              </IconButton>
-            )}
-          </>
+                >
+                  <img
+                    src={
+                      showPassword
+                        ? "/icons/visibility_off.svg"
+                        : "/icons/visibility_on.svg"
+                    }
+                    alt={showPassword ? "Hide Password" : "Show Password"}
+                  />
+                </IconButton>
+              )}
+            </>
+          )}
         </InputAdornment>
       }
       {...props}

@@ -19,30 +19,45 @@ export default function CustomForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const isFormValid = () => {
-    return email !== "" && password !== "";
+  const isFormValid = email !== "" && password !== "";
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const formContainerStyles = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto",
+    padding: 4,
+    width: "100%",
+    maxWidth: 450,
+  };
+
+  const buttonContainerStyles = {
+    display: "flex",
+    gap: "4px",
+    alignItems: "center",
+    marginTop: 2,
+    justifyContent: "center",
   };
 
   return (
     <Box
       component="form"
       onSubmit={onSubmit}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        margin: "0 auto",
-        padding: "16px",
-        width: "100%",
-        maxWidth: "400",
-      }}
+      sx={formContainerStyles}
     >
       {variant === "login" && (
         <Box
           sx={{
             width: "100%",
-            maxWidth: 400,
             mb: 2,
           }}
         >
@@ -50,10 +65,10 @@ export default function CustomForm({
             variant="h5"
             sx={{
               mb: 7,
-              fontSize: "24px",
-              fontWeight: 400,
-              lineHeight: "32.02px",
-              color: "#222629DE",
+              fontSize: (theme) => theme.typography.h5.fontSize,
+              fontWeight: (theme) => theme.typography.h5.fontWeight,
+              lineHeight: (theme) => theme.typography.h5.lineHeight,
+              color: (theme) => theme.palette.text.primary,
             }}
           >
             Log in
@@ -70,8 +85,9 @@ export default function CustomForm({
               placeholderText="Email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               onClear={() => setEmail("")}
+              aria-label="email input"
             />
           </FormControl>
 
@@ -80,8 +96,9 @@ export default function CustomForm({
               placeholderText="Password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               showPasswordIcon
+              aria-label="password input"
             />
           </FormControl>
 
@@ -89,21 +106,13 @@ export default function CustomForm({
             variantType="primary"
             type="submit"
             fullWidth
-            disabled={!isFormValid()}
+            disabled={!isFormValid}
           >
             {variant === "login" ? "LOG IN" : "SIGN UP"}
           </CustomButton>
 
           {variant === "login" && (
-            <Box
-              sx={{
-                display: "flex",
-                gap: "4px",
-                alignItems: "center",
-                marginTop: "8px",
-                justifyContent: "center",
-              }}
-            >
+            <Box sx={buttonContainerStyles}>
               <Typography variant="body2">Forgot password?</Typography>
               <CustomLink href="/reset">Reset</CustomLink>
             </Box>
@@ -128,15 +137,7 @@ export default function CustomForm({
             {variant === "login" ? "LOG IN WITH GITHUB" : "SIGN UP WITH GITHUB"}
           </CustomButton>
 
-          <Box
-            sx={{
-              display: "flex",
-              gap: "4px",
-              alignItems: "center",
-              marginTop: "16px",
-              justifyContent: "center",
-            }}
-          >
+          <Box sx={buttonContainerStyles}>
             <Typography variant="body2">
               {variant === "login"
                 ? "Don't have an account? "
