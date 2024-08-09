@@ -1,7 +1,11 @@
 const log = require('loglevel');
 const knex = require('knex');
 
+require('dotenv').config()
+
 const connection = process.env.DATABASE_URL;
+
+if(!connection) log.warn('env var DATABASE_URL not set');
 
 const postgresPattern = /^postgresql:\//;
 if (!postgresPattern.test(connection)) {

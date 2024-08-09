@@ -5,7 +5,7 @@ const log = require('loglevel');
 const HttpError = require('./utils/HttpError');
 const { errorHandler } = require('./utils/utils');
 const { handlerWrapper } = require('./utils/utils');
-// const router = require('./routes');
+const messageRouter = require('./routes/messageRouter');
 
 const app = express();
 
@@ -40,14 +40,21 @@ app.use(express.json()); // parse application/json
 
 // routers
 // app.use('/', router);
+app.use('/message', messageRouter);
 
 // Global error handler
 app.use(errorHandler);
 
 const { version } = require('../package.json');
 
-app.get('*', function (req, res) {
+const server = app.get('*', function (req, res) {
   res.status(200).send(version);
 });
 
+
+
+process.once('SIGINT', () => {
+  console.log('Terminate request received...');
+  server.close();
+})
 module.exports = app;
