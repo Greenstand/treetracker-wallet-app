@@ -22,29 +22,6 @@ describe('subscribes clients to postgres channel and send new message to confirm
             }
         }
 
-        // create notification function on postgres schema
-        pgClient.query(`CREATE OR REPLACE FUNCTION queue.new_message_notify_trigger() RETURNS TRIGGER AS $$
-            DECLARE
-            BEGIN
-                PERFORM pg_notify(cast(NEW.channel as text), row_to_json(new)::text);
-                RETURN NEW;
-            END;
-            $$ LANGUAGE plpgsql;`
-            , (err, res) => {
-                if (err) throw Error(`function creation error: ${err}`)
-                console.log("function created: ", res);
-            });
-
-        // create trigger on postgres table
-        pgClient.query(`DROP TRIGGER IF EXISTS new_message_insert_trigger on queue.message`, (err) => {
-            if (err) throw Error(`trigger drop error: ${err}`);
-        })
-        pgClient.query(`CREATE TRIGGER new_message_insert_trigger BEFORE INSERT ON queue.message
-            FOR EACH ROW EXECUTE PROCEDURE queue.new_message_notify_trigger();`, (err, res) => {
-            if (err) throw Error(`trigger creation error: ${err}`);
-            console.log("trigger created: ", res);
-        });
-
         // subscribe clients to a channel, return a promise and verify message/payload from resolved promise
         Promise.all([
             subscribe(pgClient, messageObj.channel),
