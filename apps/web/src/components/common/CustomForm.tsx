@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Typography, FormControl, FormGroup } from "@mui/material";
-import CustomInput from "./CustomInput";
+import { Box, Typography, FormGroup } from "@mui/material";
 import CustomButton from "./CustomButton";
 import CustomLink from "./CustomLink";
+import CustomInput from "./CustomInput";
 
 interface CustomFormProps {
   variant: "login" | "signup";
@@ -80,27 +80,28 @@ export default function CustomForm({
         children
       ) : (
         <FormGroup sx={{ width: "100%", alignItems: "center" }}>
-          <FormControl fullWidth sx={{ mb: 6.5 }}>
-            <CustomInput
-              placeholderText="Email"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              onClear={() => setEmail("")}
-              aria-label="email input"
-            />
-          </FormControl>
+          {/* Remove FormControl wrappers */}
+          <CustomInput
+            placeholderText="Email"
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            onClear={() => setEmail("")}
+            aria-label="email input"
+            variant="filled"
+            sx={{ mb: 6.5, width: "100%" }}
+          />
 
-          <FormControl fullWidth sx={{ mb: 6.5 }}>
-            <CustomInput
-              placeholderText="Password"
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              showPasswordIcon
-              aria-label="password input"
-            />
-          </FormControl>
+          <CustomInput
+            placeholderText="Password"
+            type="password"
+            value={password}
+            onChange={handlePasswordChange}
+            showPasswordIcon
+            aria-label="password input"
+            variant="filled"
+            sx={{ mb: 6.5, width: "100%" }}
+          />
 
           <CustomButton
             variantType="primary"
