@@ -3,8 +3,8 @@ const expect = require('expect-runtime');
 class BaseRepository {
   constructor(tableName, session) {
     expect(tableName).defined();
-    this._tableName = tableName;
-    this._session = session;
+    this.tableName = tableName;
+    this.session = session;
   }
 
   async getById(id) {
