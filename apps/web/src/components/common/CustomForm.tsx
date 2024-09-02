@@ -80,7 +80,6 @@ export default function CustomForm({
         children
       ) : (
         <FormGroup sx={{ width: "100%", alignItems: "center" }}>
-          {/* Remove FormControl wrappers */}
           <CustomInput
             placeholderText="Email"
             type="email"
