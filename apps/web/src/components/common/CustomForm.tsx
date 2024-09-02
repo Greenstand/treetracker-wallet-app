@@ -108,6 +108,7 @@ export default function CustomForm({
             type="submit"
             fullWidth
             disabled={!isFormValid}
+            sx={{ mb: 2, width: "100%" }}
           >
             {variant === "login" ? "LOG IN" : "SIGN UP"}
           </CustomButton>

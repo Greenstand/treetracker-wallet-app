@@ -9,9 +9,6 @@ const StyledLink = styled(Link)(({ theme }) => ({
   letterSpacing: "0.15px",
   textDecoration: "none",
   display: "inline-block",
-  "&:hover": {
-    textDecoration: "underline",
-  },
 }));
 
 export default function CustomLink({

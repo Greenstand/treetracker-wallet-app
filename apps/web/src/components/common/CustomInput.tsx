@@ -18,20 +18,21 @@ interface CustomInputProps extends Omit<TextFieldProps, "variant"> {
 const StyledInput = styled(TextField)(({ theme }) => ({
   width: "calc(273px + (227 * (100vw - 305px) / (550 - 305)))",
   maxWidth: "400px",
-  backgroundColor: theme.palette.grey[200],
+  backgroundColor: theme.palette.secondary.dark,
   marginBottom: theme.spacing(2.5),
   boxSizing: "border-box",
-  margin: "0 auto",
+  margin: "0 5px",
   "& .MuiInputBase-input": {
     paddingLeft: theme.spacing(1.5),
     height: "100%",
+    marginLeft: "6px",
   },
   "& .MuiFilledInput-root": {
     padding: 0,
   },
 }));
 
-export default function CustomInputLari({
+export default function CustomInput({
   placeholderText,
   onClear,
   showPasswordIcon = false,

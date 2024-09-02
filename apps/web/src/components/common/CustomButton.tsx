@@ -20,17 +20,16 @@ const StyledButton = styled(Button, {
     padding: theme.spacing(1, 3),
     marginBottom: theme.spacing(5),
     borderRadius: theme.shape.borderRadius,
-    border: "1px solid",
     transition: theme.transitions.create(["background-color", "border-color", "color"], {
       duration: theme.transitions.duration.short,
     }),
     backgroundColor: isPrimary ? theme.palette.primary.main : theme.palette.common.white,
-    color: variantType === 'primary' ? theme.palette.common.white : theme.palette.primary.main,
+    color: isPrimary ? theme.palette.common.white : theme.palette.primary.main,
     "&:hover": {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: isPrimary ? theme.palette.primary.dark : theme.palette.primary.light,
     },
     "&.Mui-disabled": {
-      backgroundColor: isPrimary ? theme.palette.action.disabledBackground : theme.palette.action.disabledBackground,
+      backgroundColor: theme.palette.action.disabledBackground,
       color: theme.palette.text.disabled,
       borderColor: theme.palette.action.disabledBackground,
     },
