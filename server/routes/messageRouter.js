@@ -21,13 +21,22 @@ router.get(
                 channel: Joi.string().required(),
                 from: Joi.date().format('YYYY-MM-DD').required(),
                 to: Joi.date().format('YYYY-MM-DD')
-            })
+            }).unknown(true)
         )
+
+        const filter = {};
+        let hasFilter = false;
+        for (const [key, value] of Object.entries(req.query)) { // eslint-disable-line
+            if(key!=='channel' && key!=='from' && key!=='to') {
+                hasFilter = true;
+                filter[key] = value;
+            }
+        }
 
         const session = new Session();
         const repo = new MessageRepository(session);
 
-        const exe = await MessageModel.getMessage(repo)(channel, from, to);
+        const exe = await MessageModel.getMessage(repo)(channel, from, to, hasFilter? filter : null);
         res.send(exe);
         res.end();
     })

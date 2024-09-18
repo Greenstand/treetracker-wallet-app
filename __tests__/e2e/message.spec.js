@@ -39,22 +39,20 @@ describe('tests client subscription and past message fetching', () => {
         publish(pgClient, messageObj.channel, messageObj.data);
     }, 30000)
 
-    // fetch past messages and check response
-    it('message?channel=tree&from=2024-08-10&to=2024-08-23', (done) => {
+     // fetch past messages with a filter and check response
+     it('message?channel=tree&from=2024-09-01&to=2024-09-18&name=John', (done) => {
 
-        // check past messages between the given start and end dates on tree channel
-        supertest(app).get('/message?channel=tree&from=2024-08-10&to=2024-08-23').then(res => {
+        // check past messages between the given start and end dates on tree channel with a filter
+        supertest(app).get('/message?channel=tree&from=2024-09-01&to=2024-09-18&name=John').then(res => {
             expect(res.status).toBe(200); // eslint-disable-line
-            expect(res.body.length).toBe(2); // eslint-disable-line
+            expect(res.body.length).toBe(1); // eslint-disable-line
             expect(res.body[0]).toMatchObject( // eslint-disable-line
                 {
-                    "id": "9a02e4bd-ab0f-42df-b6ea-f2ffaedafa4d",
+                    "id": "e334b98b-2c43-4e17-8eee-b6da207c3c52",
                     "channel": "tree",
                     "data": {
-                        "capture_id": "baf29ea3-5a9f-4c1a-b338-d6676e37ada8"
-                    },
-                    "created_at": "2024-08-16T20:15:07.900Z",
-                    "updated_at": "2024-08-16T20:15:07.900Z"
+                        "name": "John"
+                    }
                 }
             )
         }).finally(() => {

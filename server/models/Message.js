@@ -2,8 +2,8 @@
 function getMessage(
     messageRepository
 ){
-   return async function (channel, from, to) {
-    const messages = await messageRepository.checkMessage(channel, from, to);
+   return async function (channel, from, to, filter=null) {
+    const messages = await messageRepository.checkMessage(channel, from, to, filter);
     return messages;
    }
 }
