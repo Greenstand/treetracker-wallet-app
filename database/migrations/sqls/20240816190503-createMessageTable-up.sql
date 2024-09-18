@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE queue.message (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     channel text,
-    data json,
+    data jsonb,
     created_at timestamptz,
     updated_at timestamptz
 );
