@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: 'export',
-  transpilePackages: ['demo-core'],
+  transpilePackages: ['core'],
   webpack(config) {
     config.module.rules.push(
       {
