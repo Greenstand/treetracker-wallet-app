@@ -57,7 +57,7 @@ const LogInForm: React.FC = () => {
     <Box
       display="flex"
       flexDirection="column"
-      alignItems="center"
+      alignItems="start"
       justifyContent="center"
     >
       <Typography variant="h4" component="h1" gutterBottom>
