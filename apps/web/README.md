@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Treetracker Wallet Web App
 
-## Getting Started
+The Treetracker Wallet Web App is a user-friendly interface for managing digital tokens.
+### Overview
 
-First, run the development server:
+This web app is built using Next.js and provides a secure and scalable way to manage digital tokens.
 
+### Features
+
+* **Secure token management**
+* **Easy token sending and receiving**
+* **User-friendly interface**
+
+### Getting Started
+
+#### Clone the Repository
+
+`git clone https://github.com/Greenstand/treetracker-wallet-app`
+
+#### Install Dependencies
+
+
+`yarn` in the main project directory
+
+#### Start the Development Server
 ```bash
-npm run dev
-# or
+cd apps/web
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### Open the App in your web browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[http://localhost:3000](http://localhost:3000/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+#### Testing with Cypress
 
-To learn more about Next.js, take a look at the following resources:
+We use Cypress for comprehensive testing of our web app, including:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* **Component Testing**: Testing individual components in isolation to ensure they function correctly. We use Cypress to test the behavior of single components, without rendering the entire application.
+* **End-to-End Testing (E2E)**: Testing the entire application flow to ensure it works as expected, from start to finish. We use Cypress to test the entire application, simulating real-world user interactions and workflows.
+* **Integration Testing**: Testing how different components or modules interact with each other to ensure they function correctly together. We use Cypress to test how multiple components work together to achieve a specific goal or workflow.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`yarn cy:open`  component test or e2e test
+`yarn cy:component `  component test
+`yarn cy:e2e` e2e  test 
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
