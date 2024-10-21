@@ -31,6 +31,13 @@ or
 - [ ] 💥 **Breaking change** (fix or feature that would cause existing functionality to not work as expected)
 - [ ] 📝 **Documentation update** (changes)
 
+--- 
+
+
+## Screenshots
+|       Before        |       After        |
+| :-----------------: | :----------------: |
+| "screenshot before" | "screenshot after" |
 ---
 
 ### How Has This Been Tested?
