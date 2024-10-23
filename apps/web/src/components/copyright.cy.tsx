@@ -1,5 +1,5 @@
 import React from "react";
-import Copyright from "./CopyrightComponent";
+import Copyright from "./Copyright";
 
 describe("Copyright Component", () => {
   it("renders correctly", () => {
