@@ -35,8 +35,11 @@ queueClient.receiveMessage(
 );
 ```
 
-Note: The user of this client decides whether or not to acknowledge the message by calling the callback function `acknowlege`.
+Note: 
 
+The user of this client decides whether or not to acknowledge the message by calling the callback function `acknowlege`.
+
+The message should include the `ack` field which is the jsonb data in db, so the user of this client can choose to modify the existing `ack` or simply overwrite it.
 
 # Database Schema
 
