@@ -1,6 +1,61 @@
-# Name of this microservice
+# Queue service
    
-Description of this microservice
+# API Definition
+
+## The send message API
+
+To use the queue client to send a message, call function (example in Javascript):
+
+```javascript
+const queueClient = require('queue-client');
+
+queueClient.sendMessage(
+    'walletCreated', 
+    {
+        walletId: '1234',
+        createdAt: '2021-01-01'
+    }
+);
+
+## The receive message API
+
+To use the queue client to receive a message, call function (example in Javascript):
+
+```javascript
+const queueClient = require('queue-client');
+
+queueClient.receiveMessage(
+    'walletCreated', 
+    (message, acknowlege) => {
+        console.log(message);
+        acknowlege({
+            acknowledged: true,
+        });
+    }
+);
+```
+
+Note: The user of this client decides whether or not to acknowledge the message by calling the callback function `acknowlege`.
+
+
+# Database Schema
+
+The queue service use the database schema: 'queue'.
+
+Tables:
+
+- message
+
+    Columns:
+
+    - id: UUID
+    - channel: text
+    - data: jsonb
+    - created_at: timestamptz
+    - updated_at: timestamptz
+    - ack: jsonb
+    - ack_at: timestamptz
+
 
 # Development toolkit
 
