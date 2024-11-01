@@ -27,8 +27,8 @@ describe('tests client subscription and past message fetching', () => {
 
         // subscribe clients to a channel, return a promise and verify message/payload from resolved promise
         Promise.all([
-            subscribe(pgClient, messageObj.channel),
-            subscribe(pgClient2, messageObj.channel)
+            subscribe({pgClient, channel: messageObj.channel, clientID: uuid.v4() }),
+            subscribe({ pgClient: pgClient2, channel: messageObj.channel, clientID: uuid.v4() })
         ]).then(values => {
             expect(values[0]).toMatchObject(messageObj); // eslint-disable-line
             expect(values[1]).toMatchObject(messageObj); // eslint-disable-line
@@ -36,11 +36,11 @@ describe('tests client subscription and past message fetching', () => {
         });
 
         // publish message to a given channel
-        publish(pgClient, messageObj.channel, messageObj.data);
+        publish({ pgClient, channel: messageObj.channel, data: messageObj.data });
     }, 30000)
 
-     // fetch past messages with a filter and check response
-     it('message?channel=tree&from=2024-09-01&to=2024-09-18&name=John', (done) => {
+    // fetch past messages with a filter and check response
+    it('message?channel=tree&from=2024-09-01&to=2024-09-18&name=John', (done) => {
 
         // check past messages between the given start and end dates on tree channel with a filter
         supertest(app).get('/message?channel=tree&from=2024-09-01&to=2024-09-18&name=John').then(res => {
