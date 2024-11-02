@@ -1,6 +1,69 @@
-# Name of this microservice
+# Queue service
    
-Description of this microservice
+# API Definition
+
+## The send message API
+
+To use the queue client to send a message, call function (example in Javascript):
+
+```javascript
+const queueClient = require('queue-client');
+
+queueClient.sendMessage(
+    'walletCreated', 
+    {
+        walletId: '1234',
+        createdAt: '2021-01-01'
+    }
+);
+
+## The receive message API
+
+To use the queue client to receive a message, call function (example in Javascript):
+
+```javascript
+const queueClient = require('queue-client');
+
+queueClient.receiveMessage(
+    'walletCreated', 
+    (message, acknowlege) => {
+        console.log(message);
+        acknowlege({
+            acknowledged: true,
+        });
+    }
+);
+```
+
+Note: 
+
+The user of this client decides whether or not to acknowledge the message by calling the callback function `acknowlege`.
+
+The message should include the `ack` field which is the jsonb data in db, so the user of this client can choose to modify the existing `ack` or simply overwrite it.
+
+# Database Schema
+
+The queue service use the database schema: 'queue'.
+
+Tables:
+
+- message
+
+    Columns:
+
+    - id: UUID
+    - channel: text
+    - data: jsonb
+    - created_at: timestamptz
+    - updated_at: timestamptz
+    - ack: jsonb
+
+Note, the act time could be record in ack column, like this:
+
+```
+{ acknowledgedByClientA: {ack: true, timestamp: 2023-03-15 18:37:06.880169-11} acknowledgedByClientB: {ack: true, timestamp: 2023-03-15 18:37:06.880169-11} }
+```
+
 
 # Development toolkit
 
