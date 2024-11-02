@@ -1,14 +1,22 @@
+const ack = require("./ack");
+
 // subscribes a client to a channel
-async function subscribe(client, channel) {
+async function subscribe({ pgClient, channel, clientID }) {
 
     const notiPromise = new Promise((resolve) => {
-        client.on('notification', msg => {
+        pgClient.on('notification', msg => {
+
             const newRow = JSON.parse(msg.payload);
-            return resolve(newRow);
+            const date = new Date()
+            const dateStr = date.toISOString()
+
+            return ack({ pgClient, id: newRow.id, dateStr, clientID }).then(response => {
+                return resolve(response[0])
+            })
         });
     });
 
-    client.query(`LISTEN ${channel}`, (err, res) => {
+    pgClient.query(`LISTEN ${channel}`, (err, res) => {
         if (err) throw Error(`subscription error: ${err}`);
         console.log(`subscription success: ${res}`)
     });
