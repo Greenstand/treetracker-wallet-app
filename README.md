@@ -57,7 +57,12 @@ Tables:
     - created_at: timestamptz
     - updated_at: timestamptz
     - ack: jsonb
-    - ack_at: timestamptz
+
+Note, the act time could be record in ack column, like this:
+
+```
+{ acknowledgedByClientA: {ack: true, timestamp: 2023-03-15 18:37:06.880169-11} acknowledgedByClientB: {ack: true, timestamp: 2023-03-15 18:37:06.880169-11} }
+```
 
 
 # Development toolkit
