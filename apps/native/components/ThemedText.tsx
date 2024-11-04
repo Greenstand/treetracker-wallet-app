@@ -37,24 +37,29 @@ const styles = StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
+    fontFamily: "roboto"
   },
   defaultSemiBold: {
     fontSize: 16,
     fontWeight: "600",
     lineHeight: 24,
+    fontFamily: "roboto"
   },
   link: {
     color: "#0a7ea4",
     fontSize: 16,
     lineHeight: 30,
+    fontFamily: "roboto"
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "bold",
+    fontFamily: "roboto"
   },
   title: {
     fontSize: 32,
-    fontWeight: "bold",
     lineHeight: 32,
+    fontWeight: "medium",
+    fontFamily: "roboto"
   },
 });

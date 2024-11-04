@@ -30,6 +30,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Roboto: require('../assets/fonts/Roboto-Regular.ttf'),
+    RobotoBold: require('../assets/fonts/Roboto-Bold.ttf'),
+    RobotoMedium: require('../assets/fonts/Roboto-Medium.ttf'),
     ...FontAwesome.font,
   });
 
@@ -51,12 +54,17 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+export const options = {
+  headerShown: false,
+};
+
 function RootLayoutNav() {
 
   return (
     <PaperProvider theme={theme}>
       <Stack>
         <Stack.Screen name="index" />
+        <Stack.Screen name="accountConfirmation" options={options}/>
       </Stack>
     </PaperProvider>
   );
