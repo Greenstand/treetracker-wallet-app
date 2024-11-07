@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -10,7 +10,10 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 
+import { useRouter } from 'expo-router';
+
 export function HelloWave() {
+  const router = useRouter();
   const rotationAnimation = useSharedValue(0);
 
   rotationAnimation.value = withRepeat(
@@ -26,9 +29,14 @@ export function HelloWave() {
   }));
 
   return (
-    <Animated.View style={animatedStyle}>
-      <ThemedText style={styles.text}>👋</ThemedText>
-    </Animated.View>
+    <View>
+      <Animated.View style={animatedStyle}>
+        <ThemedText style={styles.text}>👋</ThemedText>
+      </Animated.View>
+      <TouchableOpacity onPress={() => router.push('/accountConfirmation')}>
+        <ThemedText>Go to Account Confirmation Screen</ThemedText>
+      </TouchableOpacity>
+    </View>
   );
 }
 
