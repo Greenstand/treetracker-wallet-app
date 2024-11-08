@@ -10,7 +10,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 
 export function HelloWave() {
   const router = useRouter();
@@ -33,8 +33,12 @@ export function HelloWave() {
       <Animated.View style={animatedStyle}>
         <ThemedText style={styles.text}>👋</ThemedText>
       </Animated.View>
-      <TouchableOpacity onPress={() => router.push('/accountConfirmation')}>
+      <TouchableOpacity onPress={() => router.push("/accountConfirmation")}>
         <ThemedText>Go to Account Confirmation Screen</ThemedText>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/home")}>
+        <ThemedText>Go to Home Screen</ThemedText>
       </TouchableOpacity>
     </View>
   );
