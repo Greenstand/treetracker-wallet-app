@@ -1,50 +1,51 @@
-# Welcome to your Expo app 👋
+# Treetracker Wallet Mobile App
+==========================
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The Treetracker Wallet Mobile App is a user-friendly interface for managing digital tokens.
 
-## Get started
+### Overview
+------------
 
-1. Install dependencies
+This app is built using Expo and React Native, and provides a secure and scalable way to manage digital tokens.
 
-   ```bash
-   npm install
-   ```
+### Features
+------------
 
-2. Start the app
+* **Secure token management**
+* **Easy token sending and receiving**
+* **User-friendly interface**
 
-   ```bash
-    npx expo start
-   ```
+### Getting Started
+-------------------
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
-
-When you're ready, run:
+#### Clone the Repository
 
 ```bash
-npm run reset-project
+git clone https://github.com/Greenstand/treetracker-wallet-app
 ```
+#### Install Dependencies
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+`yarn` in the main project directory
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+cd apps/native
+yarn start
+```
+This will start the app in development mode, and you can access it by scanning the QR code with your Expo Go app.
+### Testing
+------------
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+####  Testing with Maestro
 
-## Join the community
+We use Maestro for testing of our app:
 
-Join our community of developers creating universal apps.
+* **End-to-End Testing (E2E)**: Testing the entire application flow to ensure it works as expected, from start to finish.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+```bash
+yarn maestro test
+```
