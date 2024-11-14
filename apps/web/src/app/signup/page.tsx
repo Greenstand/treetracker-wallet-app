@@ -18,7 +18,7 @@ import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
 import CenteredColumnBox from "@/components/common/CenteredColumnBox";
-import LoginComponent from "@/components/common/LogoComponent";
+import LogoComponent from "@/components/common/LogoComponent";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -100,7 +100,7 @@ export default function SignUp() {
   return (
     <Wrapper>
       <CenteredColumnBox>
-        <LoginComponent />
+        <LogoComponent />
         <CustomHeadingTitle title="Sign Up" />
         <form onSubmit={handleSubmit}>
           <CustomTextField
