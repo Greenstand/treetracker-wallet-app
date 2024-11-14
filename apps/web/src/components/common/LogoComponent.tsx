@@ -14,7 +14,7 @@ export default function LogoComponent(props: any) {
       }}>
       <img
         style={{ width: "100%", height: "100%" }}
-        src="/assets/images/TreeTraderLogo.png"
+        src="/assets/images/TreeTraderLogo.svg"
       />
     </Box>
   );
