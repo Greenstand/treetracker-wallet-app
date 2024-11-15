@@ -8,8 +8,9 @@ import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
-import { SafeAreaView } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -64,12 +65,18 @@ function RootLayoutNav() {
   return (
     <PaperProvider theme={theme}>
       <Stack>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="accountConfirmation" options={options} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={options} />
         <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+        <Stack.Screen name="accountConfirmation" options={options} />
       </Stack>
     </PaperProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
