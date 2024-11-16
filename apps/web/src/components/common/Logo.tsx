@@ -2,7 +2,7 @@
 
 import { Box } from "@mui/material";
 
-export default function LogoComponent(props: any) {
+export default function Logo(props: any) {
   return (
     <Box
       sx={{
