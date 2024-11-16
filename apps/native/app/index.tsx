@@ -1,12 +1,2 @@
-import React from "react";
-import { SafeAreaView } from "react-native";
-
-import { HelloWave } from "@/components/HelloWave";
-
-export default function Index() {
-  return (
-    <SafeAreaView>
-      <HelloWave />
-    </SafeAreaView>
-  );
-}
+import OnboardingScreen from "@/screens/onboarding/Onboarding.screen";
+export default () => <OnboardingScreen />;
