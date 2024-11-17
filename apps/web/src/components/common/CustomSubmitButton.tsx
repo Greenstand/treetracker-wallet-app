@@ -23,8 +23,6 @@ const CustomSubmitButton: React.FC<SubmitButtonProps> = ({
       fullWidth
       style={{
         marginTop: "1rem",
-        backgroundColor: isDisabled ? "#a9a9a9" : "rgb(97, 137, 47)",
-        color: "#ffffff",
       }}
       disabled={isDisabled}>
       {text}
