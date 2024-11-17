@@ -169,10 +169,7 @@ export default function SignUp() {
           />
           <Box sx={{ display: "flex", gap: "0.3rem" }}>
             <Typography>Have an Account?</Typography>
-            <Link
-              href="/login"
-              component={NextLink}
-              sx={{ color: "rgb(97, 137, 47)", textDecoration: "none" }}>
+            <Link href="/login" component={NextLink}>
               Log in
             </Link>
           </Box>
