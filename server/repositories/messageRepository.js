@@ -7,7 +7,7 @@ class MessageRepository extends BaseRepository {
         super('queue.message', session);
     }
 
-    async checkMessage(channel, from, to = new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0], filter) {
+    async checkMessage({channel, from, to = new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0], filter=null}) {
 
         let filterSql = ``;
         if (filter != null) {
