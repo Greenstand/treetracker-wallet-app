@@ -6,18 +6,21 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
-  Image,
   TouchableOpacity,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import Leafs from "@/assets/svg/leafs.svg";
+import Wallet from "@/assets/svg/wallet.svg";
+import Cloud from "@/assets/svg/cloud.svg";
+import { SvgProps } from "react-native-svg";
 
 const { width, height } = Dimensions.get("window");
 
 type OnboardingItem = {
   id: string;
-  icon: any;
+  icon: React.ComponentType<SvgProps>;
   title: string;
   description: string;
 };
@@ -25,21 +28,21 @@ type OnboardingItem = {
 const DATA: OnboardingItem[] = [
   {
     id: "1",
-    icon: ".", //require("./path/to/icon1.png"),
+    icon: Leafs,
     title: "Join the Greenstand movement!",
     description: "Start making a positive impact on the environment today.",
   },
   {
     id: "2",
-    icon: ".", //require("./path/to/icon1.png"),
+    icon: Wallet,
     title: "Experience the convenience",
-    description: "Enjoy the ease of digital wallet transfers on the go.",
+    description: "Digital wallet transfers on the go.",
   },
   {
     id: "3",
-    icon: ".", //require("./path/to/icon1.png"),
-    title: "Secure exchanges",
-    description: "Access secure and reliable wallet transactions.",
+    icon: Cloud,
+    title: "Enjoy the ease and convenience of secure and reliable token",
+    description: "exchanges through our intuitive app interface.",
   },
 ];
 
@@ -51,41 +54,59 @@ const OnboardingScreen = () => {
     setCurrentIndex(slideIndex);
   };
 
-  const renderItem = ({ item }: { item: OnboardingItem }) => (
-    <View style={styles.container}>
-      <Image source={item.icon} style={styles.icon} />
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-      <View style={styles.pagination}>
-        {DATA.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              { backgroundColor: currentIndex === index ? "green" : "#ccc" },
-            ]}
-          />
-        ))}
+  const renderItem = ({ item }: { item: OnboardingItem }) => {
+    const Icon = item.icon;
+    return (
+      <View style={styles.slide}>
+        <Icon width={120} height={120} style={styles.icon} />
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.description}>{item.description}</Text>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlashList
         data={DATA}
         renderItem={renderItem}
-        estimatedItemSize={height}
         horizontal
         pagingEnabled
         onScroll={handleScroll}
         showsHorizontalScrollIndicator={false}
+        estimatedItemSize={height}
       />
+      <View style={styles.pagination}>
+        {DATA.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.circleWrapper,
+              currentIndex === index ? styles.activeCircle : null,
+            ]}>
+            <View
+              style={[
+                styles.dot,
+                currentIndex === index ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          </View>
+        ))}
+      </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={() => router.push("/(auth)/login")}
-          style={styles.button}>
-          <Text style={styles.buttonText}>Go to Login</Text>
+        {currentIndex === DATA.length - 1 ? (
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/login")}
+            style={styles.button}>
+            <Text style={styles.buttonText}>GET STARTED</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => {}} style={styles.button}>
+            <Text style={styles.buttonText}>CONTINUE</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity>
+          <Text style={styles.skipText}>SKIP THE TOUR</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -95,60 +116,81 @@ const OnboardingScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "white",
   },
-  container: {
+  slide: {
     width,
+    height: height * 0.6,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
+    backgroundColor: "white",
   },
   icon: {
-    width: 150,
-    height: 150,
-    marginTop: 50,
-    marginBottom: 150,
-    backgroundColor: "green",
+    marginBottom: height * 0.05,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontWeight: "500",
     textAlign: "center",
-    marginBottom: 10,
+    marginTop: 30,
   },
   description: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 20,
+    fontWeight: "500",
     textAlign: "center",
-    marginBottom: 30,
   },
-  buttonContainer: {
-    paddingVertical: 20,
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  circleWrapper: {
     alignItems: "center",
     justifyContent: "center",
+    width: 20,
+    height: 20,
+    marginHorizontal: 5,
+  },
+  activeCircle: {
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    borderRadius: 10,
+  },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  activeDot: {
+    backgroundColor: "#4CAF50",
+  },
+  inactiveDot: {
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#ccc",
+  },
+  buttonContainer: {
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   button: {
     backgroundColor: "#4CAF50",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 100,
+    borderRadius: 8,
+    marginBottom: 10,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
-  pagination: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 10,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 20,
-    marginHorizontal: 5,
-    backgroundColor: "green",
+  skipText: {
+    color: "#4CAF50",
+    fontSize: 15,
+    fontWeight: "500",
   },
 });
 
