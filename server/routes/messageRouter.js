@@ -27,7 +27,7 @@ router.get(
         const filter = {};
         let hasFilter = false;
         for (const [key, value] of Object.entries(req.query)) { // eslint-disable-line
-            if(key!=='channel' && key!=='from' && key!=='to') {
+            if (key !== 'channel' && key !== 'from' && key !== 'to') {
                 hasFilter = true;
                 filter[key] = value;
             }
@@ -36,7 +36,7 @@ router.get(
         const session = new Session();
         const repo = new MessageRepository(session);
 
-        const exe = await MessageModel.getMessage(repo)(channel, from, to, hasFilter? filter : null);
+        const exe = await MessageModel.getMessage(repo)({ channel, from, to, filter: hasFilter ? filter : null });
         res.send(exe);
         res.end();
     })
