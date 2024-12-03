@@ -1,4 +1,5 @@
 import { Link } from "expo-router";
+import React from "react";
 import {
   Dimensions,
   Platform,
@@ -6,6 +7,7 @@ import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -24,6 +26,9 @@ const DATA: LoginTypes[] = [
 ];
 
 const LoginScreen = () => {
+  const [login, onChangeLogin] = React.useState("");
+  const [password, onChangePassword] = React.useState("");
+
   return (
     <SafeAreaView style={styles.loginPageContainer}>
       <KeyboardAvoidingView
@@ -40,7 +45,28 @@ const LoginScreen = () => {
         </View>
 
         {/* MIDDLE */}
-        <View style={styles.inputBoxContainer}></View>
+        <View style={styles.inputBoxContainer}>
+          <View style={styles.inputBox}>
+            <TextInput
+              style={styles.placeholderInputBox}
+              onChangeText={onChangeLogin}
+              value={login}
+              placeholder="Email"
+            />
+          </View>
+        </View>
+
+        <View style={styles.inputBoxContainer}>
+          <View style={styles.inputBox}>
+            <TextInput
+              style={styles.placeholderInputBox}
+              onChangeText={onChangePassword}
+              value={password}
+              placeholder="Senha"
+              secureTextEntry={true}
+            />
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -85,6 +111,17 @@ const styles = StyleSheet.create({
   // ------------------------------------------------------------ MIDDLE
   inputBoxContainer: {
     // container
+    height: "15%",
+    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "red",
+  },
+  inputBox: {
+    height: "80%",
+    width: "90%",
+
+    backgroundColor: "white",
   },
   placeholderInputBox: {},
   loginButtonContainer: {
