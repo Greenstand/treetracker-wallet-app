@@ -24,7 +24,7 @@ export default function HeaderSearch({
         alignItems: "center",
         justifyContent: isExpanded ? "flex-start" : "center",
         position: "relative",
-        width: "100%", // Full width when expanded
+        width: "100%",
       }}>
       {isExpanded ? (
         <>
@@ -61,7 +61,7 @@ export default function HeaderSearch({
         <IconButton
           onClick={onExpand}
           sx={{
-            backgroundColor: theme => theme.palette.primary.light,
+            backgroundColor: theme => theme.palette.header.main,
             "&:hover": { backgroundColor: theme => theme.palette.primary.dark },
           }}>
           <SearchIcon sx={{ color: theme => theme.palette.common.white }} />
