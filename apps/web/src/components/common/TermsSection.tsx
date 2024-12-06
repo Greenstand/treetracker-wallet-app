@@ -13,18 +13,14 @@ const TermsSection = () => {
         display: "flex",
         flexWrap: "wrap",
       }}>
-      <Typography>By continuing, I agree to Greenstand's</Typography>
-      <Link
-        href="#"
-        component={NextLink}
-        sx={{ color: "rgb(97, 137, 47)", textDecoration: "none" }}>
+      <Typography variant="sub">
+        By continuing, I agree to Greenstand's
+      </Typography>
+      <Link href="#" component={NextLink} variant="sub">
         Privacy Policy
       </Link>
-      <Typography>and</Typography>
-      <Link
-        href="#"
-        component={NextLink}
-        sx={{ color: "rgb(97, 137, 47)", textDecoration: "none" }}>
+      <Typography variant="sub">and</Typography>
+      <Link href="#" component={NextLink} variant="sub">
         Terms of Use
       </Link>
     </Box>
