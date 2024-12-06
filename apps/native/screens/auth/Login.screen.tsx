@@ -10,7 +10,7 @@ const LoginScreen = () => {
         alignItems: "center",
       }}>
       <Text>LoginScreen</Text>
-      <Link push href="/(tabs)/">
+      <Link push href="/(tabs)/home">
         Login
       </Link>
     </View>
