@@ -5,12 +5,14 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedStatusBar } from "@/components/ThemedStatusBar";
 import { ThemedSafeAreaView } from "@/components/ThemeSafeArea";
 
-export default function Settings() {
+export default function Home() {
   return (
     <ThemedSafeAreaView style={styles.safeArea}>
-      <ThemedStatusBar />
+      <ThemedStatusBar/>
       <ThemedView style={[styles.container]}>
-        <Text style={[styles.commonText, styles.description]}>Settings</Text>
+        <Text style={[styles.commonText, styles.description]}>
+          Home
+        </Text>
       </ThemedView>
     </ThemedSafeAreaView>
   );
