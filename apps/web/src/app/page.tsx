@@ -2,12 +2,10 @@
 
 import * as React from "react";
 import { Container, Box, Typography } from "@mui/material";
-import Header from "@/components/header/Header";
 
 export default function Home() {
   return (
     <>
-      <Header />
       <Container maxWidth="lg">
         <Box
           sx={{
