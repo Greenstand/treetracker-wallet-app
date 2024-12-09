@@ -1,13 +1,28 @@
 "use client";
 
 import { Roboto } from "next/font/google";
-import { createTheme } from "@mui/material/styles";
+import {
+  createTheme,
+  PaletteColor,
+  PaletteColorOptions,
+} from "@mui/material/styles";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   display: "swap",
 });
+
+// In figma design, the header color is #86c232
+declare module "@mui/material/styles" {
+  interface Palette {
+    header: PaletteColor;
+  }
+
+  interface PaletteOptions {
+    header?: PaletteColorOptions;
+  }
+}
 
 const theme = createTheme({
   palette: {
@@ -22,6 +37,9 @@ const theme = createTheme({
     action: {
       disabledBackground: "#DCE0D7",
       disabled: "#22262961",
+    },
+    header: {
+      main: "#86c232", // Define a custom green color for the header
     },
   },
   typography: {

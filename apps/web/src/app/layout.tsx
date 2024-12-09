@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "@/theme";
 import { Container } from "@mui/material";
+import Header from "@/components/header/Header";
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <Header />
             <Container maxWidth="sm">{props.children}</Container>
           </ThemeProvider>
         </AppRouterCacheProvider>
