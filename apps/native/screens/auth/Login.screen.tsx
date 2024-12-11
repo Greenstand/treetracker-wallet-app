@@ -48,7 +48,7 @@ const LoginScreen = () => {
           </Text>
         </View>
 
-        {/* MIDDLE */}
+        {/* MIDDLE -- Change the Form (login and password) to react-native-paper*/}
         <View style={styles.inputBoxContainer}>
           <View style={styles.inputBox}>
             <Text
@@ -109,17 +109,6 @@ const LoginScreen = () => {
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}>
-      <Text>LoginScreen</Text>
-      <Link push href="/(tabs)/home">
-        Login
-      </Link>
-    </View>
   );
 };
 
