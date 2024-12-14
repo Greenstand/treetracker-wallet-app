@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: treetracker-wallet-monorepo-user-api
+  labels:
+    app: treetracker-wallet-monorepo-user-api
+  namespace: treetracker-wallet-monorepo-user-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: treetracker-wallet-monorepo-user-api
+  template:
+    metadata:
+      labels:
+        app: treetracker-wallet-monorepo-user-api
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: doks.digitalocean.com/node-pool
+                    operator: In
+                    values:
+                      - microservices-node-pool
+      containers:
+        - name: treetracker-wallet-monorepo-user-api
+          image: greenstand/treetracker-wallet-monorepo-user-api:TAG
+          # get this from env as well
+          ports:
+            - containerPort: 8080

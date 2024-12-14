@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterUserDto } from '@dtos/register-user.dto';
 
@@ -9,5 +9,10 @@ export class UserController {
   @Post('register')
   registerUser(@Body() registerUserDto: RegisterUserDto) {
     return this.userService.createUser(registerUserDto);
+  }
+
+  @Get('test')
+  check(@Body() registerUserDto: RegisterUserDto) {
+    return 'tree growing!!'
   }
 }
