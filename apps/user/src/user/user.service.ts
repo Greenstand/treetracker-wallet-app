@@ -10,7 +10,7 @@ export class UserService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  private async getToken() {
+  public async getToken() {
     const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
     const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
     const tokenApi = `${keycloakBaseUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`;
