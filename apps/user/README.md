@@ -40,6 +40,10 @@ http://localhost:8080/swagger
 
 `test:e2e`
 
+### integration tests
+
+`yarn int-test`
+
 ### unit tests
 
 `yarn test:unit`

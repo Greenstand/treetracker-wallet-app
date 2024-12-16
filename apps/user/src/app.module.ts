@@ -6,12 +6,11 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 
 const ENV = process.env.NODE_ENV;
-
 @Module({
   imports: [
     UserModule,
     HttpModule,
-    ConfigModule.forRoot({ envFilePath: ENV ? '.dev.env' : '.env' }),
+    ConfigModule.forRoot({ envFilePath: ENV === 'dev' ? '.dev.env' : '.env' }),
   ],
   controllers: [UserController],
   providers: [UserService],
