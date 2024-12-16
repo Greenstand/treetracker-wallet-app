@@ -6,7 +6,7 @@
 
 To use the queue client to send a message, call function (example in Javascript):
 
-```javascript
+```
 const queueClient = require('queue-client');
 
 queueClient.sendMessage(
@@ -21,7 +21,7 @@ queueClient.sendMessage(
 
 To use the queue client to receive a message, call function (example in Javascript):
 
-```javascript
+```
 const queueClient = require('queue-client');
 
 queueClient.receiveMessage(
@@ -72,6 +72,51 @@ This repository was created from Greenstand's template for microservice projects
 ## db-migrate
 
 db-migrate is used to create database tables and other database objects
+
+### setup
+
+create a file named 'database.json' inside the database folder.
+inside the file create and populate database secret fields as follows.
+DO NOT commit this file as it contains databse connection secrets.
+
+```
+{
+    "dev": {
+      "driver": "pg",
+      "user" : "username",
+      "password" : "password",
+      "database" : "db name",
+      "host" : "host name",
+      "port" : "port number",
+      "schema" : "schema name",
+      "ssl" : "ssl"
+    }
+}
+```
+
+### create a migration template
+
+navigate to database folder and run:
+
+```db-migrate create migrationname```
+
+then populate the sql files in migrations/sqls folder with the appropriate postgres scripts.
+
+### execute migrations
+
+to execute the current set of migrations and push them to the database run:
+
+```db-migrate up```
+
+to rollback already executed migrations run:
+
+```db-migrate down```
+
+you can also execute and roll back migrations incrementally by using the '-c' flag as follows:
+
+```db-migrate up -c 2``` or ```db-migrate down -c 3```
+
+for more info on db-migrate visit the documentation at https://db-migrate.readthedocs.io/en/latest/
 
 ## Conventional Commits
 
