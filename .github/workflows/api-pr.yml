@@ -1,0 +1,31 @@
+name: CI for New Pull Requests
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - 'apps/user/**'  # Only trigger for changes in the apps/user directory
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Install dependencies for specific package
+        run: yarn workspace greenstand-wallet-app-api install
+
+      - name: Build TypeScript project
+        run: yarn workspace greenstand-wallet-app-api build
+
+      - name: Lint code with ESLint
+        run: yarn workspace greenstand-wallet-app-api lint
+
+      - name: Run tests
+        run: yarn workspace greenstand-wallet-app-api test
