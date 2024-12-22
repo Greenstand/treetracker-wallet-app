@@ -8,11 +8,9 @@ import { ThemedSafeAreaView } from "@/components/ThemeSafeArea";
 export default function Send() {
   return (
     <ThemedSafeAreaView style={styles.safeArea}>
-      <ThemedStatusBar/>
+      <ThemedStatusBar />
       <ThemedView style={[styles.container]}>
-        <Text style={[styles.commonText, styles.description]}>
-          Send
-        </Text>
+        <Text style={[styles.commonText, styles.description]}>Send</Text>
       </ThemedView>
     </ThemedSafeAreaView>
   );

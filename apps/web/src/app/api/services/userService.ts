@@ -1,8 +1,12 @@
-import { getToken } from './tokenService'; 
+import { getToken } from "./tokenService";
 
 const keycloakBaseUrl = process.env.NEXT_PUBLIC_KEYCLOAK_BASE_URL;
 
-export const createUser = async (userData: { username: string; email: string; password: string }) => {
+export const createUser = async (userData: {
+  username: string;
+  email: string;
+  password: string;
+}) => {
   try {
     // Get the access token
     const tokenData = await getToken();

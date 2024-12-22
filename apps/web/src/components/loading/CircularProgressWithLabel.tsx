@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { useState, useEffect } from "react";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 const CircularProgressWithLabel = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setProgress((prevProgress) =>
+      setProgress(prevProgress =>
         prevProgress >= 100 ? 100 : prevProgress + 10,
       );
     }, 300);
@@ -24,7 +24,7 @@ const CircularProgressWithLabel = () => {
         variant="determinate"
         value={progress}
         size={32}
-        sx={{ color: '#61892F' }}
+        sx={{ color: "#61892F" }}
       />
       <Box
         top={0}
@@ -34,13 +34,11 @@ const CircularProgressWithLabel = () => {
         position="absolute"
         display="flex"
         alignItems="center"
-        justifyContent="center"
-      >
+        justifyContent="center">
         <Typography
           variant="caption"
           component="div"
-          sx={{ fontSize: '12px', color: '#222629' }}
-        >
+          sx={{ fontSize: "12px", color: "#222629" }}>
           {`${Math.round(progress)}%`}
         </Typography>
       </Box>

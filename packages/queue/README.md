@@ -21,4 +21,5 @@ subscribe({
 ```
 
 ## To run e2e test
-``` npm run test ```
+
+`npm run test`
