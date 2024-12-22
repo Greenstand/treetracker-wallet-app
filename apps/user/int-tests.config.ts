@@ -1,5 +1,5 @@
-import jestConfig from './jest.config';
+import jestConfig from "./jest.config";
 export default {
   ...jestConfig,
-  testRegex: 'spec.int.ts$',
+  testRegex: "spec.int.ts$",
 };

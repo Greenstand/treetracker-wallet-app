@@ -1,12 +1,11 @@
 name: Service CI/CD Pipeline to Release and Deploy to Dev Env
 
-
 on:
   push:
     branches:
       - main
     paths:
-      - 'apps/user/**'  # Only trigger for changes in the apps/user directory
+      - "apps/user/**" # Only trigger for changes in the apps/user directory
 
 jobs:
   release:
@@ -20,7 +19,7 @@ jobs:
       - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: Yarn Clean Install
         run: yarn workspace greenstand-wallet-app-api install
@@ -54,12 +53,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-
       - name: Build and Push Docker Image
         id: docker_build_release
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/user/ 
+          context: ./apps/user/
           file: ./apps/user/Dockerfile
           push: true
           tags: greenstand/treetracker-wallet-monorepo-user-api:${{ steps.package-version.outputs.current-version }}

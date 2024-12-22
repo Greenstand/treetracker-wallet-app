@@ -1,5 +1,5 @@
-import React from 'react';
-import { StatusBar, type StatusBarProps } from 'react-native';
+import React from "react";
+import { StatusBar, type StatusBarProps } from "react-native";
 
 export type ThemedStatusBarProps = StatusBarProps & {
   lightColor?: string;
@@ -12,8 +12,8 @@ export function ThemedStatusBar({
   ...otherProps
 }: ThemedStatusBarProps) {
   return (
-    <StatusBar 
-      barStyle={darkColor ? "light-content" : "dark-content"} 
+    <StatusBar
+      barStyle={darkColor ? "light-content" : "dark-content"}
       {...otherProps}
     />
   );

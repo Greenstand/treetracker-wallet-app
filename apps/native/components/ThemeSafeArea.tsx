@@ -1,11 +1,16 @@
-import { SafeAreaView, type StyleProp, type ViewProps, ViewStyle } from "react-native";
+import {
+  SafeAreaView,
+  type StyleProp,
+  type ViewProps,
+  ViewStyle,
+} from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type ThemedSafeAreaViewProps = ViewProps & {
   lightColor?: string;
   darkColor?: string;
-  style: StyleProp<ViewStyle>
+  style: StyleProp<ViewStyle>;
 };
 
 export function ThemedSafeAreaView({
