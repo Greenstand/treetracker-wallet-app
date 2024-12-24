@@ -11,7 +11,7 @@ export class UserController {
     return this.userService.createUser(registerUserDto);
   }
 
-  @Get("test")
+  @Get("healthz")
   check(@Body() registerUserDto: RegisterUserDto) {
     return "tree growing!!";
   }
