@@ -41,6 +41,9 @@ const theme = createTheme({
     header: {
       main: "#86c232", // Define a custom green color for the header
     },
+    background: {
+      default: "#f5f5f5",
+    },
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
