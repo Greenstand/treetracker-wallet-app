@@ -58,7 +58,7 @@ export default function Settings() {
         maxWidth: "600px",
         margin: "0 auto",
       }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h5" gutterBottom>
         Settings
       </Typography>
       <List>
@@ -72,7 +72,7 @@ export default function Settings() {
                   secondary={item.secondaryText || null}
                   primaryTypographyProps={{
                     sx: {
-                      fontWeight: item.secondaryText ? "normal" : "normal",
+                      fontWeight: item.secondaryText ? "normal" : "inherit",
                     },
                   }}
                   secondaryTypographyProps={{
@@ -91,9 +91,13 @@ export default function Settings() {
         <ListItem disablePadding>
           <ListItemButton onClick={() => router.push("/logout")}>
             <ListItemText
-              primary="LOG OUT"
+              primary="log out"
               primaryTypographyProps={{
-                sx: { fontWeight: "bold", textAlign: "center" },
+                sx: {
+                  textTransform: "uppercase",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                },
               }}
             />
           </ListItemButton>
