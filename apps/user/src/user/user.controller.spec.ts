@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
-import { RegisterUserDto } from '@dtos/register-user.dto';
+import { Test, TestingModule } from "@nestjs/testing";
+import { UserController } from "./user.controller";
+import { UserService } from "./user.service";
+import { RegisterUserDto } from "@dtos/register-user.dto";
 
-describe('UserController', () => {
+describe("UserController", () => {
   let userController: UserController;
   let userService: UserService;
 
@@ -24,18 +24,18 @@ describe('UserController', () => {
     userService = module.get<UserService>(UserService);
   });
 
-  describe('register', () => {
-    it('should call UserService.register with the correct data', async () => {
+  describe("register", () => {
+    it("should call UserService.register with the correct data", async () => {
       const registerUserDto: RegisterUserDto = {
-        username: 'testuser',
-        password: 'password123',
-        email: 'test@example.com',
-        firstName: 'firstname',
-        lastName: 'lastname',
+        username: "testuser",
+        password: "password123",
+        email: "test@example.com",
+        firstName: "firstname",
+        lastName: "lastname",
       };
-      const result = { success: true, message: 'message' };
+      const result = { success: true, message: "message" };
 
-      jest.spyOn(userService, 'createUser').mockResolvedValue(result);
+      jest.spyOn(userService, "createUser").mockResolvedValue(result);
 
       const response = await userController.registerUser(registerUserDto);
 

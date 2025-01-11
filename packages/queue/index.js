@@ -1,5 +1,4 @@
-const subscribe = require('./subscribe');
-const publish = require('./publish');
+const subscribe = require("./subscribe");
+const publish = require("./publish");
 
-
-module.exports = {subscribe, publish};
+module.exports = { subscribe, publish };
