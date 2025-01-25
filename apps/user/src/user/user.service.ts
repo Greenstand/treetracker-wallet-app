@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { RegisterUserDto } from '@dtos/register-user.dto';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import { HttpStatusCode } from 'axios';
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { RegisterUserDto } from "@dtos/register-user.dto";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+import { HttpStatusCode } from "axios";
 
 @Injectable()
 export class UserService {
@@ -10,7 +10,7 @@ export class UserService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  private async getToken() {
+  public async getToken() {
     const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
     const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
     const tokenApi = `${keycloakBaseUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`;
@@ -18,11 +18,11 @@ export class UserService {
     const body = new URLSearchParams({
       client_id: process.env.PRIVATE_KEYCLOAK_CLIENT_ID,
       client_secret: process.env.PRIVATE_KEYCLOAK_CLIENT_SECRET,
-      grant_type: 'client_credentials',
+      grant_type: "client_credentials",
     });
 
     const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      "Content-Type": "application/x-www-form-urlencoded",
     };
 
     try {
@@ -55,7 +55,7 @@ export class UserService {
 
       const headers = {
         Authorization: `Bearer ${tokenData}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       };
       const body = JSON.stringify({
         username: userData.username,
@@ -66,7 +66,7 @@ export class UserService {
         emailVerified: false,
         credentials: [
           {
-            type: 'password',
+            type: "password",
             value: userData.password,
             temporary: false,
           },
@@ -80,7 +80,7 @@ export class UserService {
       );
       // Check if response is valid
       if (response?.status === 201) {
-        return { success: true, message: 'User created successfully!' };
+        return { success: true, message: "User created successfully!" };
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.errorMessage || error.message;
@@ -90,7 +90,7 @@ export class UserService {
       } else {
         // Logger.error(errorMessage);
         throw new HttpException(
-          'Error creating user',
+          "Error creating user",
           HttpStatusCode.Forbidden,
         );
       }

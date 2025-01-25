@@ -8,11 +8,9 @@ import { ThemedSafeAreaView } from "@/components/ThemeSafeArea";
 export default function Home() {
   return (
     <ThemedSafeAreaView style={styles.safeArea}>
-      <ThemedStatusBar/>
+      <ThemedStatusBar />
       <ThemedView style={[styles.container]}>
-        <Text style={[styles.commonText, styles.description]}>
-          Home
-        </Text>
+        <Text style={[styles.commonText, styles.description]}>Home</Text>
       </ThemedView>
     </ThemedSafeAreaView>
   );

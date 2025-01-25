@@ -1,6 +1,5 @@
-
-import { createUser } from '../../services/userService'; // Import the createUser function
-import { NextResponse } from 'next/server';
+import { createUser } from "../../services/userService"; // Import the createUser function
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const res = await request.json();
@@ -19,6 +18,9 @@ export async function POST(request: Request) {
     }
   } catch (error: unknown) {
     console.error("Error during signup:", error);
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }

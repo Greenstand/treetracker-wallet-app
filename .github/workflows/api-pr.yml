@@ -1,0 +1,34 @@
+name: CI for New Pull Requests
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "apps/user/**" # Only trigger for changes in the apps/user directory
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - name: Install dependencies for specific package
+        run: yarn workspace user install
+
+      - name: Build TypeScript project
+        run: yarn workspace user build
+
+      - name: Lint code with ESLint
+        run: yarn workspace user lint
+
+      - name: Run unit tests
+        run: yarn workspace user test:unit
+
+      - name: Run integration tests
+        run: yarn workspace user int-test
