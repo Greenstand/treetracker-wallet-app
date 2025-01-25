@@ -22,19 +22,35 @@ describe("tests client subscription", () => {
       },
     };
 
+    clientID1 = uuid.v4();
+    clientID2 = uuid.v4();
+
     // subscribe clients to a channel, return a promise and verify message/payload from resolved promise
-    Promise.all([
-      subscribe({ pgClient, channel: messageObj.channel, clientID: uuid.v4() }),
-      subscribe({
-        pgClient: pgClient2,
-        channel: messageObj.channel,
-        clientID: uuid.v4(),
-      }),
-    ]).then(values => {
-      expect(values[0]).toMatchObject(messageObj); // eslint-disable-line
-      expect(values[1]).toMatchObject(messageObj); // eslint-disable-line
-      done();
-    });
+    subscribe({ pgClient: pgClient, channel: messageObj.channel, clientID: clientID1 }).then(emitter1 => {
+      subscribe({ pgClient: pgClient2, channel: messageObj.channel, clientID: clientID2 }).then(emitter2 => {
+
+        const promise1 = new Promise((resolve) => {
+          emitter1.on("message", message1 => {
+            expect(message1).toMatchObject(messageObj); // eslint-disable-line
+            expect(new Date(message1.ack[clientID1])).toBeInstanceOf(Date); // eslint-disable-line
+            resolve(message1);
+          });
+        });
+
+        const promise2 = new Promise((resolve) => {
+          emitter2.on("message", message2 => {
+            expect(message2).toMatchObject(messageObj); // eslint-disable-line
+            expect(new Date(message2.ack[clientID2])).toBeInstanceOf(Date); // eslint-disable-line
+            resolve(message2);
+          });
+        });
+
+        Promise.all([promise1, promise2]).then(() => {
+          done();
+        });
+
+      });
+    })
 
     // publish message to a given channel
     publish({ pgClient, channel: messageObj.channel, data: messageObj.data });
