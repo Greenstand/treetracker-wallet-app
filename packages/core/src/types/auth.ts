@@ -1,11 +1,10 @@
-// Define the structure of user data
-export interface User {
+export interface AuthData {
   username: string;
-  firstName?: string; // Optional for login
-  lastName?: string; // Optional for login
-  email?: string; // Optional for login
+  firstName?: string;
+  lastName?: string;
+  email?: string;
   password: string;
-  confirmPassword?: string; // Optional for register
+  confirmPassword?: string;
   isSubmitting?: boolean;
   submissionSuccess?: boolean;
   error: string | null;
@@ -13,4 +12,4 @@ export interface User {
 }
 
 // Define the type for form type, which could either be 'register' or 'login'
-export type UserType = "register" | "login";
+export type FormType = "register" | "login";

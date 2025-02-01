@@ -1,22 +1,22 @@
 import { useAtom } from "jotai";
 import { registerSchema, loginSchema } from "../schemas/authSchemas";
-import { User, UserType } from "../types/auth";
+import { AuthData, FormType } from "../types/auth";
 import { WALLET_APP_API } from "../utils/config";
 import { storage } from "../utils/storage";
 import { handleValidationError, trimInputs } from "../utils/validation";
 import { registerStateAtom, loginStateAtom, userAuthAtom } from "../atoms";
 
-export const useSession = (formType: UserType) => {
+export const useSession = (formType: FormType) => {
   const [formState, setFormState] = useAtom(
     formType === "register" ? registerStateAtom : loginStateAtom,
   );
   const [isAuth, setIsAuth] = useAtom(userAuthAtom);
 
-  const setUserState = (partialState: Partial<User>) => {
+  const setUserState = (partialState: Partial<AuthData>) => {
     setFormState(prev => ({ ...prev, ...partialState }));
   };
 
-  const prepareAuthPayload = (formType: UserType, userState: User) => {
+  const prepareAuthPayload = (formType: FormType, userState: AuthData) => {
     const { isSubmitting, submissionSuccess, error, fieldErrors, ...userData } =
       userState;
 
