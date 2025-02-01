@@ -1,13 +1,13 @@
-import { User } from "../types/auth";
+import { AuthData } from "../types/auth";
 
-// Trims any string fields in the User object and leaves other fields intact
-export const trimInputs = (input: Partial<User>): User => {
+// Trims any string fields in the AuthData object and leaves other fields intact
+export const trimInputs = (input: Partial<AuthData>): AuthData => {
   return Object.keys(input).reduce((acc, key) => {
-    const value = input[key as keyof User];
+    const value = input[key as keyof AuthData];
     // Only trim strings, leave other types intact
     acc[key] = typeof value === "string" ? value.trim() : value;
     return acc;
-  }, {} as User);
+  }, {} as AuthData);
 };
 
 // Handles validation errors and formats them into a key-value object
