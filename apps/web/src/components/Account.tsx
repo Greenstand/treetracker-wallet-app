@@ -7,7 +7,6 @@ import NotificationsIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useRouter } from "next/navigation";
-import { fontWeight } from "@mui/system";
 
 export default function Account() {
   const router = useRouter();
@@ -18,11 +17,10 @@ export default function Account() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        padding: "16px",
         maxWidth: "600px",
-        margin: "0 auto",
+        margin: "0 -1em",
         textAlign: "center",
-        marginTop: "-1.5vh",
+        height: "90vh",
       }}>
       <Box
         sx={{
@@ -153,7 +151,7 @@ export default function Account() {
         <ArrowForwardIosIcon fontSize="small" />
       </Button>
 
-      {/* Full-width "Member since May 2023" Box */}
+      {/* "Member since May 2023" Box */}
       <Box
         sx={{
           backgroundColor: "white",
@@ -187,6 +185,7 @@ export default function Account() {
           height: "10vh",
           display: "flex",
           alignItems: "center",
+          flexGrow: 1,
         }}
       />
     </Box>
