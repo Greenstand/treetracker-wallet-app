@@ -1,26 +1,25 @@
-import { router } from "expo-router";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-  TouchableOpacity,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-} from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import Cloud from "@/assets/svg/cloud.svg";
 import Leafs from "@/assets/svg/leafs.svg";
 import Wallet from "@/assets/svg/wallet.svg";
-import Cloud from "@/assets/svg/cloud.svg";
-import { SvgProps } from "react-native-svg";
+import { FlashList } from "@shopify/flash-list";
+import { router } from "expo-router";
+import React, { useRef, useState } from "react";
+import {
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
 type OnboardingItem = {
   id: string;
-  icon: React.ComponentType<SvgProps>;
+  icon: React.ReactNode;
   title: string;
   description: string;
 };
@@ -48,6 +47,16 @@ const DATA: OnboardingItem[] = [
 
 const OnboardingScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const listRef = useRef<FlashList<OnboardingItem>>(null);
+
+  const handleNextItem = () => {
+    if (currentIndex !== DATA.length - 1) {
+      listRef.current?.scrollToIndex({
+        index: currentIndex + 1,
+        animated: true,
+      });
+    }
+  };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -65,9 +74,15 @@ const OnboardingScreen = () => {
     );
   };
 
+  const handleNavigateLogin = () => {
+    router.push("/(auth)/login");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlashList
+        ref={listRef}
+        testID="onboarding-flash-list"
         data={DATA}
         renderItem={renderItem}
         horizontal
@@ -95,17 +110,15 @@ const OnboardingScreen = () => {
       </View>
       <View style={styles.buttonContainer}>
         {currentIndex === DATA.length - 1 ? (
-          <TouchableOpacity
-            onPress={() => router.push("/(auth)/login")}
-            style={styles.button}>
+          <TouchableOpacity onPress={handleNavigateLogin} style={styles.button}>
             <Text style={styles.buttonText}>GET STARTED</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => {}} style={styles.button}>
+          <TouchableOpacity onPress={handleNextItem} style={styles.button}>
             <Text style={styles.buttonText}>CONTINUE</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleNavigateLogin}>
           <Text style={styles.skipText}>SKIP THE TOUR</Text>
         </TouchableOpacity>
       </View>

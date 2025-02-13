@@ -3,14 +3,14 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import "react-native-reanimated";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
+import "react-native-reanimated";
 
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -50,7 +50,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}>
         <RootLayoutNav />
       </SafeAreaView>
     </SafeAreaProvider>
