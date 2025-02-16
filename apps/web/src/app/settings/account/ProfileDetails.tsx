@@ -3,14 +3,19 @@
 import React from "react";
 import { Typography, Button } from "@mui/material";
 
-export default function ProfileDetails() {
+interface ProfileDetailsProps {
+  name: string;
+  email: string;
+}
+
+export default function ProfileDetails({ name, email }: ProfileDetailsProps) {
   return (
     <>
       <Typography variant="h6" sx={{ marginTop: 1 }}>
-        John Doe
+        {name}
       </Typography>
       <Typography variant="body2" color="textSecondary">
-        Emailaddress@gmail.com
+        {email}
       </Typography>
       <Button
         variant="outlined"
