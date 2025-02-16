@@ -50,7 +50,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}>
         <RootLayoutNav />
       </SafeAreaView>
     </SafeAreaProvider>
