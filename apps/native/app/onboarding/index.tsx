@@ -1,9 +1,11 @@
 import Cloud from "@/assets/svg/cloud.svg";
 import Leafs from "@/assets/svg/leafs.svg";
 import Wallet from "@/assets/svg/wallet.svg";
+import CustomButton from "@/components/ui/common/CustomButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlashList } from "@shopify/flash-list";
-import { router } from "expo-router";
-import React, { useRef, useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   Dimensions,
   NativeScrollEvent,
@@ -47,20 +49,35 @@ const DATA: OnboardingItem[] = [
 
 const OnboardingScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const listRef = useRef<FlashList<OnboardingItem>>(null);
+
+  const router = useRouter();
+  let flashListRef = React.useRef<FlashList<OnboardingItem>>(null);
 
   const handleNextItem = () => {
     if (currentIndex !== DATA.length - 1) {
-      listRef.current?.scrollToIndex({
+      flashListRef.current?.scrollToIndex({
         index: currentIndex + 1,
         animated: true,
       });
     }
   };
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-    setCurrentIndex(slideIndex);
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+      setCurrentIndex(slideIndex);
+    },
+    [],
+  );
+
+  const handleSignUp = async () => {
+    await AsyncStorage.setItem("hasLaunched", "true");
+    router.push("/(auth)/register");
+  };
+
+  const handleLogIn = async () => {
+    await AsyncStorage.setItem("hasLaunched", "true");
+    router.push("/(auth)/login");
   };
 
   const renderItem = ({ item }: { item: OnboardingItem }) => {
@@ -81,20 +98,25 @@ const OnboardingScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlashList
-        ref={listRef}
+        ref={flashListRef}
         testID="onboarding-flash-list"
         data={DATA}
         renderItem={renderItem}
         horizontal
         pagingEnabled
-        onScroll={handleScroll}
+        onMomentumScrollEnd={handleScroll}
         showsHorizontalScrollIndicator={false}
         estimatedItemSize={height}
+        keyExtractor={item => item.id}
       />
+
       <View style={styles.pagination}>
         {DATA.map((_, index) => (
-          <View
+          <TouchableOpacity
             key={index}
+            onPress={() =>
+              flashListRef.current?.scrollToIndex({ index, animated: true })
+            }
             style={[
               styles.circleWrapper,
               currentIndex === index ? styles.activeCircle : null,
@@ -105,22 +127,18 @@ const OnboardingScreen = () => {
                 currentIndex === index ? styles.activeDot : styles.inactiveDot,
               ]}
             />
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
+
       <View style={styles.buttonContainer}>
-        {currentIndex === DATA.length - 1 ? (
-          <TouchableOpacity onPress={handleNavigateLogin} style={styles.button}>
-            <Text style={styles.buttonText}>GET STARTED</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={handleNextItem} style={styles.button}>
-            <Text style={styles.buttonText}>CONTINUE</Text>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity onPress={handleNavigateLogin}>
-          <Text style={styles.skipText}>SKIP THE TOUR</Text>
-        </TouchableOpacity>
+        <CustomButton title="SIGN UP" onPress={handleSignUp} />
+
+        <CustomButton
+          title="LOG IN"
+          variant="secondary"
+          onPress={handleLogIn}
+        />
       </View>
     </SafeAreaView>
   );
@@ -163,11 +181,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 20,
     height: 20,
-    marginHorizontal: 5,
+    marginHorizontal: 1,
   },
   activeCircle: {
-    borderWidth: 2,
-    borderColor: "#4CAF50",
     borderRadius: 10,
   },
   dot: {
@@ -176,16 +192,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   activeDot: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#FF7A00",
   },
   inactiveDot: {
-    backgroundColor: "transparent",
+    backgroundColor: "#BDBDBD",
     borderWidth: 2,
     borderColor: "#ccc",
   },
   buttonContainer: {
     alignItems: "center",
     paddingHorizontal: 20,
+    gap: 8,
     marginBottom: 20,
   },
   button: {
