@@ -41,6 +41,18 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           error={false}
         />
+
+        <View style={styles.buttonContainer}>
+          <CustomSubmitButton
+            title="log in"
+            onPress={handleLogIn}
+            disabled={isLoginEnabled}
+            style={
+              (isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
+              [{ textTransform: "uppercase" }])
+            }
+          />
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
