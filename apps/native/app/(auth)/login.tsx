@@ -24,6 +24,23 @@ const LoginScreen = () => {
       style={styles.keyboardContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <CustomTitle title="Log In" />
+        <CustomTextInput
+          label="Email"
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          error={false}
+        />
+
+        <CustomTextInput
+          label="Password"
+          placeholder="Enter your password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          error={false}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
