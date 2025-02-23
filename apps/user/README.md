@@ -50,22 +50,21 @@ http://localhost:8080/swagger
 
 ## How to access wallet api (Draft)
 
-### Set up Keycloak 
+### Set up Keycloak
 
-Attach permission by adding new role to this user api client, so the wallet api can auth with this user api client by verifying the role, say: `wallet-operator-microservice`
+Attach permission by adding new role to this user api client, so the wallet api
+can auth with this user api client by verifying the role, say:
+`wallet-operator-microservice`
 
-1. Create a new realm role
-  1.1. Go to `Realm Roles` -> `Create Role`
-  1.2. Name it `wallet-operator-microservice`
-  1.3. Save
+1. Create a new realm role 1.1. Go to `Realm Roles` -> `Create Role` 1.2. Name
+   it `wallet-operator-microservice` 1.3. Save
 
-2. Attach the role to the user api client
-  2.1. Go to `Clients` -> `wallet-app-user-dev-svc` -> `Client scopes`
-  2.2. Find the item: `xxx-dedicated`, here in this case, it is `wallet-app-user-dev-svc-dedicated`
-  2.3. Click `Add mapper` -> `by configuration` -> `Hardcoded role`
-  2.4. Input `operator`, choose the role created in step 1, `wallet-operator-microservice`
-  2.5. Save
-
+2. Attach the role to the user api client 2.1. Go to `Clients` ->
+   `wallet-app-user-dev-svc` -> `Client scopes` 2.2. Find the item:
+   `xxx-dedicated`, here in this case, it is `wallet-app-user-dev-svc-dedicated`
+   2.3. Click `Add mapper` -> `by configuration` -> `Hardcoded role` 2.4. Input
+   `operator`, choose the role created in step 1, `wallet-operator-microservice`
+   2.5. Save
 
 ### Get access token
 
@@ -132,9 +131,11 @@ will get a response like:
 }
 ```
 
-In the realm role, `wallet-operator-microservice` is attached to the user api client, `wallet-app-user-dev-svc`, so the access token can be used to access the wallet api.
+In the realm role, `wallet-operator-microservice` is attached to the user api
+client, `wallet-app-user-dev-svc`, so the access token can be used to access the
+wallet api.
 
 ### Access wallet api
 
-The wallet api will verify the access token by checking the role `wallet-operator-microservice` in the access token.
-
+The wallet api will verify the access token by checking the role
+`wallet-operator-microservice` in the access token.
