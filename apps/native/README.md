@@ -2,13 +2,15 @@
 
 ==========================
 
-The Treetracker Wallet Mobile App is a user-friendly interface for managing digital tokens.
+The Treetracker Wallet Mobile App is a user-friendly interface for managing
+digital tokens.
 
 ### Overview
 
 ---
 
-This app is built using Expo and React Native, and provides a secure and scalable way to manage digital tokens.
+This app is built using Expo and React Native, and provides a secure and
+scalable way to manage digital tokens.
 
 ### Features
 
@@ -37,7 +39,8 @@ cd apps/native
 yarn start
 ```
 
-This will start the app in development mode, and you can access it by scanning the QR code with your Expo Go app.
+This will start the app in development mode, and you can access it by scanning
+the QR code with your Expo Go app.
 
 ### Testing
 
@@ -47,7 +50,8 @@ This will start the app in development mode, and you can access it by scanning t
 
 We use Maestro for testing of our app:
 
-- **End-to-End Testing (E2E)**: Testing the entire application flow to ensure it works as expected, from start to finish.
+- **End-to-End Testing (E2E)**: Testing the entire application flow to ensure it
+  works as expected, from start to finish.
 
 ```bash
 yarn maestro test
