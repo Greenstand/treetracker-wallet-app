@@ -1,28 +1,27 @@
-import { useRouter } from "expo-router";
-import React, { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-  TouchableOpacity,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-} from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import Cloud from "@/assets/svg/cloud.svg";
 import Leafs from "@/assets/svg/leafs.svg";
 import Wallet from "@/assets/svg/wallet.svg";
-import Cloud from "@/assets/svg/cloud.svg";
-import { SvgProps } from "react-native-svg";
 import CustomButton from "@/components/ui/common/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FlashList } from "@shopify/flash-list";
+import { useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import {
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
 type OnboardingItem = {
   id: string;
-  icon: React.ComponentType<SvgProps>;
+  icon: React.ReactNode;
   title: string;
   description: string;
 };
@@ -54,6 +53,15 @@ const OnboardingScreen = () => {
   const router = useRouter();
   let flashListRef = React.useRef<FlashList<OnboardingItem>>(null);
 
+  const handleNextItem = () => {
+    if (currentIndex !== DATA.length - 1) {
+      flashListRef.current?.scrollToIndex({
+        index: currentIndex + 1,
+        animated: true,
+      });
+    }
+  };
+
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -83,10 +91,15 @@ const OnboardingScreen = () => {
     );
   };
 
+  const handleNavigateLogin = () => {
+    router.push("/(auth)/login");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlashList
         ref={flashListRef}
+        testID="onboarding-flash-list"
         data={DATA}
         renderItem={renderItem}
         horizontal
