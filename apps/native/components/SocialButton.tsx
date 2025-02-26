@@ -18,7 +18,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   return (
     <TouchableOpacity style={[styles.socialButton, style]} onPress={onPress}>
       <AntDesign name={iconName} size={20} color="#6B8E23" />
-      <Text style={styles.socialButtonText}>{title}</Text>
+      <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -34,11 +34,12 @@ const styles = StyleSheet.create({
     borderColor: "#6B8E23",
     marginBottom: 12,
   },
-  socialButtonText: {
+  buttonText: {
     color: "#6B8E23",
     marginLeft: 10,
     fontSize: 14,
     fontWeight: "600",
+    textTransform: "uppercase",
   },
 });
 

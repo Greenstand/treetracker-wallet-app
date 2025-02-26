@@ -59,37 +59,39 @@ const LoginScreen = () => {
           />
         </View>
 
-        <View style={styles.forgotPasswordContainer}>
-          <Text style={styles.forgotPasswordText}>Forgot password? </Text>
-          <TouchableOpacity onPress={() => router.navigate("/(auth)/login")}>
-            <Text style={styles.resetText}>Reset</Text>
+        <View style={styles.forgotPasswordSection}>
+          <Text style={styles.forgotPasswordLabel}>Forgot password? </Text>
+          <TouchableOpacity>
+            <Text style={styles.resetLink}>Reset</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.orText}>or</Text>
+        <Text style={styles.dividerText}>or</Text>
+
+        {/* Add the SocialButton component here */}
 
         <SocialButton
           iconName="google"
-          title="LOG IN WITH GMAIL"
+          title="Log in with Gmail"
           onPress={() => console.log("Gmail Login")}
         />
 
         <SocialButton
           iconName="facebook-square"
-          title="LOG IN WITH FACEBOOK"
+          title="Log in with Facebook"
           onPress={() => console.log("Facebook Login")}
         />
 
         <SocialButton
           iconName="github"
-          title="LOG IN WITH GITHUB"
+          title="Log in with GitHub"
           onPress={() => console.log("GitHub Login")}
         />
 
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Don't have an account? </Text>
-          <TouchableOpacity>
-            <Text style={styles.signupLink}>Sign up</Text>
+        <View style={styles.signupSection}>
+          <Text style={styles.signupPrompt}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
+            <Text style={styles.signupActionLink}>Sign up</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -98,9 +100,6 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-  },
   keyboardContainer: {
     flex: 1,
   },
@@ -109,7 +108,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
   },
-
   buttonContainer: {
     paddingVertical: 13,
     alignItems: "center",
@@ -127,37 +125,31 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-  },
-  orText: {
+  dividerText: {
     textAlign: "center",
     color: "#666",
-    marginVertical: 20,
+    marginVertical: 15,
   },
-
-  signupContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  signupText: {
-    color: "#333",
-  },
-  signupLink: {
-    color: "#6B8E23",
-  },
-  forgotPasswordContainer: {
+  forgotPasswordSection: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 20,
   },
-  forgotPasswordText: {
+  forgotPasswordLabel: {
     color: "#333",
   },
-  resetText: {
+  resetLink: {
+    color: "#6B8E23",
+  },
+  signupSection: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  signupPrompt: {
+    color: "#333",
+  },
+  signupActionLink: {
     color: "#6B8E23",
   },
 });
