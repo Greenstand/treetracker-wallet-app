@@ -1,41 +1,47 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import BalanceCard from "@/components/ui/BalanceCard";
+import { WIDTH } from "../../utils/dimensions";
 
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedStatusBar } from "@/components/ThemedStatusBar";
-import { ThemedSafeAreaView } from "@/components/ThemeSafeArea";
+const data = [
+  { value: "1000", label: "Tokens" },
+  { value: "2", label: "Wallets" },
+];
+
+const iconMapping = {
+  Tokens: <MaterialIcons name="toll" size={24} color="#2E7D32" />,
+  Wallets: (
+    <MaterialIcons name="account-balance-wallet" size={24} color="#1A237E" />
+  ),
+};
 
 export default function Home() {
   return (
-    <ThemedSafeAreaView style={styles.safeArea}>
-      <ThemedStatusBar />
-      <ThemedView style={[styles.container]}>
-        <Text style={[styles.commonText, styles.description]}>Home</Text>
-      </ThemedView>
-    </ThemedSafeAreaView>
+    <View style={styles.container}>
+      <View style={[styles.row, { gap: WIDTH * 0.05 }]}>
+        {data.map((item, index) => (
+          <BalanceCard
+            key={index}
+            value={item.value}
+            icon={iconMapping[item.label]}
+            label={item.label}
+          />
+        ))}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
   container: {
     flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 32,
+    paddingHorizontal: 20,
     backgroundColor: "#f5f5f5",
   },
-  content: {
-    marginTop: 32,
-  },
-  commonText: {
-    textAlign: "center",
-    color: "#222629DE",
-  },
-  description: {
-    fontSize: 20,
+  row: {
+    flexDirection: "row",
+    justifyContent: "center",
+    flexWrap: "wrap",
   },
 });
