@@ -6,17 +6,28 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { router } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
 import CustomTitle from "@/components/ui/common/CustomTitle";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
+  const [isAuth, setAuth] = useState(false);
   const [password, setPassword] = useState("");
   const isLoginEnabled = email.length > 0 && password.length > 0;
   console.log(isLoginEnabled);
 
-  const handleLogIn = () => {};
+  const handleLogIn = () => {
+    setAuth(true);
+    if (isAuth) {
+      router.push("/(tabs)/home");
+
+      AsyncStorage.setItem("isAuth", `${isAuth}`);
+    }
+    console.log("login....");
+  };
 
   return (
     <KeyboardAvoidingView
@@ -47,10 +58,10 @@ const LoginScreen = () => {
             title="log in"
             onPress={handleLogIn}
             disabled={isLoginEnabled}
-            style={
-              (isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
-              [{ textTransform: "uppercase" }])
-            }
+            style={[
+              isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
+              { textTransform: "uppercase" },
+            ]}
           />
         </View>
       </ScrollView>
