@@ -9,9 +9,12 @@ export default function InitialRoute() {
   useEffect(() => {
     const verifyAppLaunchStatus = async () => {
       const hasCompletedOnboarding = await AsyncStorage.getItem("hasLaunched");
+      const isAuthenticated = await AsyncStorage.getItem("isAuth");
 
       if (hasCompletedOnboarding === null) {
         setShouldShowOnboarding(true);
+      } else if (isAuthenticated && hasCompletedOnboarding === "true") {
+        router.push("/(tabs)/home");
       } else {
         router.replace("/(auth)/login");
       }
