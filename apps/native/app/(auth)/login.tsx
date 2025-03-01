@@ -21,7 +21,9 @@ const LoginScreen = () => {
   console.log(isLoginEnabled);
   const router = useRouter();
 
-  const handleLogIn = () => {};
+  const handleLogIn = () => {
+    console.log("Logging in...");
+  };
 
   return (
     <KeyboardAvoidingView
