@@ -1,18 +1,17 @@
-## <!--
+<!--
 
-name: "Monorepo Contribution"
-about: "Template for contributions in a monorepo with apps and packages folders"
-title: "[Feature/Bug] - Title"
-labels: ["contribution"]
-assignees: "" # Leave blank if no specific assignee
+name: "Monorepo Contribution" about: "Template for contributions in a monorepo
+with apps and packages folders" title: "[Feature/Bug] - Title" labels:
+["contribution"] assignees: "" # Leave blank if no specific assignee
 
 ---
 
 -->
 
-### Description
+# Description
 
-Please provide a clear and concise description of the changes made, including the purpose and context.
+Please provide a clear and concise description of the changes made, including
+the purpose and context.
 
 **Fixes**: # (issue number)  
 or  
@@ -20,14 +19,16 @@ or
 
 ---
 
-### Changes Made
+## Changes Made
 
-- [ ] Changes in **`apps`** folder (specify the app and briefly describe the changes):
+- [ ] Changes in **`apps`** folder (specify the app and briefly describe the
+      changes):
 
   - [ ] `Web`
   - [ ] `Native`
 
-- [ ] Changes in **`packages`** folder (specify the package and briefly describe the changes):
+- [ ] Changes in **`packages`** folder (specify the package and briefly describe
+      the changes):
   - [ ] `Core`
 
 ---
@@ -36,12 +37,13 @@ or
 
 - [ ] 🐛 **Bug fix** (non-breaking change which fixes an issue)
 - [ ] ✨ **New feature** (non-breaking change which adds functionality)
-- [x] 💥 **Breaking change** (fix or feature that would cause existing functionality to not work as expected)
+- [ ] 💥 **Breaking change** (fix or feature that would cause existing
+      functionality to not work as expected)
 - [ ] 📝 **Documentation update** (changes)
 
 ---
 
-## Screenshots
+#### Screenshots
 
 |       Before        |       After        |
 | :-----------------: | :----------------: |
