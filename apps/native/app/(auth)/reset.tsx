@@ -6,36 +6,36 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { router, Link } from "expo-router";
+import { Link } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
-import CustomTitle from "@/components/ui/common/CustomTitle";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
+import { Feather } from "@expo/vector-icons";
 
-const LoginScreen = () => {
+const ResetPasswordScreen = () => {
   const [email, setEmail] = useState("");
-  const [isAuth, setAuth] = useState(false);
-  const [password, setPassword] = useState("");
-  const isLoginEnabled = email.length > 0 && password.length > 0;
-  console.log(isLoginEnabled);
+  const isLoginEnabled = email.length > 0;
 
-  const handleLogIn = () => {
-    setAuth(true);
-    if (isAuth) {
-      router.push("/(tabs)/home");
-
-      AsyncStorage.setItem("isAuth", `${isAuth}`);
-    }
-    console.log("login....");
-  };
+  const handleReset = () => {};
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.keyboardContainer}>
+      <View style={styles.iconContainer}>
+        <Link replace href="/login">
+          <Feather name="arrow-left" size={28} color={"#2226298F"} />
+        </Link>
+      </View>
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <CustomTitle title="Log In" />
+        <ThemedText type="title" style={[styles.titleText]} darkColor="dark">
+          Forgot your password?
+        </ThemedText>
+        <ThemedText type="default" style={[styles.commonText]} darkColor="dark">
+          Confirm your email and we'll send you a link to create a brand new
+          password.
+        </ThemedText>
         <CustomTextInput
           label="Email"
           placeholder="Enter your email"
@@ -45,39 +45,16 @@ const LoginScreen = () => {
           error={false}
         />
 
-        <CustomTextInput
-          label="Password"
-          placeholder="Enter your password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          error={false}
-        />
-
         <View style={styles.buttonContainer}>
           <CustomSubmitButton
-            title="log in"
-            onPress={handleLogIn}
+            title="SEND THE LINK"
+            onPress={handleReset}
             disabled={isLoginEnabled}
-            style={[
-              isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
-              { textTransform: "uppercase" },
-            ]}
+            style={
+              (isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
+              [{ textTransform: "uppercase" }])
+            }
           />
-        </View>
-
-        <View>
-          <ThemedText type="title" darkColor="dark" style={[styles.commonText]}>
-            Forgot password?{" "}
-            <Link replace href="/reset">
-              <ThemedText
-                type="link"
-                darkColor="green"
-                style={[styles.commonText, styles.resetText]}>
-                Reset
-              </ThemedText>
-            </Link>
-          </ThemedText>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -87,6 +64,10 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
+  },
+  iconContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   keyboardContainer: {
     flex: 1,
@@ -119,15 +100,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  commonText: {
-    textAlign: "center",
+  titleText: {
     color: "#222629DE",
-    fontSize: 19,
-  },
-  resetText: {
-    color: "#61892F",
+    fontSize: 32,
     fontWeight: "bold",
+    marginVertical: 16,
+  },
+  commonText: {
+    color: "#222629DE",
+    fontSize: 18,
   },
 });
 
-export default LoginScreen;
+export default ResetPasswordScreen;
