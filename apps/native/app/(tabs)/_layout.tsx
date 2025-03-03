@@ -6,7 +6,6 @@ export default function Layout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: "#fff",
