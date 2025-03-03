@@ -3,7 +3,6 @@ const EventEmitter = require("events");
 
 // subscribes a client to a channel
 async function subscribe({ pgClient, clientID, channel }) {
-
   const eventEmitter = new EventEmitter();
 
   // subscribes a client to a channel
@@ -19,11 +18,9 @@ async function subscribe({ pgClient, clientID, channel }) {
     const dateStr = date.toISOString();
 
     // sends message receipt confirmation to DB
-    ack({ pgClient, id: newRow.id, dateStr, clientID }).then(
-      response => {
-        eventEmitter.emit("message", response[0]);
-      },
-    );
+    ack({ pgClient, id: newRow.id, dateStr, clientID }).then(response => {
+      eventEmitter.emit("message", response[0]);
+    });
   });
 
   return eventEmitter;
