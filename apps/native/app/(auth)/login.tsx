@@ -8,9 +8,12 @@ import {
   Text,
   ScrollView,
 } from "react-native";
+import { router, Link } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
 import CustomTitle from "@/components/ui/common/CustomTitle";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ThemedText } from "@/components/ThemedText";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +23,15 @@ const LoginScreen = () => {
   console.log(isLoginEnabled);
   const router = useRouter();
 
-  const handleLogIn = () => {};
+  const handleLogIn = () => {
+    setAuth(true);
+    if (isAuth) {
+      router.push("/(tabs)/home");
+
+      AsyncStorage.setItem("isAuth", `${isAuth}`);
+    }
+    console.log("login....");
+  };
 
   return (
     <KeyboardAvoidingView
@@ -56,6 +67,20 @@ const LoginScreen = () => {
               { textTransform: "uppercase" },
             ]}
           />
+        </View>
+
+        <View>
+          <ThemedText type="title" darkColor="dark" style={[styles.commonText]}>
+            Forgot password?{" "}
+            <Link replace href="/reset">
+              <ThemedText
+                type="link"
+                darkColor="green"
+                style={[styles.commonText, styles.resetText]}>
+                Reset
+              </ThemedText>
+            </Link>
+          </ThemedText>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -114,6 +139,15 @@ const styles = StyleSheet.create({
   },
   signupActionLink: {
     color: "#6B8E23",
+  },
+  commonText: {
+    textAlign: "center",
+    color: "#222629DE",
+    fontSize: 19,
+  },
+  resetText: {
+    color: "#61892F",
+    fontWeight: "bold",
   },
   commonText: {
     textAlign: "center",
