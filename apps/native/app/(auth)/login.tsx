@@ -8,22 +8,19 @@ import {
   Text,
   ScrollView,
 } from "react-native";
-import SocialButton from "@/components/SocialButton";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
 import CustomTitle from "@/components/ui/common/CustomTitle";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
-import { useRouter } from "expo-router";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
+  const [isAuth, setAuth] = useState(false);
   const [password, setPassword] = useState("");
   const isLoginEnabled = email.length > 0 && password.length > 0;
   console.log(isLoginEnabled);
   const router = useRouter();
 
-  const handleLogIn = () => {
-    console.log("Logging in...");
-  };
+  const handleLogIn = () => {};
 
   return (
     <KeyboardAvoidingView
@@ -54,47 +51,11 @@ const LoginScreen = () => {
             title="log in"
             onPress={handleLogIn}
             disabled={isLoginEnabled}
-            style={
-              (isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
-              [{ textTransform: "uppercase" }])
-            }
+            style={[
+              isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
+              { textTransform: "uppercase" },
+            ]}
           />
-        </View>
-
-        <View style={styles.forgotPasswordSection}>
-          <Text style={styles.forgotPasswordLabel}>Forgot password? </Text>
-          <TouchableOpacity>
-            <Text style={styles.resetLink}>Reset</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.dividerText}>or</Text>
-
-        {/* Add the SocialButton component here */}
-
-        <SocialButton
-          iconName="google"
-          title="Log in with Gmail"
-          onPress={() => console.log("Gmail Login")}
-        />
-
-        <SocialButton
-          iconName="facebook-square"
-          title="Log in with Facebook"
-          onPress={() => console.log("Facebook Login")}
-        />
-
-        <SocialButton
-          iconName="github"
-          title="Log in with GitHub"
-          onPress={() => console.log("GitHub Login")}
-        />
-
-        <View style={styles.signupSection}>
-          <Text style={styles.signupPrompt}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
-            <Text style={styles.signupActionLink}>Sign up</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -153,6 +114,15 @@ const styles = StyleSheet.create({
   },
   signupActionLink: {
     color: "#6B8E23",
+  },
+  commonText: {
+    textAlign: "center",
+    color: "#222629DE",
+    fontSize: 19,
+  },
+  resetText: {
+    color: "#61892F",
+    fontWeight: "bold",
   },
 });
 
