@@ -13,16 +13,14 @@ interface CustomSubmitButtonProps {
 const CustomSubmitButton: React.FC<CustomSubmitButtonProps> = ({
   onPress,
   title,
-  loading = false,
   disabled = false,
   style = {},
 }) => {
-  const isDisabled = disabled || loading;
-
+  const isDisabled = disabled;
   return (
     <Pressable
-      onPress={isDisabled ? undefined : onPress}
-      disabled={isDisabled}
+      onPress={!isDisabled ? null : onPress}
+      disabled={!isDisabled}
       style={[styles.button, !isDisabled && styles.buttonDisabled, style]}>
       <Text
         style={[styles.buttonText, !isDisabled && styles.buttonTextDisabled]}>

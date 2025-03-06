@@ -1,27 +1,28 @@
-import Cloud from "@/assets/svg/cloud.svg";
-import Leafs from "@/assets/svg/leafs.svg";
-import Wallet from "@/assets/svg/wallet.svg";
-import CustomButton from "@/components/ui/common/CustomButton";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
+  View,
+  Text,
+  StyleSheet,
   Dimensions,
+  SafeAreaView,
+  TouchableOpacity,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import Leafs from "@/assets/svg/leafs.svg";
+import Wallet from "@/assets/svg/wallet.svg";
+import Cloud from "@/assets/svg/cloud.svg";
+import { SvgProps } from "react-native-svg";
+import CustomButton from "@/components/ui/common/CustomButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
 type OnboardingItem = {
   id: string;
-  icon: React.ReactNode;
+  icon: React.ComponentType<SvgProps>;
   title: string;
   description: string;
 };
@@ -61,7 +62,7 @@ const OnboardingScreen = () => {
       });
     }
   };
-
+  
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
