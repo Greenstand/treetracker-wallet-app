@@ -2,15 +2,25 @@ import { HttpService } from "@nestjs/axios";
 import { HttpException, Injectable, Logger } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 
-type TokenResponse = {
-  data: { access_token: string };
+type KeycloakResponse = {
+  data: { access_token: string; expires_in: number };
 };
 
 @Injectable()
-export class CommonService {
+export class AuthService {
   constructor(private readonly httpService: HttpService) {}
+  private bearerToken: string | null = null;
+  private tokenExpiresAt: number | null = null;
 
-  async getToken() {
+  public async getToken(): Promise<string> {
+    // If no token or token is expired, refresh it
+    if (!this.bearerToken || this.isTokenExpired()) {
+      await this.fetchTokenFromKeycloak();
+    }
+    return this.bearerToken;
+  }
+
+  private async fetchTokenFromKeycloak() {
     const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
     const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
     const tokenApi = `${keycloakBaseUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`;
@@ -26,9 +36,12 @@ export class CommonService {
     };
 
     try {
-      const response: TokenResponse = await firstValueFrom(
+      const response: KeycloakResponse = await firstValueFrom(
         this.httpService.post(tokenApi, body, { headers }),
       );
+
+      this.bearerToken = response?.data?.access_token;
+      this.tokenExpiresAt = Date.now() * response?.data?.expires_in * 1000;
 
       return response?.data?.access_token;
     } catch (e) {
@@ -41,5 +54,12 @@ export class CommonService {
         e.response.status,
       );
     }
+  }
+
+  private isTokenExpired(): boolean {
+    if (!this.tokenExpiresAt) {
+      return true;
+    }
+    return Date.now() >= this.tokenExpiresAt;
   }
 }

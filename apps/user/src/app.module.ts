@@ -7,6 +7,8 @@ import { HttpModule } from "@nestjs/axios";
 import { ConfigModule } from "@nestjs/config";
 import { QueueListenerService } from "./queue-listener/queue-listener.service";
 import { QueueModule } from "./queue-listener/queue-listener.module";
+import { AuthModule } from "./auth/auth.module";
+import { AuthService } from "./auth/auth.service";
 
 dotenv.config();
 
@@ -17,8 +19,9 @@ const ENV = process.env.NODE_ENV;
     HttpModule,
     QueueModule,
     ConfigModule.forRoot({ envFilePath: ENV === "dev" ? ".dev.env" : ".env" }),
+    AuthModule,
   ],
   controllers: [UserController],
-  providers: [UserService, QueueListenerService],
+  providers: [UserService, AuthService],
 })
 export class AppModule {}
