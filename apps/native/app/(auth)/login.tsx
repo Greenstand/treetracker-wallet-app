@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   commonText: {
     textAlign: "center",
     color: "#222629DE",
-    fontSize: 19,
+    fontSize: 16,
   },
   resetText: {
     color: "#61892F",
