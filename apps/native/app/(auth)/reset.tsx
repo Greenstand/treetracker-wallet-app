@@ -6,7 +6,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { Link } from "expo-router";
+import { router, Link } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
 import { ThemedText } from "@/components/ThemedText";
@@ -28,7 +28,9 @@ const ResetPasswordScreen = () => {
     setIsValidEmail(validateEmail(text));
   };
 
-  const handleReset = () => {};
+  const handleReset = () => {
+    router.push("/(auth)/checkEmail");
+  };
 
   return (
     <KeyboardAvoidingView
