@@ -67,12 +67,17 @@ const LoginScreen = () => {
         </View>
 
         <View>
-          <ThemedText type="title" darkColor="dark" style={[styles.commonText]}>
+          <ThemedText
+            type="title"
+            lightColor="black"
+            darkColor="white"
+            style={[styles.commonText]}>
             Forgot password?{" "}
             <Link replace href="/reset">
               <ThemedText
                 type="link"
-                darkColor="green"
+                lightColor="black"
+                darkColor="white"
                 style={[styles.commonText, styles.resetText]}>
                 Reset
               </ThemedText>

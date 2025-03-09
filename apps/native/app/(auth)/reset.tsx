@@ -14,7 +14,19 @@ import { Feather } from "@expo/vector-icons";
 
 const ResetPasswordScreen = () => {
   const [email, setEmail] = useState("");
-  const isLoginEnabled = email.length > 0;
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
+  const isResetButtonEnabled = email.length > 0;
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    setIsValidEmail(validateEmail(text));
+  };
 
   const handleReset = () => {};
 
@@ -29,10 +41,18 @@ const ResetPasswordScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <ThemedText type="title" style={[styles.titleText]} darkColor="dark">
+        <ThemedText
+          type="title"
+          style={[styles.titleText]}
+          lightColor="black"
+          darkColor="white">
           Forgot your password?
         </ThemedText>
-        <ThemedText type="default" style={[styles.commonText]} darkColor="dark">
+        <ThemedText
+          type="default"
+          style={[styles.commonText]}
+          lightColor="black"
+          darkColor="white">
           Confirm your email and we'll send you a link to create a brand new
           password.
         </ThemedText>
@@ -40,18 +60,21 @@ const ResetPasswordScreen = () => {
           label="Email"
           placeholder="Enter your email"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={handleEmailChange}
           keyboardType="email-address"
-          error={false}
+          error={!isValidEmail}
+          helperText={!isValidEmail ? "Please enter a valid email address" : ""}
         />
 
         <View style={styles.buttonContainer}>
           <CustomSubmitButton
             title="SEND THE LINK"
             onPress={handleReset}
-            disabled={isLoginEnabled}
+            disabled={isResetButtonEnabled && isValidEmail}
             style={
-              (isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
+              (isResetButtonEnabled
+                ? styles.buttonActive
+                : styles.buttonDisabled,
               [{ textTransform: "uppercase" }])
             }
           />
