@@ -3,6 +3,7 @@ import React from "react";
 import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
+import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -20,6 +21,9 @@ export default function BottomNavigationBar() {
         router.push("/send");
         break;
       case 2:
+        router.push("/notifications");
+        break;
+      case 3:
         router.push("/settings");
         break;
       default:
@@ -44,7 +48,7 @@ export default function BottomNavigationBar() {
         showLabels>
         <BottomNavigationAction label="Home" icon={<HomeIcon />} />
         <BottomNavigationAction
-          label="Send"
+          label=""
           icon={
             <Image
               src="/assets/images/send.svg"
@@ -62,6 +66,10 @@ export default function BottomNavigationBar() {
             top: "-10px", // Adjust to push the button partially out
             zIndex: 1, // Ensure it appears above other elements
           }}
+        />
+        <BottomNavigationAction
+          label="Notifications"
+          icon={<NotificationsIcon />}
         />
         <BottomNavigationAction label="Settings" icon={<SettingsIcon />} />
       </BottomNavigation>
