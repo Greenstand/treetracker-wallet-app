@@ -12,7 +12,7 @@ import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { Feather } from "@expo/vector-icons";
 
-const ResetPasswordScreen = () => {
+const ConfirmEmailScreen = () => {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
 
@@ -137,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResetPasswordScreen;
+export default ConfirmEmailScreen;
