@@ -6,11 +6,12 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { router } from "expo-router";
+import { router, Link } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
 import CustomTitle from "@/components/ui/common/CustomTitle";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ThemedText } from "@/components/ThemedText";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -64,6 +65,25 @@ const LoginScreen = () => {
             ]}
           />
         </View>
+
+        <View>
+          <ThemedText
+            type="title"
+            lightColor="black"
+            darkColor="white"
+            style={[styles.commonText]}>
+            Forgot password?{" "}
+            <Link href="/forgotPassword">
+              <ThemedText
+                type="link"
+                lightColor="black"
+                darkColor="white"
+                style={[styles.commonText, styles.resetText]}>
+                Reset
+              </ThemedText>
+            </Link>
+          </ThemedText>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -103,6 +123,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
+  },
+  commonText: {
+    textAlign: "center",
+    color: "#222629DE",
+    fontSize: 16,
+  },
+  resetText: {
+    color: "#61892F",
+    fontWeight: "bold",
   },
 });
 
