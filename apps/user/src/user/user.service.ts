@@ -3,52 +3,23 @@ import { RegisterUserDto } from "@dtos/register-user.dto";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { HttpStatusCode } from "axios";
+import { AuthService } from "../auth/auth.service";
 
 @Injectable()
 export class UserService {
   // private readonly logger = new Logger(UserService.name);
 
-  constructor(private readonly httpService: HttpService) {}
-
-  public async getToken() {
-    const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
-    const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
-    const tokenApi = `${keycloakBaseUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`;
-
-    const body = new URLSearchParams({
-      client_id: process.env.PRIVATE_KEYCLOAK_CLIENT_ID,
-      client_secret: process.env.PRIVATE_KEYCLOAK_CLIENT_SECRET,
-      grant_type: "client_credentials",
-    });
-
-    const headers = {
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
-
-    try {
-      const response = await firstValueFrom(
-        this.httpService.post(tokenApi, body, { headers }),
-      );
-
-      return response?.data?.access_token;
-    } catch (e) {
-      Logger.error(
-        `logger: keycloak service account auth returned with ${e.response.status}, ${e.response.data.error_description}, `,
-      );
-
-      throw new HttpException(
-        `Service account failed to authenticate`,
-        e.response.status,
-      );
-    }
-  }
+  constructor(
+    private readonly httpService: HttpService,
+    private authService: AuthService,
+  ) {}
 
   public async createUser(userData: RegisterUserDto) {
     const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
     const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
     try {
       // Get the access token
-      const tokenData = await this.getToken();
+      const tokenData = await this.authService.getToken();
 
       // API for creating the user
       const createUserApiUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users`;
