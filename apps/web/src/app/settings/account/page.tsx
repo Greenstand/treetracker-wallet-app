@@ -12,7 +12,6 @@ import ProfileDetails from "./ProfileDetails";
 export default function Account() {
   const router = useRouter();
 
-  // Mock user data, to be replaced with actual user data later
   const user = {
     name: "John Doe",
     email: "Emailaddress@gmail.com",

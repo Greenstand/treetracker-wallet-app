@@ -9,7 +9,6 @@ export function RecentActivity({ activityData }: { activityData: any[] }) {
     <Box sx={{ mt: 4 }}>
       <Box display="flex" justifyContent="space-between">
         <Typography variant="h6">Recent Activity</Typography>
-        {/* Make view all align with activity title */}
         <Typography
           variant="body2"
           color="primary"

@@ -10,9 +10,9 @@ interface ProfileAvatarProps {
 }
 
 const getInitials = (name: string) => {
-  const parts = name.trim().split(/\s+/); // Split by whitespace
-  if (parts.length === 1) return parts[0][0].toUpperCase(); // Single name case
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase(); // First + Last initials
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
 
 export default function ProfileAvatar({

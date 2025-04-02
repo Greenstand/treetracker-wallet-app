@@ -28,28 +28,24 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); // State for the state of the button
-  const [emailError, setEmailError] = useState(""); // E-mail error state
-  const [passwordError, setPasswordError] = useState(""); // Password error state
+  const [showPassword, setShowPassword] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  // Email format validation
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Password validation (at least 8 characters)
   const validatePassword = (password: string) => {
-    return password.length >= 8; // At least 8 characters
+    return password.length >= 8;
   };
 
-  // Show/hide password operation
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  // Function to handle form changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -57,35 +53,28 @@ export default function SignUp() {
     });
   };
 
-  // The process of submitting the form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Password verification
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-    // Sending to backend will come here (API integration)
     console.log("Form Data:", formData);
   };
 
-  // Validate email and password on each form data change
   useEffect(() => {
-    // Email validation
     if (formData.email && !validateEmail(formData.email)) {
       setEmailError("Error: Email is incorrect");
     } else {
       setEmailError("");
     }
 
-    // Password validation
     if (formData.password && !validatePassword(formData.password)) {
       setPasswordError("Minimum length 8 characters");
     } else {
       setPasswordError("");
     }
 
-    // Button activation logic
     const isFormValid =
       formData.name !== "" &&
       emailError === "" &&
@@ -94,7 +83,7 @@ export default function SignUp() {
       formData.confirmPassword !== "" &&
       formData.password === formData.confirmPassword;
 
-    setIsButtonDisabled(!isFormValid); // If the form is not valid the button becomes disabled
+    setIsButtonDisabled(!isFormValid);
   }, [formData, emailError, passwordError]);
 
   return (

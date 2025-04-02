@@ -33,8 +33,7 @@ export function NotificationItem({
         transition: "background-color 0.3s ease",
         borderRadius: 1,
       }}
-      onClick={onSelect} // Clicking changes selection
-    >
+      onClick={onSelect}>
       <Stack direction="row" spacing={2} alignItems="flex-start">
         <Avatar sx={{ width: 35, height: 35, color: "white", marginTop: 0.5 }}>
           {getInitials(thirdParty)}

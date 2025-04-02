@@ -25,9 +25,8 @@ export default function Login() {
     password: "",
   });
 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); // State for the state of the button
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Function to handle form changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -35,19 +34,15 @@ export default function Login() {
     });
   };
 
-  // The process of submitting the form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Sending to backend will come here (API integration)
     console.log("Form Data:", formData);
   };
 
-  // Validate email and password on each form data change
   useEffect(() => {
-    // Button activation logic
-    const isFormValid: boolean = formData.password !== ""; // TypeScript is instructed that this is a boolean
+    const isFormValid: boolean = formData.password !== "";
 
-    setIsButtonDisabled(!isFormValid); // If the form is not valid the button becomes disabled
+    setIsButtonDisabled(!isFormValid);
   }, [formData]);
   return (
     <Wrapper>
