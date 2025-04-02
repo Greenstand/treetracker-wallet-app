@@ -8,10 +8,8 @@ export const createUser = async (userData: {
   password: string;
 }) => {
   try {
-    // Get the access token
     const tokenData = await getToken();
 
-    // API for creating the user
     const createUserApi = `${keycloakBaseUrl}/admin/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM}/users`;
 
     const response = await fetch(createUserApi, {
@@ -34,7 +32,6 @@ export const createUser = async (userData: {
       }),
     });
 
-    // Check if response is valid
     if (response.status === 201) {
       return { success: true, message: "User created successfully!" };
     } else if (response.status === 409) {
@@ -45,6 +42,6 @@ export const createUser = async (userData: {
     }
   } catch (error: unknown) {
     console.error("Error during user creation:", error);
-    throw error; // Re-throw the error to handle it in the route
+    throw error;
   }
 };

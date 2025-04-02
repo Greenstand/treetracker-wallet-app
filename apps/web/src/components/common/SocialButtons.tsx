@@ -4,27 +4,26 @@ import { ReactNode } from "react";
 import { Button } from "@mui/material";
 
 interface ButtonProps {
-  onClick?: () => void; // Optional click handler
-  text: string; // Button text
-  icon?: ReactNode; // Optional icon to be displayed
-  type?: "submit" | "button"; // Button type, defaults to "button"
+  onClick?: () => void;
+  text: string;
+  icon?: ReactNode;
+  type?: "submit" | "button";
 }
 
 const SocialButtons: React.FC<ButtonProps> = ({
   text,
   icon,
   onClick,
-  type = "button", // Default type is "button"
+  type = "button",
 }) => {
   return (
     <Button
       variant="outlined"
       fullWidth
       color="primary"
-      startIcon={icon ? icon : undefined} // Display icon if provided
+      startIcon={icon ? icon : undefined}
       onClick={onClick}
-      type={type} // Button type, defaults to "button"
-    >
+      type={type}>
       {text}
     </Button>
   );

@@ -1,4 +1,4 @@
-import { createUser } from "../../services/userService"; // Import the createUser function
+import { createUser } from "../../services/userService";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
