@@ -26,12 +26,9 @@ export default function BottomNavigationBar() {
         // router.push("/send");
         break;
       case 2:
-        router.push("/send");
-        break;
-      case 3:
         router.push("/notifications");
         break;
-      case 4:
+      case 3:
         router.push("/settings");
         break;
       default:
