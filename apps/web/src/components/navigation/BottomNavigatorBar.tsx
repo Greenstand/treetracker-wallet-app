@@ -4,6 +4,7 @@ import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ChooseAction from "./ChooseAction";
@@ -52,6 +53,10 @@ export default function BottomNavigationBar() {
           onChange={(event, newValue) => handleNavigation(newValue)}
           showLabels>
           <BottomNavigationAction label="Home" icon={<HomeIcon />} />
+          <BottomNavigationAction
+            label="Wallet"
+            icon={<AccountBalanceWalletIcon />}
+          />
           <BottomNavigationAction
             label=""
             icon={
