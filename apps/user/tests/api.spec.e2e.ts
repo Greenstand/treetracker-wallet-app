@@ -2,7 +2,7 @@
 
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import supertest from "supertest";
 import { AppModule } from "../src/app.module";
 
 describe("UserController (e2e)", () => {
@@ -32,7 +32,7 @@ describe("UserController (e2e)", () => {
       };
     }
     const newUser = generateUniqueUserData();
-    return request(app.getHttpServer())
+    return supertest(app.getHttpServer())
       .post("/register")
       .send(newUser)
       .expect(201)
@@ -51,7 +51,7 @@ describe("UserController (e2e)", () => {
       };
     }
     const newUser = generateUniqueUserData();
-    return request(app.getHttpServer())
+    return supertest(app.getHttpServer())
       .post("/register")
       .send(newUser)
       .expect(201)
