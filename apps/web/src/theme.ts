@@ -79,7 +79,7 @@ const theme = createTheme({
           textDecoration: "underline",
           variants: [
             {
-              props: props => props.variant === "sub",
+              props: props => props.variant === "body2",
               style: {
                 fontSize: "12px",
               },
@@ -93,7 +93,7 @@ const theme = createTheme({
         root: {
           variants: [
             {
-              props: props => props.variant === "sub",
+              props: props => props.variant === "body2",
               style: {
                 fontSize: "12px",
                 color: "#22262999",
