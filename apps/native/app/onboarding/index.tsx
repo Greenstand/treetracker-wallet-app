@@ -54,6 +54,15 @@ const OnboardingScreen = () => {
   const router = useRouter();
   let flashListRef = React.useRef<FlashList<OnboardingItem>>(null);
 
+  const handleNextItem = () => {
+    if (currentIndex !== DATA.length - 1) {
+      flashListRef.current?.scrollToIndex({
+        index: currentIndex + 1,
+        animated: true,
+      });
+    }
+  };
+  
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -83,10 +92,15 @@ const OnboardingScreen = () => {
     );
   };
 
+  const handleNavigateLogin = () => {
+    router.push("/(auth)/login");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlashList
         ref={flashListRef}
+        testID="onboarding-flash-list"
         data={DATA}
         renderItem={renderItem}
         horizontal
