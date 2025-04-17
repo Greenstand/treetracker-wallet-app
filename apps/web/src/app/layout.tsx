@@ -9,6 +9,7 @@ import { Container } from "@mui/material";
 import Header from "@/components/header/Header";
 import BottomNavigationBar from "@/components/navigation/BottomNavigatorBar";
 import { usePathname } from "next/navigation";
+import ProtectedRoute from "@/components/ProtectedRoutes";
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,14 +22,16 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body style={{ backgroundColor: theme.palette.background.default }}>
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {!isAuthPage && <Header />}
-            <Container maxWidth="sm">{props.children}</Container>
-            {!isAuthPage && <BottomNavigationBar />}
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+        <ProtectedRoute>
+          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              {!isAuthPage && <Header />}
+              <Container maxWidth="sm">{props.children}</Container>
+              {!isAuthPage && <BottomNavigationBar />}
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </ProtectedRoute>
       </body>
     </html>
   );
