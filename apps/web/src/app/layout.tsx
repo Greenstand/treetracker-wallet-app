@@ -16,7 +16,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
 
   const authRoutes = ["/login", "/signup"];
 
-  // Check if the current route is an authentication page
   const isAuthPage = authRoutes.includes(pathname ?? "");
 
   return (

@@ -1,6 +1,5 @@
 const keycloakBaseUrl = process.env.NEXT_PUBLIC_KEYCLOAK_BASE_URL || "";
 
-// Function to get the token
 const getToken = async () => {
   const tokenApi = `${keycloakBaseUrl}/realms/master/protocol/openid-connect/token`;
 

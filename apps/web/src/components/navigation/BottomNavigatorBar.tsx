@@ -47,7 +47,7 @@ export default function BottomNavigationBar() {
           left: 0,
           right: 0,
           zIndex: theme => theme.zIndex.appBar,
-          overflow: "visible", // Allow overflow
+          overflow: "visible",
         }}
         elevation={3}>
         <BottomNavigation
@@ -69,14 +69,14 @@ export default function BottomNavigationBar() {
                 height={44}
                 style={{
                   position: "relative",
-                  top: "-10px", // Move the image up
+                  top: "-10px",
                 }}
               />
             }
             sx={{
-              position: "relative", // Relative positioning for custom styling
-              top: "-10px", // Adjust to push the button partially out
-              zIndex: 1, // Ensure it appears above other elements
+              position: "relative",
+              top: "-10px",
+              zIndex: 1,
             }}
           />
           <BottomNavigationAction

@@ -9,7 +9,7 @@ export function NotificationsList({ notifications }: { notifications: any[] }) {
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
 
   const handleSelect = (index: number) => {
-    setSelectedIndex(prevIndex => (prevIndex === index ? null : index)); // Toggle selection
+    setSelectedIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
   return (
@@ -34,7 +34,6 @@ export function NotificationsList({ notifications }: { notifications: any[] }) {
           </Typography>
         </Box>
       ) : (
-        // Show notifications list when data is available
         notifications.map((item, index) => (
           <NotificationItem
             key={index}

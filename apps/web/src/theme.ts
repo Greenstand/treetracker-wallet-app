@@ -13,7 +13,6 @@ const roboto = Roboto({
   display: "swap",
 });
 
-// In figma design, the header color is #86c232
 declare module "@mui/material/styles" {
   interface Palette {
     header: PaletteColor;
@@ -39,7 +38,7 @@ const theme = createTheme({
       disabled: "#22262961",
     },
     header: {
-      main: "#86c232", // Define a custom green color for the header
+      main: "#86c232",
     },
     background: {
       default: "#f5f5f5",
