@@ -7,19 +7,19 @@ interface SubmitButtonProps {
   text: string;
   isDisabled: boolean;
   onClick?: () => void;
-  variant?: "text" | "outlined" | "contained"; // Add variant prop
+  variant?: "text" | "outlined" | "contained";
 }
 
 const CustomSubmitButton: React.FC<SubmitButtonProps> = ({
   text,
   isDisabled,
   onClick,
-  variant = "contained", // Default to "contained" variant
+  variant = "contained",
 }) => {
   return (
     <Button
       type="submit"
-      variant={variant} // Use the variant prop
+      variant={variant}
       fullWidth
       style={{
         marginTop: "1rem",
