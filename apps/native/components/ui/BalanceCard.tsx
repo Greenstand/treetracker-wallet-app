@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: WIDTH * 0.02,
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     margin: 10,
   },
   iconContainer: {
