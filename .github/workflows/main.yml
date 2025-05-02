@@ -1,0 +1,51 @@
+name: Build and Distribute Android APK
+on:
+  push:
+    branches: [main]
+    paths: ['apps/native/**', '.github/workflows/build.yml']
+  workflow_dispatch:
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+          cache-dependency-path: 'apps/native/yarn.lock'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - run: npm install -g yarn@1.22.22
+      - name: Install dependencies
+        run: |
+          yarn install
+          yarn add expo expo-router firebase @react-native-async-storage/async-storage react-native-gesture-handler react-native-reanimated react-native@0.75.4
+        working-directory: apps/native
+      - name: Place google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
+        working-directory: apps/native
+      - name: Run expo prebuild
+        run: npx expo prebuild --platform android --clean
+        working-directory: apps/native
+      - name: Install Fastlane
+        run: |
+          gem install bundler
+          bundle init
+          echo "source 'https://rubygems.org'" > Gemfile
+          echo "gem 'fastlane'" >> Gemfile
+          echo "gem 'fastlane-plugin-firebase_app_distribution'" >> Gemfile
+          bundle install
+          bundle exec fastlane add_plugin firebase_app_distribution --non-interactive
+        working-directory: apps/native/android
+      - name: Decode Firebase credentials
+        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" | base64 -d > firebase_credentials.json
+        working-directory: apps/native/android
+      - name: Build and distribute APK
+        run: bundle exec fastlane Beta
+        working-directory: apps/native/android
+        env:
+          FASTLANE_FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
