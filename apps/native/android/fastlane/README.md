@@ -23,6 +23,22 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Build and distribute to Firebase
 
+### android bump_version_android
+
+```sh
+[bundle exec] fastlane android bump_version_android
+```
+
+Bump Android versionCode and versionName
+
+### android build_debug
+
+```sh
+[bundle exec] fastlane android build_debug
+```
+
+Build Debug APK
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
