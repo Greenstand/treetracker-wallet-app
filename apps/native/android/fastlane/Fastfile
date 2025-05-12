@@ -37,14 +37,22 @@ platform :android do
       gradle_file_path: "../apps/native/android/app/build.gradle"
     )
     increment_version_name(
-      version_name: get_version_name_from_git_tag
+      version_name: get_version_name_from_file
     )
   end
 end
 
 # Global method
-def get_version_name_from_git_tag
-  return sh("git describe --tags").strip
+def get_version_name_from_file
+  File.read("../apps/native/version.txt").strip
+end
+
+# Slack notification
+slack(
+  message: "🚀 New Android release uploaded via Fastlane!",
+  success: true,
+  webhook_url: ENV["SLACK_WEBHOOK_URL"]
+)
 end
 
 
