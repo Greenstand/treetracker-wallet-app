@@ -8,24 +8,26 @@ jobs:
   build-android:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'yarn'
-          cache-dependency-path: 'apps/native/yarn.lock'
+          cache-dependency-path: yarn.lock # Fix: Use root yarn.lock
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.2
           bundler-cache: true
-      - run: npm install -g yarn@1.22.22
       - name: Install dependencies
-        run: |
-          yarn install
-          yarn add expo expo-router firebase @react-native-async-storage/async-storage react-native-gesture-handler react-native-reanimated react-native@0.75.4
-        working-directory: apps/native
+        run: yarn install --frozen-lockfile
+      - name: Install Expo CLI
+        run: yarn global add expo-cli
       - name: Place google-services.json
         run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
+            echo "Error: GOOGLE_SERVICES_JSON secret is not set"
+            exit 1
+          fi
           echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
         working-directory: apps/native
       - name: Run expo prebuild
@@ -33,19 +35,25 @@ jobs:
         working-directory: apps/native
       - name: Install Fastlane
         run: |
-          gem install bundler
-          bundle init
-          echo "source 'https://rubygems.org'" > Gemfile
-          echo "gem 'fastlane'" >> Gemfile
-          echo "gem 'fastlane-plugin-firebase_app_distribution'" >> Gemfile
+          if [ ! -f Gemfile ]; then
+            echo "source 'https://rubygems.org'" > Gemfile
+            echo "gem 'fastlane'" >> Gemfile
+            echo "gem 'fastlane-plugin-firebase_app_distribution'" >> Gemfile
+          fi
           bundle install
           bundle exec fastlane add_plugin firebase_app_distribution --non-interactive
         working-directory: apps/native/android
       - name: Decode Firebase credentials
-        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" | base64 -d > firebase_credentials.json
+        run: |
+          if [ -z "${{ secrets.FIREBASE_CREDENTIALS }}" ]; then
+            echo "Error: FIREBASE_CREDENTIALS secret is not set"
+            exit 1
+          fi
+          echo "${{ secrets.FIREBASE_CREDENTIALS }}" | base64 -d > firebase_credentials.json
         working-directory: apps/native/android
       - name: Build and distribute APK
         run: bundle exec fastlane Beta
         working-directory: apps/native/android
         env:
           FASTLANE_FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_CLI_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
