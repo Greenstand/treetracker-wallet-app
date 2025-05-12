@@ -15,10 +15,10 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
-### android beta
+### android build_debug
 
 ```sh
-[bundle exec] fastlane android beta
+[bundle exec] fastlane android build_debug
 ```
 
 Build and distribute to Firebase
@@ -30,14 +30,6 @@ Build and distribute to Firebase
 ```
 
 Bump Android versionCode and versionName
-
-### android build_debug
-
-```sh
-[bundle exec] fastlane android build_debug
-```
-
-Build Debug APK
 
 ----
 

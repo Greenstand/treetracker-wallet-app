@@ -4,6 +4,7 @@ import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
+import crashlytics from "@react-native-firebase/crashlytics"; // ✅ Crashlytics import
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,6 +20,10 @@ export default function AppLayout() {
   useEffect(() => {
     if (areFontsLoaded || fontLoadError) {
       SplashScreen.hideAsync();
+
+      // ✅ Initialize Crashlytics
+      crashlytics().log("AppLayout mounted");
+      crashlytics().setCrashlyticsCollectionEnabled(true);
     }
   }, [areFontsLoaded, fontLoadError]);
 

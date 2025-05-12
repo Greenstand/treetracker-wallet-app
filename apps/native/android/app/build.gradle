@@ -2,6 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -104,20 +105,30 @@ android {
         }
     }
     buildTypes {
-        debug {
-            applicationIdSuffix ".debug"
-            debuggable true
-        }
-        release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
+    debug {
+        applicationIdSuffix ".debug"
+        debuggable true
+
+        // ✅ Enable Crashlytics in debug builds
+        firebaseCrashlytics {
+            mappingFileUploadEnabled false
         }
     }
+    release {
+        // Caution! In production, you need to generate your own keystore file.
+        // see https://reactnative.dev/docs/signed-apk-android.
+        signingConfig signingConfigs.debug
+        shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
+        minifyEnabled enableProguardInReleaseBuilds
+        proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
+
+        // ✅ Enable Crashlytics in release builds (already default, but explicit here)
+        firebaseCrashlytics {
+            mappingFileUploadEnabled true
+        }
+    }
+}
     packagingOptions {
         jniLibs {
             useLegacyPackaging (findProperty('expo.useLegacyPackaging')?.toBoolean() ?: false)
@@ -149,27 +160,33 @@ android {
 }
 
 dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
+    // React Native runtime (version managed by the React Native Gradle Plugin)
     implementation("com.facebook.react:react-android")
 
+    // Firebase Crashlytics SDK for native crash reporting
+    implementation 'com.google.firebase:firebase-crashlytics:18.6.2'
+
+    // Optional image format support
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
 
     if (isGifEnabled) {
-        // For animated gif support
+        // Animated GIF support using Fresco
         implementation("com.facebook.fresco:animated-gif:${reactAndroidLibs.versions.fresco.get()}")
     }
 
     if (isWebpEnabled) {
-        // For webp support
+        // WebP support using Fresco
         implementation("com.facebook.fresco:webpsupport:${reactAndroidLibs.versions.fresco.get()}")
+
         if (isWebpAnimatedEnabled) {
-            // Animated webp support
+            // Animated WebP support
             implementation("com.facebook.fresco:animated-webp:${reactAndroidLibs.versions.fresco.get()}")
         }
     }
 
+    // JavaScript engine configuration
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
