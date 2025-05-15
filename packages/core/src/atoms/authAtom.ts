@@ -1,9 +1,11 @@
+// Uses AuthUser type consistently
+
 import { atom } from "jotai";
-import { User } from "../types/auth";
+import { AuthUser } from "../types/auth";
 import { storage } from "../utils/storage";
 import { appStore } from "../store";
 
-export const registerStateAtom = atom<User>({
+export const registerStateAtom = atom<AuthUser>({
   username: "",
   firstName: "",
   lastName: "",
@@ -16,7 +18,7 @@ export const registerStateAtom = atom<User>({
   fieldErrors: {},
 });
 
-export const loginStateAtom = atom<User>({
+export const loginStateAtom = atom<AuthUser>({
   username: "",
   password: "",
   isSubmitting: false,

@@ -38,14 +38,19 @@ function getRandomStatus(): "Received" | "Pending" | "Sent" {
   return statuses[Math.floor(Math.random() * statuses.length)];
 }
 
-function getRandomBalance(status: "Received" | "Pending" | "Sent"): string {
+/*
+Returns a numeric balance for a given transaction status.
+- "Sent" → negative number
+- "Received" or "Pending" → positive number
+*/
+function getRandomBalance(status: "Received" | "Pending" | "Sent"): number {
   const balance = faker.number.int({ min: 100, max: 300 });
 
   if (status === "Pending") {
-    return `${balance}`;
+    return balance;
   }
 
-  return status === "Sent" ? `-${balance}` : `+${balance}`;
+  return status === "Sent" ? -balance : balance;
 }
 
 async function getWalletByKeyword(keyword: string): Promise<Wallet[]> {

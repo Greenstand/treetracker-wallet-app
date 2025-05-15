@@ -7,15 +7,26 @@ const nextConfig = {
     unoptimized: true,
   },
   webpack: (config, { isServer }) => {
-    // Skip native-only modules
+    // Extend existing resolve config instead of overwriting it
     config.resolve = {
       ...(config.resolve || {}),
+      // Prevent Next.js from bundling native-only modules in web builds
       alias: {
         ...(config.resolve?.alias || {}),
         "expo-constants": false,
         "expo-modules-core": false,
+        "react-native": false,
       },
-      extensions: [".web.tsx", ".web.ts", ".tsx", ".ts", ".js", ".json"],
+      // Ensure .web.ts/.web.tsx files are preferred over .native.ts in web builds
+      extensions: [
+        ".web.tsx",
+        ".web.ts",
+        ".tsx",
+        ".ts",
+        ".js",
+        ".json",
+        ...(config.resolve?.extensions || []),
+      ],
     };
 
     return config;
