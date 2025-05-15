@@ -7,12 +7,17 @@ const nextConfig = {
     unoptimized: true,
   },
   webpack: (config, { isServer }) => {
-    // Ignore specific modules in the build
-    config.externals = [
-      ...(config.externals || []),
-      "expo-constants",
-      "expo-modules-core",
-    ];
+    // Skip native-only modules
+    config.resolve = {
+      ...(config.resolve || {}),
+      alias: {
+        ...(config.resolve?.alias || {}),
+        "expo-constants": false,
+        "expo-modules-core": false,
+      },
+      extensions: [".web.tsx", ".web.ts", ".tsx", ".ts", ".js", ".json"],
+    };
+
     return config;
   },
 };
