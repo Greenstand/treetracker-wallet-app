@@ -1,7 +1,9 @@
-import * as dotenv from "dotenv";
-import path from "path";
+let config;
 
-dotenv.config({ path: path.join(__dirname, "../app/web/.env.development") });
+if (typeof window === "undefined") {
+  config = require("./config.web");
+} else {
+  config = require("./config.native");
+}
 
-export const WALLET_APP_API =
-  process.env.NEXT_PUBLIC_WALLET_APP_API || "http://localhost:8080";
+export const WALLET_APP_API = config.WALLET_APP_API;

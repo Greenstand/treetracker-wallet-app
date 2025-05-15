@@ -1,4 +1,4 @@
-export interface AuthData {
+export interface AuthUser {
   username: string;
   firstName?: string;
   lastName?: string;
@@ -8,8 +8,6 @@ export interface AuthData {
   isSubmitting?: boolean;
   submissionSuccess?: boolean;
   error: string | null;
-  fieldErrors: { [key: string]: string };
+  fieldErrors?: Record<string, string>;
 }
-
-// Define the type for form type, which could either be 'register' or 'login'
 export type FormType = "register" | "login";

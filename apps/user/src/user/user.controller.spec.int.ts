@@ -1,27 +1,28 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpModule } from "@nestjs/axios";
 import { HttpException, HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import supertest from "supertest";
 import { UserService } from "./user.service";
-import { AppModule } from "../app.module";
+import { AuthService } from "../auth/auth.service";
+import { UserModule } from "./user.module";
 
 describe("User Registration Integration Tests", () => {
   let app: INestApplication;
   let userService: UserService;
-
+  let authService: AuthService;
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule, AppModule],
+      imports: [HttpModule, UserModule],
     })
       .overrideProvider(UserService)
       .useValue({
-        getToken: jest.fn(),
         createUser: jest.fn(),
       })
       .compile();
 
     app = moduleFixture.createNestApplication();
     userService = moduleFixture.get<UserService>(UserService);
+    authService = moduleFixture.get<AuthService>(AuthService);
     await app.init();
   });
 
@@ -40,7 +41,7 @@ describe("User Registration Integration Tests", () => {
       message: "User created successfully!",
     };
 
-    jest.spyOn(userService, "getToken").mockResolvedValue(mockToken);
+    jest.spyOn(authService, "getToken").mockResolvedValue(mockToken);
     jest.spyOn(userService, "createUser").mockResolvedValue(mockResponse);
 
     const registerUserDto = {
@@ -51,7 +52,7 @@ describe("User Registration Integration Tests", () => {
       password: "securepassword123",
     };
 
-    await request(app.getHttpServer())
+    await supertest(app.getHttpServer())
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.CREATED)
@@ -67,7 +68,7 @@ describe("User Registration Integration Tests", () => {
       HttpStatus.CONFLICT,
     );
 
-    jest.spyOn(userService, "getToken").mockResolvedValueOnce(mockToken);
+    jest.spyOn(authService, "getToken").mockResolvedValueOnce(mockToken);
     jest.spyOn(userService, "createUser").mockRejectedValue(mockError);
 
     const registerUserDto = {
@@ -78,7 +79,7 @@ describe("User Registration Integration Tests", () => {
       password: "securepassword123",
     };
 
-    await request(app.getHttpServer())
+    await supertest(app.getHttpServer())
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.CONFLICT)
@@ -88,17 +89,14 @@ describe("User Registration Integration Tests", () => {
   });
 
   it("should return 403 if token retrieval fails", async () => {
-    const mockTokenError = new HttpException(
-      "error getting token",
-      HttpStatus.UNAUTHORIZED,
-    );
+    const mockTokenError = "error getting token";
 
     const mockRegisterError = new HttpException(
       "Error creating user",
       HttpStatus.FORBIDDEN,
     );
 
-    jest.spyOn(userService, "getToken").mockResolvedValueOnce(mockTokenError);
+    jest.spyOn(authService, "getToken").mockResolvedValueOnce(mockTokenError);
     jest.spyOn(userService, "createUser").mockRejectedValue(mockRegisterError);
 
     const registerUserDto = {
@@ -109,7 +107,7 @@ describe("User Registration Integration Tests", () => {
       password: "securepassword123",
     };
 
-    await request(app.getHttpServer())
+    await supertest(app.getHttpServer())
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.FORBIDDEN)
@@ -125,7 +123,7 @@ describe("User Registration Integration Tests", () => {
       HttpStatus.FORBIDDEN,
     );
 
-    jest.spyOn(userService, "getToken").mockResolvedValue(mockToken);
+    jest.spyOn(authService, "getToken").mockResolvedValue(mockToken);
     jest.spyOn(userService, "createUser").mockRejectedValue(mockError);
 
     const registerUserDto = {
@@ -136,7 +134,7 @@ describe("User Registration Integration Tests", () => {
       password: "securepassword123",
     };
 
-    await request(app.getHttpServer())
+    await supertest(app.getHttpServer())
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.FORBIDDEN)
