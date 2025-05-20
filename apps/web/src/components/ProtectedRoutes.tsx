@@ -10,7 +10,8 @@ type ProtectedRouteProps = {
 };
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuth } = useSession("login");
+  // const { isAuth } = useSession("login");
+  const isAuth = localStorage.getItem("isAuth");
   const router = useRouter();
 
   useEffect(() => {
