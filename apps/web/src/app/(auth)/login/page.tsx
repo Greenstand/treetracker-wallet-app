@@ -18,37 +18,66 @@ import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
 import CenteredColumnBox from "@/components/common/CenteredColumnBox";
 import Logo from "@/components/common/Logo";
+import { useRouter } from "next/navigation";
+// import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); // State for the state of the button
+  const router = useRouter();
 
-  // Function to handle form changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // The process of submitting the form
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Sending to backend will come here (API integration)
-    console.log("Form Data:", formData);
+    setError("");
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: formData.username,
+            password: formData.password,
+          }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error_description || "Login failed");
+        return;
+      }
+
+      localStorage.setItem("isAuth", "true");
+
+      localStorage.setItem("token", data.access_token);
+      //@ts-ignore
+
+      router.push("/home");
+    } catch (err) {
+      console.log(err);
+      setError("Something went wrong. Please try again.");
+    }
   };
 
-  // Validate email and password on each form data change
   useEffect(() => {
-    // Button activation logic
-    const isFormValid: boolean = formData.password !== ""; // TypeScript is instructed that this is a boolean
-
-    setIsButtonDisabled(!isFormValid); // If the form is not valid the button becomes disabled
+    const isFormValid = formData.username !== "" && formData.password !== "";
+    setIsButtonDisabled(!isFormValid);
   }, [formData]);
+
   return (
     <Wrapper>
       <CenteredColumnBox>
@@ -56,11 +85,11 @@ export default function Login() {
         <CustomHeadingTitle title="Log in" />
         <form onSubmit={handleSubmit}>
           <CustomTextField
-            label="Email"
-            name="email"
-            value={formData.email}
+            label="Username"
+            name="username"
+            value={formData.username}
             handleChange={handleChange}
-            type="email"
+            type="text"
             required
           />
           <CustomTextField
@@ -71,6 +100,11 @@ export default function Login() {
             type="password"
             required
           />
+          {error && (
+            <Typography color="error" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
           <CustomSubmitButton text="Log In" isDisabled={isButtonDisabled} />
         </form>
 
@@ -106,6 +140,7 @@ export default function Login() {
             type="submit"
             icon={<GitHubIcon />}
           />
+
           <Box sx={{ display: "flex", gap: "0.3rem" }}>
             <Typography>Not have an Account?</Typography>
             <Link href="/signup" component={NextLink}>
