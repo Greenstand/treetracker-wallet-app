@@ -1,0 +1,73 @@
+name: Deploy NextJS to AWS Dev
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/web/**'
+  workflow_dispatch:
+env:
+  project-directory: ./apps/web
+  REPOSITORY: 'Greenstand/treetracker-wallet-app'
+jobs:
+  build:
+    name: Build Next.js Static Site
+    runs-on: ubuntu-latest
+    if: |
+      !contains(github.event.head_commit.message, 'skip-ci')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Set environment variables for dev
+        run: |
+          cat > ${{ env.project-directory }}/.env.local << EOF
+          NEXT_PUBLIC_HOSTNAME=https://wallet-dev.treetracker.org
+          EOF
+      - name: Build for deployment
+        run: |
+          cd ${{ env.project-directory }}
+          yarn build
+      - name: List output directory content
+        run: |
+          ls -la ${{ env.project-directory }}/out
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-site-build
+          path: ${{ env.project-directory }}/out
+          retention-days: 1
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: |
+      github.repository == 'Greenstand/treetracker-wallet-app'
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: static-site-build
+          path: build
+      - name: List downloaded artifacts
+        run: |
+          ls -la build/
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Deploy to S3 (dev)
+        run: |
+          aws s3 sync build/ s3://${{ secrets.DEV_CDN_S3_BUCKET }}/ --delete
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.DEV_CDN_DISTRIBUTION_ID }} --paths "/*"
+      - name: Deployment complete
+        run: |
+          echo "::notice title=Deployment Complete::Website deployed to https://wallet-dev.treetracker.org"
