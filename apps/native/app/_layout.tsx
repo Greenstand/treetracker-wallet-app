@@ -1,3 +1,5 @@
+import ActionSelectionModal from "@/components/ActionSelectionModal";
+import { ModalProvider } from "@/context/ModalContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
@@ -22,5 +24,10 @@ export default function AppLayout() {
     }
   }, [areFontsLoaded, fontLoadError]);
 
-  return <Slot />;
+  return (
+    <ModalProvider>
+      <Slot />
+      <ActionSelectionModal />
+    </ModalProvider>
+  );
 }
