@@ -1,18 +1,11 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
-
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedStatusBar } from "@/components/ThemedStatusBar";
-import { ThemedSafeAreaView } from "@/components/ThemeSafeArea";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function Settings() {
   return (
-    <ThemedSafeAreaView style={styles.safeArea}>
-      <ThemedStatusBar />
-      <ThemedView style={[styles.container]}>
-        <Text style={[styles.commonText, styles.description]}>Settings</Text>
-      </ThemedView>
-    </ThemedSafeAreaView>
+    <View>
+      <Text>Settings</Text>
+    </View>
   );
 }
 

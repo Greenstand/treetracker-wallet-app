@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BalanceCard from "@/components/ui/BalanceCard";
-import { WIDTH } from "../../utils/dimensions";
+import { WIDTH } from "@/utils/dimensions";
 
 const data = [
   { value: "1000", label: "Tokens" },
