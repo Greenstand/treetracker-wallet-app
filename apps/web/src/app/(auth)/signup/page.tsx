@@ -128,7 +128,7 @@ export default function SignUp() {
           />
           <CustomTextField
             label="Confirm password"
-            name="confirmpassword"
+            name="confirmPassword"
             type="password"
             value={formData.confirmPassword}
             handleChange={handleChange}
