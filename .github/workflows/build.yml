@@ -37,17 +37,11 @@ jobs:
         with:
           ruby-version: 3.2
           # bundler-cache: true
-          run: | 
-           working-directory: apps/native/android
+          #run: | 
+           #working-directory: apps/native/android
       - name: Install bundle
         run: |
-          gem install bundler
-          if [ ! -f Gemfile ]; then
-            echo "source 'https://rubygems.org'" > Gemfile
-            echo "gem 'fastlane'" >> Gemfile
-            echo "gem 'fastlane-plugin-firebase_app_distribution'" >> Gemfile
-          fi
-          bundle install
+          cd android && gem install bundler && bundle install
         working-directory: apps/native
       - name: Decode Firebase credentials
         run: |
@@ -60,5 +54,5 @@ jobs:
       - name: Build and distribute APK
         run: |
           set -x
-          cd android && bundle exec fastlane build_debug
+          cd android && bundle exec fastlane build_debug && bundle exec fastlane update_plugins
         working-directory: apps/native
