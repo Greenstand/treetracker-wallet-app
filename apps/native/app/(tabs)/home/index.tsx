@@ -12,12 +12,11 @@ import { FlashList } from "@shopify/flash-list";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BalanceCard from "@/components/ui/BalanceCard";
 import { Colors } from "@/constants/Colors";
-import Title from "@/components/ui/common/Title";
+// import Title from "@/components/ui/common/Title";
 import useWalletList from "core/src/hooks/wallet";
 import { useTheme } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-// import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
-// import { MaterialCommunityIcons } from "@expo/vector-icons";
+import CustomTitle from "@/components/ui/common/CustomTitle";
 
 const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get("window");
 
@@ -141,7 +140,10 @@ export default function Home() {
       <View
         style={[styles.activityContainer, { marginTop: WINDOW_HEIGHT * 0.03 }]}>
         <View style={styles.activityHeader}>
-          <Title title="Recent activity" />
+          <CustomTitle
+            title="Recent activity"
+            style={{ color: Colors.charcoal }}
+          />
           <TouchableOpacity>
             <Text style={[styles.activityLink, { color: Colors.green }]}>
               View all

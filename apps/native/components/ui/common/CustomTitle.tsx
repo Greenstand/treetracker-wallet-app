@@ -1,28 +1,21 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, StyleSheet, TextProps } from "react-native";
 
-interface CustomTitleProps {
+interface TitleProps extends TextProps {
   title: string;
-  subtitle?: string;
 }
 
-const CustomTitle: React.FC<CustomTitleProps> = ({ title, subtitle }) => {
+export default function CustomTitle({ title, style, ...rest }: TitleProps) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
+    <Text style={[styles.title, style]} {...rest}>
+      {title}
+    </Text>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 10,
-    marginBottom: 20,
-  },
   title: {
-    fontSize: 30,
-    color: "#222629DE",
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
-
-export default CustomTitle;
