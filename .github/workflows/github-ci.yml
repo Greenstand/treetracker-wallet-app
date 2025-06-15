@@ -5,26 +5,26 @@ name: Wallet App CI for New Pull Requests
 
 on:
   pull_request:
-    paths-ignore:
-      - "**.md"
     branches:
       - "*"
+    paths:
+      - 'web/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
 
 jobs:
   install:
     name: Install dependencies
     runs-on: ubuntu-latest
     steps:
-      # https://github.com/actions/checkout
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      # only install dependencies
-      # https://github.com/cypress-io/github-action
       - name: Install 📦
         uses: cypress-io/github-action@v6
         with:
           runTests: false
+          working-directory: web
 
   cypress-tests:
     name: Run cypress unit tests
@@ -38,3 +38,4 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           command: yarn run cypress-component-test
+          working-directory: web
