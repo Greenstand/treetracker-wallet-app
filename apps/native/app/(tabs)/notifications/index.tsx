@@ -1,34 +1,88 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import { router, Stack, useRouter } from "expo-router";
+import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 
 export default function NotificationsLayout() {
   return (
-    <View>
-      <Text>Notfications</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.side}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push("/");
+            }}
+            style={styles.iconButton}>
+            <Ionicons name="arrow-back" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.title}>Notifications</Text>
+
+        <View style={styles.side}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="settings-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.body}>
+        <MaterialCommunityIcons name="wallet-outline" size={80} color="gray" />
+        <Text style={styles.message}>
+          Come back here to get information about recent transactions, mentions,
+          and much more.
+        </Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
   container: {
     flex: 1,
-    justifyContent: "space-between",
+    backgroundColor: "#fff",
+  },
+  header: {
+    height: 60,
+    flexDirection: "row",
     alignItems: "center",
-    padding: 32,
-    backgroundColor: "#f5f5f5",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    position: "relative",
   },
-  content: {
-    marginTop: 32,
+  side: {
+    width: 40, // same width left and right to reserve space
+    alignItems: "center",
+    justifyContent: "center",
   },
-  commonText: {
+  iconButton: {
+    padding: 8,
+    borderRadius: 20,
+  },
+  title: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     textAlign: "center",
-    color: "#222629DE",
-  },
-  description: {
     fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  body: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    marginTop: "-20%",
+  },
+  message: {
+    marginTop: 16,
+    textAlign: "center",
+    color: "gray",
+    fontSize: 16,
+    lineHeight: 22,
   },
 });
