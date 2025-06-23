@@ -1,0 +1,66 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Build and distribute to Firebase"
+  lane :build_debug do
+    gradle(
+      task: "assembleDebug",
+    )
+
+    firebase_app_distribution(
+      app: "1:733858202404:android:095f31fecc85aed4c6a9b1",
+      service_credentials_file: "firebase_credentials.json",
+      android_artifact_type: "APK",
+      android_artifact_path: "android/app/build/outputs/apk/debug/app-debug.apk",
+      #apk_path: "android/app/build/outputs/apk/debug/app-debug.apk",
+      groups: "Greenstand-testers",
+      release_notes: "CI Release"
+    )
+  end
+
+  desc "Bump Android versionCode and versionName"
+  lane :bump_version_android do
+    increment_version_code(
+      gradle_file_path: "../apps/native/android/app/build.gradle"
+    )
+    increment_version_name(
+      version_name: get_version_name_from_file
+    )
+  end
+end
+
+# Global method
+def get_version_name_from_file
+  File.read("../apps/native/version.txt").strip
+end
+
+
+ # desc "Submit a new Beta Build to Crashlytics Beta"
+  #lane :beta do
+   # gradle(task: "clean assembleRelease")
+    #crashlytics
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  #end
+
+  #desc "Deploy a new version to the Google Play"
+  #lane :deploy do
+   # gradle(task: "clean assembleRelease")
+    #upload_to_play_store
+ # end 
