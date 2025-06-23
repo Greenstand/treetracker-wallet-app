@@ -27,12 +27,12 @@ jobs:
             exit 1
           fi
           echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
-        working-directory: apps/native
+        working-directory: apps/native/android
       - name: Run expo prebuild
         run: |
           set -x
           npx expo prebuild --platform android --clean
-        working-directory: apps/native
+        working-directory: apps/native/android
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
@@ -42,7 +42,7 @@ jobs:
       - name: Install bundle
         run: |
           cd android && gem install bundler && bundle install
-        working-directory: apps/native
+        working-directory: apps/native/android
       - name: Decode Firebase credentials
         run: |
           if [ -z "${{ secrets.FIREBASE_CREDENTIALS }}" ]; then
@@ -50,9 +50,10 @@ jobs:
             exit 1
           fi
           echo "${{ secrets.FIREBASE_CREDENTIALS }}" | base64 -d > firebase_credentials.json
-        working-directory: apps/native/ 
+        working-directory: apps/native/android
       - name: Build and distribute APK
         run: |
           set -x
           bundle exec fastlane build_debug && bundle exec fastlane update_plugins
-        working-directory: apps/native
+        working-directory: apps/native/android
+
