@@ -1,48 +1,59 @@
 name: Build and Distribute Android APK
+
 on:
   push:
     branches: [main]
     paths: ['apps/native/**', '.github/workflows/build.yml']
   workflow_dispatch:
+
 jobs:
   build-android:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
           cache-dependency-path: yarn.lock
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
       - name: Check formatting with Prettier
         run: yarn prettier --check .
+
       - name: Install Expo CLI
         run: yarn global add expo-cli
+
       - name: Place google-services.json
         run: |
           if [ -z "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
             echo "Error: GOOGLE_SERVICES_JSON secret is not set"
             exit 1
           fi
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
-        working-directory: apps/native
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > app/google-services.json
+        working-directory: apps/native/android
+
       - name: Run expo prebuild
         run: |
           set -x
           npx expo prebuild --platform android --clean
-        working-directory: apps/native/android
+        working-directory: apps/native
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
-          # bundler-cache: true
-          #run: | 
-           #working-directory: apps/native/android
-      - name: Install bundle
+          bundler-cache: true
+
+      - name: Install bundler and Ruby gems
         run: |
-          cd android && gem install bundler && bundle install
-        working-directory: apps/native
+          gem install bundler
+          bundle install
+        working-directory: apps/native/android
+
       - name: Decode Firebase credentials
         run: |
           if [ -z "${{ secrets.FIREBASE_CREDENTIALS }}" ]; then
@@ -51,9 +62,13 @@ jobs:
           fi
           echo "${{ secrets.FIREBASE_CREDENTIALS }}" | base64 -d > firebase_credentials.json
         working-directory: apps/native/android
-      - name: Build and distribute APK
+
+      - name: Build APK with Fastlane
         run: |
           set -x
-          bundle exec fastlane build_debug && bundle exec fastlane update_plugins
+          bundle exec fastlane build_debug
         working-directory: apps/native/android
 
+      - name: Update Fastlane plugins (optional)
+        run: bundle exec fastlane update_plugins
+        working-directory: apps/native/android
