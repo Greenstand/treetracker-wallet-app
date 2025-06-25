@@ -14,24 +14,24 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_BUILD_ARGS: "--build-arg CI_PROJECT_URL"
-  DOCKER_SNAPSHOT_IMAGE: ghcr.io/${{ github.repository }}/snapshot:${{ github.sha }}
+  DOCKER_BUILD_ARGS: --build-arg CI_PROJECT_URL
+  DOCKER_SNAPSHOT_IMAGE: ghcr.io/${{ github.repository}}/snapshot:${{ github.sha }}
   DOCKER_RELEASE_IMAGE: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-  KUSTOMIZE_VER: "5.0.0"
-  KUBECTL_VER: "1.25.4"
-  K8S_KUBECTL_IMAGE: "bitnami/kubectl:1.25.4-debian-11-r8"
-  K8S_SCORE_EXTRA_OPTS: "--kubernetes-version v1.25.4 --ignore-test container-image-tag"
-  K8S_BASE_APP_NAME: "cad"
-  K8S_REVIEW_SPACE: "dev-rentacar"
-  K8S_STAGING_SPACE: "test-rentacar"
-  K8S_PROD_SPACE: "prod-rentacar"
-  K8S_ENVIRONMENT_URL: "http://%{environment_name}.ixorafiner.com"
-  REVIEW_ENABLED: "false"
-  ROBOT_LINT_DISABLED: "true"
-  HELM_BASE_APP_NAME: "ixorasfinder-frontend"
-  HELM_CHART_DIR: "./helm/ixorasfinder-frontend"
-  HELM_REVIEW_ENABLED: "false"
-  SEMREL_CHANGELOG_ENABLED: "true"
+  KUSTOMIZE_VER: 5.0.0
+  KUBECTL_VER: 1.25.4
+  K8S_KUBECTL_IMAGE: bitnami/kubectl:1.25.4-debian-11-r8
+  K8S_SCORE_EXTRA_OPTS: --kubernetes-version v1.25.4 --ignore-test container-image-tag
+  K8S_BASE_APP_NAME: cad
+  K8S_REVIEW_SPACE: dev-rentacar
+  K8S_STAGING_SPACE: test-rentacar
+  K8S_PROD_SPACE: prod-rentacar
+  K8S_ENVIRONMENT_URL: http://%{environment_name}.ixorafiner.com
+  REVIEW_ENABLED: false
+  ROBOT_LINT_DISABLED: true
+  HELM_BASE_APP_NAME: ixorasfinder-frontend
+  HELM_CHART_DIR: ./helm/ixorasfinder-frontend
+  HELM_REVIEW_ENABLED: false
+  SEMREL_CHANGELOG_ENABLED: true
 
 jobs:
   gitleaks:
@@ -43,11 +43,11 @@ jobs:
       security-events: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Gitleaks
         run: |
-          curl -sSL https://github.com/zricethezav/gitleaks/releases/download/v8.16.1/gitleaks_8.16.1_linux_x64.tar.gz -o gitleaks.tar.gz
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz -o gitleaks.tar.gz
           mkdir -p gitleaks
           tar -xvzf gitleaks.tar.gz -C gitleaks
           sudo mv gitleaks/gitleaks /usr/local/bin
@@ -60,7 +60,7 @@ jobs:
             --report-path gitleaks-results.sarif
 
       - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks-results.sarif
 
@@ -76,22 +76,43 @@ jobs:
     runs-on: ubuntu-latest
     needs: gitleaks
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image with cache
         run: |
           docker buildx build \
-            --build-arg CI_PROJECT_URL \
+            $DOCKER_BUILD_ARGS \
             --cache-to=type=inline \
             --cache-from=type=inline \
             -t $DOCKER_SNAPSHOT_IMAGE \
             --load .
+
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft --version
 
       - name: Generate Docker SBOM
         run: |
@@ -114,7 +135,8 @@ jobs:
       SEMANTIC_USERNAME: ${{ secrets.SEMANTIC_USERNAME }}
       SEMANTIC_PASSWORD: ${{ secrets.SEMANTIC_PASSWORD }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -125,8 +147,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name "********"
-          git config --global user.email "********"
+          git config --global user.name "${{ secrets.SEMANTIC_USERNAME }}"
+          git config --global user.email "${{ secrets.SEMANTIC_USERNAME }}@users.noreply.github.com"
           git remote set-url origin https://${{ env.SEMANTIC_USERNAME }}:${{ env.SEMANTIC_PASSWORD }}@github.com/${{ github.repository }}.git
 
       - name: Update Kustomization
