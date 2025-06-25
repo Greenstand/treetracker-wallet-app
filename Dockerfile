@@ -1,42 +1,29 @@
-# Stage 1: Build the Next.js application
-FROM node:20-alpine AS builder
+# Use the official Node.js 18 image as the base image
+FROM node:18-alpine
 
-# Install dependencies for native modules and gyp builds
-RUN apk add --no-cache \
-  python3 \
-  make \
-  g++ \
-  autoconf \
-  automake \
-  libtool
-
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the entire monorepo to resolve workspaces
-COPY . .
+# Copy package.json and yarn.lock from the root of the monorepo
+COPY package.json yarn.lock ./
 
-# Install all workspace dependencies
-RUN yarn install
+# Copy the web app directory
+COPY apps/web ./apps/web
 
-# Build the app specifically from the apps/web directory
-WORKDIR /app/apps/web
-RUN yarn build
+# Copy the shared core package (if needed by the web app)
+COPY packages/core ./packages/core
 
-# Stage 2: Serve the production build
-FROM node:20-alpine AS runner
+# Install dependencies using Yarn
+RUN yarn install --frozen-lockfile
 
-# Set the working directory
-WORKDIR /app
+# Build the Next.js web app
+RUN yarn workspace web build
 
-# Copy the built app and dependencies from builder
-COPY --from=builder /app .
-
-# Navigate to the web app directory
-WORKDIR /app/apps/web
-
-# Expose the Next.js default port
+# Expose the port the Next.js app will run on (default is 3000)
 EXPOSE 3000
 
-# Start the app with wallet_state env loaded
-CMD ["sh", "-c", "yarn workspace wallet_state loadEnv && yarn start"]
+# Set environment variable for production
+ENV NODE_ENV=production
+
+# Command to start the Next.js app
+CMD ["yarn", "workspace", "web", "start"]
