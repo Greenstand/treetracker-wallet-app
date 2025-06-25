@@ -16,18 +16,31 @@ COPY packages/core ./packages/core
 # Install dependencies using Yarn
 RUN yarn install --frozen-lockfile
 
-# Fix ESLint configuration by creating a new .eslintrc file
-RUN echo '{ \
-  "env": { "browser": true, "node": true, "es2021": true }, \
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended"], \
-  "parser": "@typescript-eslint/parser", \
-  "parserOptions": { "ecmaVersion": 12, "sourceType": "module" }, \
-  "plugins": ["react", "@typescript-eslint"], \
-  "rules": { "react/prop-types": "off" } \
-}' > apps/web/.eslintrc.json
+# Remove any existing ESLint config to avoid conflicts and create a new one
+RUN rm -f apps/web/.eslintrc apps/web/.eslintrc.json apps/web/.eslintrc.js && \
+    echo '{ \
+      "env": { "browser": true, "node": true, "es2021": true }, \
+      "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended"], \
+      "parser": "@typescript-eslint/parser", \
+      "parserOptions": { "ecmaVersion": 12, "sourceType": "module" }, \
+      "plugins": ["react", "@typescript-eslint"], \
+      "rules": { "react/prop-types": "off" } \
+    }' > apps/web/.eslintrc.json
 
-# Modify TermsSection.tsx to fix Typography variant issue
+# Fix TermsSection.tsx to use a valid Typography variant
 RUN sed -i 's/variant="sub"/variant="caption"/g' apps/web/src/components/common/TermsSection.tsx
+
+# Fix theme.ts to properly define the custom 'sub' variant for Material-UI
+RUN sed -i 's/props => props.variant === "sub"/props => props.variant === "caption"/g' apps/web/src/theme.ts && \
+    sed -i '/TypographyPropsVariantOverrides/d' apps/web/src/theme.ts && \
+    echo 'import { ThemeOptions } from "@mui/material/styles"; \
+          declare module "@mui/material/styles" { \
+            interface TypographyVariants { sub: true; } \
+            interface TypographyVariantsOptions { sub?: true; } \
+          } \
+          declare module "@mui/material/Typography" { \
+            interface TypographyPropsVariantOverrides { sub: true; } \
+          }' > apps/web/src/theme.d.ts
 
 # Build the Next.js web app
 RUN yarn workspace web build
