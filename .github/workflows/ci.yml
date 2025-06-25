@@ -15,7 +15,7 @@ on:
 
 env:
   DOCKER_BUILD_ARGS: --build-arg CI_PROJECT_URL
-  DOCKER_SNAPSHOT_IMAGE: ghcr.io/${{ github.repository}}/snapshot:${{ github.sha }}
+  DOCKER_SNAPSHOT_IMAGE: ghcr.io/${{ github.repository }}/snapshot:${{ github.sha }}
   DOCKER_RELEASE_IMAGE: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
   KUSTOMIZE_VER: 5.0.0
   KUBECTL_VER: 1.25.4
@@ -117,7 +117,7 @@ jobs:
       - name: Generate Docker SBOM
         run: |
           mkdir -p reports
-          docker save $DOCKER_SNAPSHOT_IMAGE | syft packages -o cyclonedx-json > reports/docker-sbom-${{ github.sha }}.cyclonedx.json
+          syft scan docker:$DOCKER_SNAPSHOT_IMAGE -o cyclonedx-json > reports/docker-sbom-${{ github.sha }}.cyclonedx.json
 
       - name: Upload SBOM Artifact
         uses: actions/upload-artifact@v4
