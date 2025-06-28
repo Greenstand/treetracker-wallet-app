@@ -89,8 +89,14 @@ jobs:
             echo "⚠️ No type-check script found. Skipping."
           fi
 
-      - name: Run Tests
-        run: yarn test --ci --watchAll=false
+      - name: Run Tests (if available)
+        run: |
+          if node -e "const pkg=require('./package.json'); process.exit(pkg.scripts?.test ? 0 : 1)"; then
+            echo "✅ Test script found. Running yarn test..."
+            yarn test --ci --watchAll=false
+          else
+            echo "⚠️ No test script found. Skipping."
+          fi
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
