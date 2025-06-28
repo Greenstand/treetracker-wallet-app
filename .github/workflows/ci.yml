@@ -62,7 +62,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.18.1'
+          node-version: '18'
           cache: 'npm'
 
       - name: Install Yarn
@@ -73,7 +73,7 @@ jobs:
 
       - name: Run ESLint (if available)
         run: |
-          if yarn run | grep -q "lint"; then
+          if node -e "const pkg=require('./package.json'); process.exit(pkg.scripts?.lint ? 0 : 1)"; then
             echo "✅ Lint script found. Running yarn lint..."
             yarn lint
           else
@@ -82,7 +82,7 @@ jobs:
 
       - name: Run Type Check (if available)
         run: |
-          if yarn run | grep -q "type-check"; then
+          if node -e "const pkg=require('./package.json'); process.exit(pkg.scripts?.['type-check'] ? 0 : 1)"; then
             echo "✅ Type-check script found. Running yarn type-check..."
             yarn type-check
           else
@@ -115,7 +115,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.18.1'
+          node-version: '18'
 
       - name: Install Yarn
         run: npm install -g yarn
