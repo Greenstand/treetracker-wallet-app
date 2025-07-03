@@ -39,8 +39,6 @@ export default function SignUp() {
     return emailRegex.test(email);
   };
 
-  console.log(formData?.confirmPassword);
-
   // Password validation (at least 8 characters)
   const validatePassword = (password: string) => {
     return password.length >= 8; // At least 8 characters
