@@ -39,6 +39,8 @@ export default function SignUp() {
     return emailRegex.test(email);
   };
 
+  console.log(formData?.confirmPassword);
+
   // Password validation (at least 8 characters)
   const validatePassword = (password: string) => {
     return password.length >= 8; // At least 8 characters
@@ -128,7 +130,7 @@ export default function SignUp() {
           />
           <CustomTextField
             label="Confirm password"
-            name="confirmpassword"
+            name="confirmPassword"
             type="password"
             value={formData.confirmPassword}
             handleChange={handleChange}
