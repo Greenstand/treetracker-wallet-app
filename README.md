@@ -81,3 +81,5 @@ are invaluable in making this project even better!
 - Mobile App: [Native README](apps/native/README.md)
 
 - Core Model Layer: [Packages README](packages/core/README.md)
+
+<!-- trigger -->
