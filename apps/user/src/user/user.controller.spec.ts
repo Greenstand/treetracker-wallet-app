@@ -2,12 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 import { RegisterUserDto } from "@dtos/register-user.dto";
-import { AuthService } from "../auth/auth.service";
 
 describe("UserController", () => {
   let userController: UserController;
   let userService: UserService;
-  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,6 +15,7 @@ describe("UserController", () => {
           provide: UserService,
           useValue: {
             createUser: jest.fn(),
+            loginUser: jest.fn(),
           },
         },
       ],
@@ -43,6 +42,28 @@ describe("UserController", () => {
 
       expect(userService.createUser).toHaveBeenCalledWith(registerUserDto);
       expect(response).toEqual(result);
+    });
+  });
+
+  describe("login", () => {
+    it("should call UserService.loginUser with correct credentials", async () => {
+      const credentials = {
+        username: "testuser",
+        password: "password123",
+      };
+      const accessToken = "mocked-access-token";
+
+      jest
+        .spyOn(userService, "loginUser")
+        .mockResolvedValue({ access_token: accessToken });
+
+      const result = await userController.loginUser(credentials);
+
+      expect(userService.loginUser).toHaveBeenCalledWith({
+        username: credentials.username,
+        password: credentials.password,
+      });
+      expect(result).toEqual({ access_token: accessToken });
     });
   });
 });
