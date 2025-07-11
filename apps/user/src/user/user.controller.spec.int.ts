@@ -17,6 +17,7 @@ describe("User Registration Integration Tests", () => {
       .overrideProvider(UserService)
       .useValue({
         createUser: jest.fn(),
+        loginUser: jest.fn(),
       })
       .compile();
 
@@ -141,5 +142,94 @@ describe("User Registration Integration Tests", () => {
       .expect(response => {
         expect(response.body.message).toBe("Error creating user");
       });
+  });
+  describe("User Login Integration Tests", () => {
+    it("should login a user successfully", async () => {
+      const mockToken = "mocked-access-token";
+
+      jest
+        .spyOn(userService, "loginUser")
+        .mockResolvedValue({ access_token: mockToken });
+
+      const loginDto = {
+        username: "testuser",
+        password: "securepassword123",
+      };
+
+      await supertest(app.getHttpServer())
+        .post("/login")
+        .send(loginDto)
+        .expect(HttpStatus.OK)
+        .expect(response => {
+          // Adjust this based on actual controller output
+          expect(response.body.access_token).toBe(mockToken);
+        });
+    });
+
+    it("should return 400 if credentials are missing", async () => {
+      const loginDto = {
+        username: "",
+        password: "",
+      };
+
+      const mockError = new HttpException(
+        "Missing credentials",
+        HttpStatus.BAD_REQUEST,
+      );
+
+      jest.spyOn(userService, "loginUser").mockRejectedValue(mockError);
+
+      await supertest(app.getHttpServer())
+        .post("/login")
+        .send(loginDto)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toBe("Missing credentials");
+        });
+    });
+
+    it("should return 401 if login credentials are invalid", async () => {
+      const loginDto = {
+        username: "invaliduser",
+        password: "wrongpassword",
+      };
+
+      const mockError = new HttpException(
+        "Invalid username or password",
+        HttpStatus.UNAUTHORIZED,
+      );
+
+      jest.spyOn(userService, "loginUser").mockRejectedValue(mockError);
+
+      await supertest(app.getHttpServer())
+        .post("/login")
+        .send(loginDto)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(response => {
+          expect(response.body.message).toBe("Invalid username or password");
+        });
+    });
+
+    it("should return 500 if login fails unexpectedly", async () => {
+      const loginDto = {
+        username: "erroruser",
+        password: "something",
+      };
+
+      const mockError = new HttpException(
+        "Internal server error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+
+      jest.spyOn(userService, "loginUser").mockRejectedValue(mockError);
+
+      await supertest(app.getHttpServer())
+        .post("/login")
+        .send(loginDto)
+        .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+        .expect(response => {
+          expect(response.body.message).toBe("Internal server error");
+        });
+    });
   });
 });
