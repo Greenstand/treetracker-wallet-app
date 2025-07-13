@@ -1,5 +1,5 @@
 import React from "react";
-import ProfileDetails from "../../src/app/settings/account/ProfileDetails";
+import ProfileDetails from "../../src/components/ProfileDetails";
 
 describe("ProfileDetails Component", () => {
   it("displays user name and email", () => {
