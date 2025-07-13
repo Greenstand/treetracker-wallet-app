@@ -9,7 +9,7 @@ import {
   Stack,
   Avatar,
 } from "@mui/material";
-import { ActivityItem } from "../home/ActivityItem";
+import { ActivityItem } from "../../../components/ActivityItem";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 
 const walletsData = [{ title: "Restaurant XY" }, { title: "Greenstand" }];

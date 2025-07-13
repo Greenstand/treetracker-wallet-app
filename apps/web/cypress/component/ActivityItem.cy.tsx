@@ -1,5 +1,5 @@
 import React from "react";
-import { ActivityItem } from "../../src/app/home/ActivityItem";
+import { ActivityItem } from "../../src/components/ActivityItem";
 
 describe("ActivityItem Component", () => {
   it("displays restaurant name and amount correctly", () => {

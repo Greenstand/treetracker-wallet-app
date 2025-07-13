@@ -1,6 +1,6 @@
 import React from "react";
-import { NotificationItem } from "../../src/app/notifications/NotificationItem";
-
+// import { NotificationItem } from "../../src/app/notifications/NotificationItem";
+import { NotificationItem } from "../../src/components/NotificationItem";
 const mockNotification = {
   title: "Sample Notification",
   description: "Sample Description",
