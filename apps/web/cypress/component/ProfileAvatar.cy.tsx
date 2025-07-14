@@ -1,5 +1,5 @@
 import React from "react";
-import ProfileAvatar from "../../src/components/ProfileAvatar";
+import ProfileAvatar from "../../src/app/settings/account/ProfileAvatar";
 
 describe("ProfileAvatar Component", () => {
   it("renders avatar with initials", () => {

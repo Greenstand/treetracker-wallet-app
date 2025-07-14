@@ -6,8 +6,8 @@ import NotificationsIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useRouter } from "next/navigation";
-import ProfileAvatar from "../../../../components/ProfileAvatar";
-import ProfileDetails from "../../../../components/ProfileDetails";
+import ProfileAvatar from "./ProfileAvatar";
+import ProfileDetails from "./ProfileDetails";
 
 export default function Account() {
   const router = useRouter();

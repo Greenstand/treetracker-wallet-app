@@ -9,35 +9,29 @@ import { Container } from "@mui/material";
 import Header from "@/components/header/Header";
 import BottomNavigationBar from "@/components/navigation/BottomNavigatorBar";
 import { usePathname } from "next/navigation";
+import ProtectedRoute from "@/components/ProtectedRoutes";
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
+
   const authRoutes = ["/login", "/signup"];
 
-  const [hasToken, setHasToken] = React.useState<boolean | null>(null);
-
-  React.useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    setHasToken(!!token);
-  }, []);
-
-  // If token is not checked yet (null), avoid flicker on hydration
-  if (hasToken === null) return null;
-
+  // Check if the current route is an authentication page
   const isAuthPage = authRoutes.includes(pathname ?? "");
-  const shouldShowLayout = !isAuthPage && hasToken;
 
   return (
     <html lang="en">
       <body style={{ backgroundColor: theme.palette.background.default }}>
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {shouldShowLayout && <Header />}
-            <Container maxWidth="sm">{props.children}</Container>
-            {shouldShowLayout && <BottomNavigationBar />}
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+        <ProtectedRoute>
+          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              {!isAuthPage && <Header />}
+              <Container maxWidth="sm">{props.children}</Container>
+              {!isAuthPage && <BottomNavigationBar />}
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </ProtectedRoute>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import { NotificationsList } from "../../src/components/NotificationsList";
+import { NotificationsList } from "../../src/app/notifications/NotificationsList";
 
 const mockNotifications = [
   {

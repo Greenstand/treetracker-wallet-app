@@ -1,5 +1,5 @@
 import React from "react";
-import { TokenBalance } from "../../src/components/TokenBalance";
+import { TokenBalance } from "../../src/app/home/TokenBalance";
 
 describe("TokenBalance Component", () => {
   it("displays correct token count", () => {

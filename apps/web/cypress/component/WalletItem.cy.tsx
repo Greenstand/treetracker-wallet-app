@@ -1,5 +1,5 @@
 import React from "react";
-import WalletItem from "../../src/components/WalletItem";
+import WalletItem from "../../src/app/wallet/WalletItem";
 
 describe("WalletItem Component", () => {
   it("displays wallet name and amount correctly", () => {

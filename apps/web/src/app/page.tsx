@@ -1,21 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import * as React from "react";
+import { Container, Box, Typography } from "@mui/material";
+import { default as Homepage } from "./home/page";
 
-export default function Page() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (token) {
-      router.replace("/home");
-    } else {
-      router.replace("/login");
-    }
-  }, [router]);
-
-  return <LoadingSpinner />;
+export default function Home() {
+  return (
+    <>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            my: 4,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <Typography variant="h4" component="h1" sx={{ mb: 2 }}></Typography>
+          <Homepage />
+        </Box>
+      </Container>
+    </>
+  );
 }
