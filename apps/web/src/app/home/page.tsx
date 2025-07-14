@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { Container, Box } from "@mui/material";
-import { TokenBalance } from "../../../components/TokenBalance";
-import { WalletBalance } from "../../../components/WalletBalance";
-import { RecentActivity } from "../../../components/RecentActivity";
+import { TokenBalance } from "./TokenBalance";
+import { WalletBalance } from "./WalletBalance";
+import { RecentActivity } from "./RecentActivity";
 
 const activityData = [
   { title: "Restaurant XY", amount: 200, status: "Pending" },

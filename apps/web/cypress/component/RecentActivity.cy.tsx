@@ -1,5 +1,5 @@
 import React from "react";
-import { RecentActivity } from "../../src/components/RecentActivity";
+import { RecentActivity } from "../../src/app/home/RecentActivity";
 
 const activityData = [
   { title: "Restaurant XY", amount: 100, status: "Received" },

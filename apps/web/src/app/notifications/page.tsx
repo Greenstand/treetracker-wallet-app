@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Container, Box, Typography } from "@mui/material";
-import { NotificationsList } from "@/components/NotificationsList";
+import { NotificationsList } from "./NotificationsList";
 
 interface Notification {
   title: string;

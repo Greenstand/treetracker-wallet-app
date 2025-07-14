@@ -1,5 +1,5 @@
 import React from "react";
-import { WalletBalance } from "../../src/components/WalletBalance";
+import { WalletBalance } from "../../src/app/home/WalletBalance";
 
 describe("WalletBalance Component", () => {
   it("displays correct wallet amount", () => {

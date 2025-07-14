@@ -19,11 +19,12 @@ import TermsSection from "@/components/common/TermsSection";
 import CenteredColumnBox from "@/components/common/CenteredColumnBox";
 import Logo from "@/components/common/Logo";
 import { useRouter } from "next/navigation";
+// import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    username: "demo",
-    password: "demodemon",
+    username: "",
+    password: "",
   });
   const [error, setError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
