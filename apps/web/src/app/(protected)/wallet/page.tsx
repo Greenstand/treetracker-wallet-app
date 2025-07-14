@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Box, Button, Typography, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import WalletItem from "./WalletItem";
+import WalletItem from "../../../components/WalletItem";
 
 export default function WalletPage() {
   const [wallets, setWallets] = useState([
