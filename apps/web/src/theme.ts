@@ -5,15 +5,17 @@ import {
   createTheme,
   PaletteColor,
   PaletteColorOptions,
+  ThemeOptions,
 } from "@mui/material/styles";
 
+// Load Roboto font
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   display: "swap",
 });
 
-// In figma design, the header color is #86c232
+// ======= Add Custom Palette Types =======
 declare module "@mui/material/styles" {
   interface Palette {
     header: PaletteColor;
@@ -22,8 +24,29 @@ declare module "@mui/material/styles" {
   interface PaletteOptions {
     header?: PaletteColorOptions;
   }
+
+  interface TypographyVariants {
+    sub: React.CSSProperties;
+  }
+
+  interface TypographyVariantsOptions {
+    sub?: React.CSSProperties;
+  }
 }
 
+declare module "@mui/material/Typography" {
+  interface TypographyPropsVariantOverrides {
+    sub: true;
+  }
+}
+
+declare module "@mui/material/Link" {
+  interface LinkPropsVariantOverrides {
+    sub: true;
+  }
+}
+
+// ======= Create Theme =======
 const theme = createTheme({
   palette: {
     primary: {
@@ -39,7 +62,7 @@ const theme = createTheme({
       disabled: "#22262961",
     },
     header: {
-      main: "#86c232", // Define a custom green color for the header
+      main: "#86c232",
     },
     background: {
       default: "#f5f5f5",
@@ -47,6 +70,10 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+    sub: {
+      fontSize: "12px",
+      color: "#22262999",
+    },
   },
   components: {
     MuiAlert: {
@@ -68,7 +95,9 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          ":disabled": "#F0F2ED",
+          ":disabled": {
+            backgroundColor: "#F0F2ED",
+          },
         },
       },
     },
@@ -77,29 +106,6 @@ const theme = createTheme({
         root: {
           color: "#61892F",
           textDecoration: "underline",
-          variants: [
-            {
-              props: props => props.variant === "sub",
-              style: {
-                fontSize: "12px",
-              },
-            },
-          ],
-        },
-      },
-    },
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          variants: [
-            {
-              props: props => props.variant === "sub",
-              style: {
-                fontSize: "12px",
-                color: "#22262999",
-              },
-            },
-          ],
         },
       },
     },

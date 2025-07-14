@@ -41,7 +41,7 @@ export default function Send() {
       <Box sx={{ mt: 4 }}>
         <Typography>Top wallets</Typography>
         {walletsData.map((item, index) => (
-          <ActivityItem key={index} title={item.title} />
+          <ActivityItem key={index} title={item.title} amount={0} status={""} />
         ))}
       </Box>
     </Box>
