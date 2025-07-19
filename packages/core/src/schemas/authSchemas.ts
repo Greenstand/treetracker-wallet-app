@@ -6,16 +6,6 @@ export const registerSchema = Joi.object({
     "string.min": "Username must be at least 3 characters",
     "string.max": "Username cannot exceed 30 characters",
   }),
-  firstName: Joi.string().min(2).max(50).trim().required().messages({
-    "string.empty": "First name is required",
-    "string.min": "First name must be at least 2 characters",
-    "string.max": "First name cannot exceed 50 characters",
-  }),
-  lastName: Joi.string().min(2).max(50).trim().required().messages({
-    "string.empty": "Last name is required",
-    "string.min": "Last name must be at least 2 characters",
-    "string.max": "Last name cannot exceed 50 characters",
-  }),
   email: Joi.string()
     .email({ tlds: { allow: false } })
     .trim()
@@ -37,10 +27,6 @@ export const registerSchema = Joi.object({
       "string.pattern.base":
         "Password must include at least one uppercase letter, one lowercase letter, and one number",
     }),
-  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
-    "any.only": "Passwords must match",
-    "string.empty": "Confirm password is required",
-  }),
 });
 
 export const loginSchema = Joi.object({
