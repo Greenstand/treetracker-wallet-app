@@ -29,7 +29,10 @@ const ForgotPasswordScreen = () => {
   };
 
   const handleReset = () => {
-    router.push("/(auth)/checkEmail");
+    router.push({
+      pathname: "/(auth)/checkEmail",
+      params: { email },
+    });
   };
 
   return (
