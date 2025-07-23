@@ -33,6 +33,14 @@ const LoginScreen = () => {
     console.log("login....");
   };
 
+  // test welcome page
+  // const handleLogIn = async () => {
+  //   await AsyncStorage.clear();
+  //   await AsyncStorage.setItem("hasLaunched", "false");
+  //   console.log("login....");
+  //   router.push("/(auth)/welcome");
+  // };
+
   const handleSocialLogin = (provider: string) => {
     //Functionality to handle social login
     console.log(`Logging in with ${provider}`);
