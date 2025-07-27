@@ -1,1 +1,42 @@
-yarn lint-staged
+#!/bin/sh
+
+echo "🔍 Running lint-staged..."
+yarn lint-staged || exit 1
+
+# Get list of staged files
+CHANGED_FILES=$(git diff --cached --name-only)
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+echo "🔁 Running tests on branch: $CURRENT_BRANCH"
+
+# Flags for changes
+WEB_CHANGED=$(echo "$CHANGED_FILES" | grep '^apps/web/')
+USER_CHANGED=$(echo "$CHANGED_FILES" | grep '^apps/user/')
+
+FAILED=0
+
+if [ -n "$WEB_CHANGED" ]; then
+  echo "🧪 Detected changes in apps/web — running Cypress tests"
+  yarn workspace web cy:component || FAILED=1
+  yarn workspace web cy:e2e-headless  || FAILED=1
+fi
+
+if [ -n "$USER_CHANGED" ]; then
+  echo "🧪 Detected changes in apps/user — running e2e tests"
+  yarn workspace user test:unit || FAILED=1
+  yarn workspace user test || FAILED=1
+  yarn workspace user test:e2e || FAILED=1
+  yarn workspace user int-test || FAILED=1
+fi
+
+if [ -z "$WEB_CHANGED" ] && [ -z "$USER_CHANGED" ]; then
+  echo "✅ No changes in apps/web or apps/user — skipping tests"
+fi
+
+if [ "$FAILED" -ne 0 ]; then
+  echo "❌ One or more tests failed — commit aborted"
+  exit 1
+fi
+
+echo "✅ All tests passed — continuing with commit"
+exit 0
