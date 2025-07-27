@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import {
   FormControl,
   InputLabel,
@@ -17,7 +17,9 @@ interface CustomTextFieldProps {
   required?: boolean;
   placeholder?: string;
   value?: string;
-  handleChange?: any;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  testId?: string;
+  autoFocus?: boolean;
 }
 
 const CustomTextField: React.FC<CustomTextFieldProps> = ({
@@ -27,41 +29,45 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
   helperText,
   required = false,
   placeholder,
-  handleChange,
+  onChange,
   value,
+  testId,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const isPasswordType = type === "password";
+  const isPassword = type === "password";
+  const inputType = isPassword && showPassword ? "text" : type;
 
   return (
-    <FormControl
-      sx={{ width: "100%", my: 2 }}
-      required={required}
-      variant="filled">
-      <InputLabel required={false}>{label}</InputLabel>
+    <FormControl sx={{ width: 1, my: 2 }} variant="filled">
+      <InputLabel>{label}</InputLabel>
       <FilledInput
-        type={isPasswordType && showPassword ? "text" : type}
+        type={inputType}
         name={name}
         placeholder={placeholder}
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
         endAdornment={
-          isPasswordType && (
+          isPassword && (
             <InputAdornment position="end">
-              <IconButton onClick={handleTogglePassword} edge="end">
+              <IconButton
+                onClick={() => setShowPassword(show => !show)}
+                edge="end"
+                data-test="toggle-password-visibility"
+                tabIndex={-1}
+                aria-label="toggle password visibility">
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           )
         }
+        data-test={testId}
+        // Do NOT add required here
       />
-      {helperText && (
-        <FormHelperText sx={{ fontSize: "12px", color: "red" }}>
+      {helperText?.trim() && (
+        <FormHelperText
+          sx={{ fontSize: 12, color: "red" }}
+          data-test="error-helper-text">
           {helperText}
         </FormHelperText>
       )}
