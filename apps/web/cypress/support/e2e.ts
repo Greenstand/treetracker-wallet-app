@@ -16,5 +16,17 @@
 // Import commands.js using ES2015 syntax:
 import "./commands";
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+/// <reference types="cypress" />
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      getByData(dataTestAttribute: string): Chainable<JQuery<HTMLElement>>;
+    }
+  }
+}
+export {};
+
+Cypress.Commands.add("getByData", selector => {
+  return cy.get(`[data-test=${selector}]`);
+});

@@ -1,149 +1,160 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
+import { useState, ChangeEvent, FormEvent } from "react";
 import {
   Email as EmailIcon,
   Facebook as FacebookIcon,
   GitHub as GitHubIcon,
 } from "@mui/icons-material";
-
-import Link from "@mui/material/Link";
+import { Box, Typography, Link } from "@mui/material";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
+import { useSetAtom } from "jotai";
+
 import Wrapper from "@/components/common/Wrapper";
+import Logo from "@/components/common/Logo";
+import CenteredColumnBox from "@/components/common/CenteredColumnBox";
 import CustomHeadingTitle from "@/components/common/CustomHeadingTitle";
 import CustomTextField from "@/components/common/CustomTextFieldProps";
-import { Box, Typography } from "@mui/material";
 import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
-import CenteredColumnBox from "@/components/common/CenteredColumnBox";
-import Logo from "@/components/common/Logo";
 
-export default function SignUp() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+import { registerAtom } from "core";
 
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true); // State for the state of the button
-  const [emailError, setEmailError] = useState(""); // E-mail error state
-  const [passwordError, setPasswordError] = useState(""); // Password error state
+const INITIAL_FORM = {
+  username: "",
+  email: "",
+  password: "",
+};
 
-  // Email format validation
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email validation regex
-    return emailRegex.test(email);
+const SignUp = () => {
+  const router = useRouter();
+  const triggerRegister = useSetAtom(registerAtom);
+
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  type SuccessMessage = { success: boolean; message: string };
+  const [successMessage, setSuccessMessage] = useState<SuccessMessage | null>(
+    null,
+  );
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Password validation (at least 8 characters)
-  const validatePassword = (password: string) => {
-    return password.length >= 8; // At least 8 characters
-  };
-
-  // Show/hide password operation
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  // Function to handle form changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // The process of submitting the form
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Password verification
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+    setIsSubmitting(true);
+    setFieldErrors({});
+    setSuccessMessage(null);
+
+    try {
+      const response = await triggerRegister(form);
+
+      if (response?.success) {
+        setSuccessMessage({
+          success: response.success,
+          message: response.message,
+        });
+        router.push("/login");
+        return;
+      }
+
+      if (response?.fieldErrors && typeof response.fieldErrors === "object") {
+        setFieldErrors(response.fieldErrors);
+        return;
+      }
+
+      if (response?.error && typeof response.error === "string") {
+        console.error("Signup error:", response.error);
+        setFieldErrors({ general: response.error });
+        return;
+      }
+
+      setFieldErrors({ general: "Sign up failed. Please try again." });
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong. Please try again.";
+      setFieldErrors({ general: message });
+      console.error("Signup error:", err);
+    } finally {
+      setIsSubmitting(false);
     }
-    // Sending to backend will come here (API integration)
-    console.log("Form Data:", formData);
   };
-
-  // Validate email and password on each form data change
-  useEffect(() => {
-    // Email validation
-    if (formData.email && !validateEmail(formData.email)) {
-      setEmailError("Error: Email is incorrect");
-    } else {
-      setEmailError("");
-    }
-
-    // Password validation
-    if (formData.password && !validatePassword(formData.password)) {
-      setPasswordError("Minimum length 8 characters");
-    } else {
-      setPasswordError("");
-    }
-
-    // Button activation logic
-    const isFormValid =
-      formData.name !== "" &&
-      emailError === "" &&
-      passwordError === "" &&
-      formData.password !== "" &&
-      formData.confirmPassword !== "" &&
-      formData.password === formData.confirmPassword;
-
-    setIsButtonDisabled(!isFormValid); // If the form is not valid the button becomes disabled
-  }, [formData, emailError, passwordError]);
-
+  console.log(successMessage, "successMessage");
   return (
     <Wrapper>
       <CenteredColumnBox>
         <Logo />
         <CustomHeadingTitle title="Sign Up" />
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          autoComplete="off"
+          data-test="signup-form">
           <CustomTextField
-            label="Name"
-            name="name"
-            value={formData.name}
-            handleChange={handleChange}
+            label="Username"
+            name="username"
+            value={form.username}
+            onChange={handleChange}
+            type="text"
             required
+            autoFocus
+            helperText={fieldErrors.username}
+            testId="signup-username"
           />
           <CustomTextField
             label="Email"
             name="email"
-            value={formData.email}
-            handleChange={handleChange}
+            value={form.email}
+            onChange={handleChange}
             type="email"
             required
+            helperText={fieldErrors.email}
+            testId="signup-email"
           />
           <CustomTextField
             label="Password"
             name="password"
-            value={formData.password}
-            handleChange={handleChange}
+            value={form.password}
+            onChange={handleChange}
             type="password"
             required
+            helperText={fieldErrors.password}
+            testId="signup-password"
           />
-          <CustomTextField
-            label="Confirm password"
-            name="confirmpassword"
-            type="password"
-            value={formData.confirmPassword}
-            handleChange={handleChange}
-            required
+
+          {fieldErrors.general && !successMessage?.success && (
+            <Typography
+              variant="body2"
+              color="error"
+              sx={{ mt: 1 }}
+              data-test="signup-error">
+              {fieldErrors.general}
+            </Typography>
+          )}
+          {successMessage?.success && (
+            <Typography
+              variant="body2"
+              color="success.main"
+              sx={{ mt: 1 }}
+              data-test="signup-success">
+              {successMessage.message}
+            </Typography>
+          )}
+          <CustomSubmitButton
+            text="Sign Up"
+            isDisabled={isSubmitting}
+            testId="signup-submit-button"
           />
-          <CustomSubmitButton text="Sign Up" isDisabled={isButtonDisabled} />
         </form>
 
-        <Box
-          sx={{
-            my: 3,
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-          }}>
+        <Box sx={{ my: 3, display: "flex", justifyContent: "center" }}>
           <Typography variant="body2">Or</Typography>
         </Box>
 
@@ -154,24 +165,13 @@ export default function SignUp() {
             display: "flex",
             flexDirection: "column",
           }}>
-          <SocialButtons
-            text="SignUp With Gmail"
-            type="submit"
-            icon={<EmailIcon />}
-          />
-          <SocialButtons
-            text="SignUp With Facebook"
-            type="submit"
-            icon={<FacebookIcon />}
-          />
-          <SocialButtons
-            text="SignUp With Github"
-            type="submit"
-            icon={<GitHubIcon />}
-          />
+          <SocialButtons text="Sign Up With Gmail" icon={<EmailIcon />} />
+          <SocialButtons text="Sign Up With Facebook" icon={<FacebookIcon />} />
+          <SocialButtons text="Sign Up With GitHub" icon={<GitHubIcon />} />
+
           <Box sx={{ display: "flex", gap: "0.3rem" }}>
             <Typography>Have an Account?</Typography>
-            <Link href="/login" component={NextLink}>
+            <Link href="/login" component={NextLink} data-test="login-link">
               Log in
             </Link>
           </Box>
@@ -180,4 +180,6 @@ export default function SignUp() {
       </CenteredColumnBox>
     </Wrapper>
   );
-}
+};
+
+export default SignUp;

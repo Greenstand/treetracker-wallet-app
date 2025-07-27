@@ -12,9 +12,9 @@ const activityData = [
   { title: "Greenstand", amount: -200, status: "Sent" },
 ];
 
-export default function Home() {
+export default function Page() {
   return (
-    <Container maxWidth="lg" sx={{ mt: 1 }}>
+    <Container maxWidth="lg" sx={{ mt: 1 }} data-test="home-page-element">
       <Box
         display="flex"
         flexDirection="row"
