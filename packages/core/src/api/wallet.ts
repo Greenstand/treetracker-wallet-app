@@ -17,7 +17,7 @@ async function getWalletsRecentActivity(userId: string): Promise<Wallet[]> {
   });
 }
 
-const wallets = Array.from({ length: 10 }, () => {
+const wallets: Wallet[] = Array.from({ length: 10 }, () => {
   const status = getRandomStatus();
   return {
     id: faker.string.uuid(),
@@ -38,14 +38,9 @@ function getRandomStatus(): "Received" | "Pending" | "Sent" {
   return statuses[Math.floor(Math.random() * statuses.length)];
 }
 
-function getRandomBalance(status: "Received" | "Pending" | "Sent"): string {
+function getRandomBalance(status: "Received" | "Pending" | "Sent"): number {
   const balance = faker.number.int({ min: 100, max: 300 });
-
-  if (status === "Pending") {
-    return `${balance}`;
-  }
-
-  return status === "Sent" ? `-${balance}` : `+${balance}`;
+  return status === "Sent" ? -balance : balance;
 }
 
 async function getWalletByKeyword(keyword: string): Promise<Wallet[]> {
