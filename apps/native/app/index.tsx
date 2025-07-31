@@ -8,10 +8,6 @@ export default function InitialRoute() {
 
   useEffect(() => {
     const verifyAppLaunchStatus = async () => {
-      // test welcome page
-      // await AsyncStorage.clear();
-      // console.log("✅ AsyncStorage cleared.");
-
       const hasCompletedOnboarding = await AsyncStorage.getItem("hasLaunched");
       const isAuthenticated = await AsyncStorage.getItem("isAuth");
 
