@@ -4,6 +4,65 @@
 digital tokens. Sending and receiving tokens takes just a few taps, making it a
 breeze to transfer them between users.
 
+## Quick get start
+
+- Install
+
+```
+yarn --frozen-lockfile
+```
+
+- Run user api
+
+1. Set up config at: apps/user/.dev.env
+
+```
+PRIVATE_KEYCLOAK_CLIENT_SECRET = [ask mainainter about this]
+```
+
+(There might be a failure because of connectiong to DB for queue reading, can be
+disabled by remove module here:
+
+"apps/user/src/app.module.ts"
+
+```typescript
+@Module({
+  imports: [
+    UserModule,
+    HttpModule,
+    //QueueModule, // comment out this line
+    ConfigModule.forRoot({ envFilePath: ENV === "dev" ? ".dev.env" : ".env" }),
+    AuthModule,
+  ],
+  controllers: [UserController],
+  providers: [UserService, AuthService],
+})
+export class AppModule {}
+```
+
+2. Run the user API server
+
+```
+yarn user:web
+```
+
+- Run web e2e test
+
+```
+yarn cypress-e2e-test
+```
+
+On the panel openning run the e2e test!
+
+By checking the test, you can understand what this project is about, and the
+roles of apps in the monorepo: web, user api
+
+3. [option] run all test in headless browser (no GUI)
+
+```
+yarn cypress-e2e-headless-test
+```
+
 ## **Project Structure:**
 
 Treetracker leverages a monorepo structure, meaning it houses multiple projects
