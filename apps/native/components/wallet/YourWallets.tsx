@@ -19,25 +19,32 @@ export function YourWallets({ wallets, onWalletPress }: YourWalletsProps) {
     <View style={styles.container}>
       <Text style={styles.title}>Your wallets</Text>
 
-      <View style={styles.walletCard}>
-        {wallets.map((wallet, index) => (
-          <React.Fragment key={wallet.id}>
-            <TouchableOpacity
-              style={styles.walletItem}
-              onPress={() => onWalletPress?.(wallet.id)}>
-              <View style={styles.walletInfo}>
-                <Text style={styles.walletName}>{wallet.name}</Text>
-                <Text style={styles.walletDate}>{wallet.date}</Text>
-              </View>
-              <View style={styles.walletBalanceContainer}>
-                <Text style={styles.walletBalance}>{wallet.balance}</Text>
-                <Ionicons name="chevron-forward" size={18} color="#999999" />
-              </View>
-            </TouchableOpacity>
-            {index < wallets.length - 1 && <View style={styles.divider} />}
-          </React.Fragment>
-        ))}
-      </View>
+      {wallets.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyStateText}>No wallets found</Text>
+        </View>
+      ) : (
+        <View style={styles.walletCard}>
+          {wallets.map((wallet, index) => (
+            <React.Fragment key={wallet.id}>
+              <TouchableOpacity
+                style={styles.walletItem}
+                onPress={() => onWalletPress?.(wallet.id)}
+                activeOpacity={0.7}>
+                <View style={styles.walletInfo}>
+                  <Text style={styles.walletName}>{wallet.name}</Text>
+                  <Text style={styles.walletDate}>{wallet.date}</Text>
+                </View>
+                <View style={styles.walletBalanceContainer}>
+                  <Text style={styles.walletBalance}>{wallet.balance}</Text>
+                  <Ionicons name="chevron-forward" size={18} color="#999999" />
+                </View>
+              </TouchableOpacity>
+              {index < wallets.length - 1 && <View style={styles.divider} />}
+            </React.Fragment>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
@@ -104,5 +111,24 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "rgba(0, 0, 0, 0.12)",
+  },
+  emptyState: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+    paddingVertical: 48,
+    paddingHorizontal: 16,
+    alignItems: "center",
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: "400",
+    lineHeight: 24,
+    letterSpacing: 0.15,
+    color: "rgba(34, 38, 41, 0.6)",
   },
 });
