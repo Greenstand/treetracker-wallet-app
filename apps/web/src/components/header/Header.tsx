@@ -5,6 +5,10 @@ import { Box, Typography } from "@mui/material";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
+import { useAtom } from "jotai";
+import { atom } from "jotai";
+
+export const searchAtom = atom("");
 
 const styles = {
   sharedBox: {
@@ -41,7 +45,7 @@ function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
           data-cy="search-toggle"
           onExpand={onSearchExpand}
           isExpanded={false}
-          onCollapse={() => {}}
+          onCollapse={() => { }}
         />
       </Box>
     </Box>
@@ -58,7 +62,7 @@ function ExpandedSearchView({
       <HeaderSearch
         isExpanded={true}
         onCollapse={onSearchCollapse}
-        onExpand={() => {}}
+        onExpand={() => { }}
       />
     </Box>
   );
@@ -66,8 +70,14 @@ function ExpandedSearchView({
 
 export default function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [, setSearchTerm] = useAtom(searchAtom);
 
   const toggleSearchBar = () => setIsSearchExpanded(prev => !prev);
+
+  const handleSearchCollapse = () => {
+    setIsSearchExpanded(false);
+    setSearchTerm("");
+  };
 
   const pathname = usePathname();
 
@@ -90,7 +100,7 @@ export default function Header() {
         {pathname === "/notifications" ? (
           <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
         ) : isSearchExpanded ? (
-          <ExpandedSearchView onSearchCollapse={toggleSearchBar} />
+          <ExpandedSearchView onSearchCollapse={handleSearchCollapse} />
         ) : (
           <DefaultHeaderView onSearchExpand={toggleSearchBar} />
         )}
