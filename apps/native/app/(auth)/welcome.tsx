@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
@@ -39,7 +38,10 @@ export default function WelcomeScreen() {
         which you can rename later.
       </Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleContinue}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleContinue}
+        accessibilityLabel="Continue to home screen">
         <Text style={styles.buttonText}>CONTINUE</Text>
       </TouchableOpacity>
     </View>
