@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, IconButton, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useAtom } from "jotai";
+import { searchAtom } from "./Header";
 
 interface HeaderSearchProps {
   isExpanded: boolean;
@@ -16,6 +18,18 @@ export default function HeaderSearch({
   onCollapse,
 }: HeaderSearchProps) {
   const [searchText, setSearchText] = useState("");
+  const [, setGlobalSearchTerm] = useAtom(searchAtom);
+
+  // Update global search state when local search text changes
+  useEffect(() => {
+    setGlobalSearchTerm(searchText);
+  }, [searchText, setGlobalSearchTerm]);
+
+  const handleCollapse = () => {
+    setSearchText("");
+    setGlobalSearchTerm("");
+    onCollapse();
+  };
 
   return (
     <Box
@@ -29,7 +43,7 @@ export default function HeaderSearch({
       {isExpanded ? (
         <>
           <IconButton
-            onClick={onCollapse}
+            onClick={handleCollapse}
             sx={{
               mr: 1,
               backgroundColor: theme => theme.palette.grey[200],
@@ -43,6 +57,7 @@ export default function HeaderSearch({
             size="small"
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
+            autoFocus
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
