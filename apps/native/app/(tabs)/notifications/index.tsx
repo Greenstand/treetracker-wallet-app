@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
 import WalletSvg from "../../../assets/svg/wallet.svg";
 
-
+// Mock notification data
 const notifications: Notification[] = [
   {
     id: 1,
@@ -42,6 +42,7 @@ const notifications: Notification[] = [
   },
 ];
 
+// Notification data structure
 type Notification = {
   id: number;
   type: "pending" | "received" | "sent";
@@ -51,7 +52,15 @@ type Notification = {
   icon: string;
 };
 
-const NotificationItem = ({ notification, isLatest }: { notification: Notification; isLatest?: boolean }) => {
+// Individual notification item component
+const NotificationItem = ({
+  notification,
+  isLatest,
+}: {
+  notification: Notification;
+  isLatest?: boolean;
+}) => {
+  // Highlight latest pending notifications
   const getBackgroundColor = () => {
     if (isLatest && notification.type === "pending") {
       return "#FFF3CD";
@@ -64,20 +73,23 @@ const NotificationItem = ({ notification, isLatest }: { notification: Notificati
       style={[
         styles.notificationItem,
         { backgroundColor: getBackgroundColor() },
-      ]}
-    >
+      ]}>
+      {/* Icon container */}
       <View style={styles.iconContainer}>
         <Text style={styles.iconText}>{notification.icon}</Text>
       </View>
+      {/* Notification content */}
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{notification.title}</Text>
         <Text style={styles.description}>{notification.description}</Text>
       </View>
+      {/* Timestamp */}
       <Text style={styles.time}>{notification.time}</Text>
     </View>
   );
 };
 
+// Empty state when no notifications exist
 const EmptyState = () => (
   <View style={styles.emptyContainer}>
     <View style={styles.walletIcon}>
@@ -90,6 +102,7 @@ const EmptyState = () => (
   </View>
 );
 
+// Main notifications screen component
 export default function NotificationsLayout() {
   const hasNotifications = notifications.length > 0;
 
@@ -103,6 +116,7 @@ export default function NotificationsLayout() {
       </View>
       */}
 
+      {/* Conditional rendering: show notifications list or empty state */}
       {hasNotifications ? (
         <ScrollView style={styles.scrollContainer}>
           {notifications.map((notification, index) => (
