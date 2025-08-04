@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, IconButton, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useAtom } from "jotai";
+import { searchAtom } from "./Header";
 
 interface HeaderSearchProps {
   isExpanded: boolean;
@@ -16,6 +18,19 @@ export default function HeaderSearch({
   onCollapse,
 }: HeaderSearchProps) {
   const [searchText, setSearchText] = useState("");
+  const [, setGlobalSearchTerm] = useAtom(searchAtom);
+
+  // Sync local search text with global state
+  useEffect(() => {
+    setGlobalSearchTerm(searchText);
+  }, [searchText, setGlobalSearchTerm]);
+
+  // Clear search and collapse
+  const handleCollapse = () => {
+    setSearchText("");
+    setGlobalSearchTerm("");
+    onCollapse();
+  };
 
   return (
     <Box
@@ -28,8 +43,9 @@ export default function HeaderSearch({
       }}>
       {isExpanded ? (
         <>
+          {/* Back button */}
           <IconButton
-            onClick={onCollapse}
+            onClick={handleCollapse}
             sx={{
               mr: 1,
               backgroundColor: theme => theme.palette.grey[200],
@@ -37,12 +53,14 @@ export default function HeaderSearch({
             }}>
             <ArrowBackIcon />
           </IconButton>
+          {/* Expanded search input */}
           <TextField
             placeholder="Search by name, company, or wallet"
             variant="outlined"
             size="small"
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
+            autoFocus
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -58,6 +76,7 @@ export default function HeaderSearch({
           />
         </>
       ) : (
+        // Collapsed search icon button
         <IconButton
           onClick={onExpand}
           sx={{
