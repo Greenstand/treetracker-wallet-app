@@ -1,144 +1,180 @@
-# Treetracker Wallet App: Secure and Easy Token Management
+# 🌳 Treetracker Wallet App
 
-**Greenstand** provides a secure and user-friendly platform for managing your
-digital tokens. Sending and receiving tokens takes just a few taps, making it a
-breeze to transfer them between users.
+[![Next.js](https://img.shields.io/badge/Next.js-14+-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React Native](https://img.shields.io/badge/React%20Native-Expo-000020?style=flat-square&logo=expo)](https://expo.dev/)
+[![NestJS](https://img.shields.io/badge/NestJS-Backend-E0234E?style=flat-square&logo=nestjs)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?style=flat-square&logo=typescript)](https://typescriptlang.org/)
 
-## Quick get start
+> **Secure and user-friendly digital token management platform built by
+> Greenstand**
 
-- Install
+Greenstand offers a secure, user-friendly wallet for seamless token transfers,
+built with enterprise-grade security and a scalable monorepo architecture
+supporting web, mobile, and backend services.
 
-```
-yarn --frozen-lockfile
-```
+_Treetracker Wallet App is part of the Greenstand ecosystem, enabling
+transparent and verifiable tree planting and forest management through
+blockchain technology._
 
-- Run user api
+## ⚡ Quick Start
 
-1. Set up config at: apps/user/.dev.env
+### Prerequisites
 
-```
-PRIVATE_KEYCLOAK_CLIENT_SECRET = [ask mainainter about this]
-```
+- **Node.js** (v20 or higher)
+- **Yarn** (v1.22 or higher)
+- **Docker** (for backend development)
 
-(There might be a failure because of connectiong to DB for queue reading, can be
-disabled by remove module here:
+### 🚀 One-Command Setup
 
-"apps/user/src/app.module.ts"
-
-```typescript
-@Module({
-  imports: [
-    UserModule,
-    HttpModule,
-    //QueueModule, // comment out this line
-    ConfigModule.forRoot({ envFilePath: ENV === "dev" ? ".dev.env" : ".env" }),
-    AuthModule,
-  ],
-  controllers: [UserController],
-  providers: [UserService, AuthService],
-})
-export class AppModule {}
+```bash
+# Clone, and install dependencies, and start development
+git clone https://github.com/Greenstand/treetracker-wallet-app.git
+cd treetracker-wallet-app && yarn install
 ```
 
-2. Run the user API server
+### 🏃‍♂️ Start Development
 
-```
-yarn user:web
+#### Option 1: Quick Web Development
+
+```bash
+yarn web:dev
+# Opens http://localhost:3000
 ```
 
-- Run web e2e test
+#### Option 2: Full Stack Development
 
+```bash
+# Terminal 1: Start backend API
+yarn user:dev
+
+# Terminal 2: Start web application
+yarn web:dev
+
+# Terminal 3: Start mobile app
+yarn native:start
 ```
+
+### 🧪 Testing
+
+```bash
+# Run E2E tests (recommended for understanding the project)
 yarn cypress-e2e-test
-```
 
-On the panel openning run the e2e test!
-
-By checking the test, you can understand what this project is about, and the
-roles of apps in the monorepo: web, user api
-
-3. [option] run all test in headless browser (no GUI)
-
-```
+# Or run headless tests
 yarn cypress-e2e-headless-test
 ```
 
-## **Project Structure:**
+> 💡 **Tip:** Run the E2E tests to understand what this project does and how the
+> apps work together!
 
-Treetracker leverages a monorepo structure, meaning it houses multiple projects
-in a single repository. This allows for efficient code sharing across different
-platforms. Here's a breakdown:
+## 🏗️ Project Structure
 
-- **`apps/native`:** This directory contains the React Native code for the
-  mobile app.
+```
+treetracker-wallet-app/
+├── apps/
+│   ├── web/             # Next.js 14 web application
+│   ├── native/          # React Native mobile app (Expo)
+│   └── user/            # NestJS backend API service
+├── packages/
+│   ├── core/            # Shared business logic (jotai)
+│   └── queue/           # Message queue utilities
+```
 
-- **`apps/web`:** This directory holds the Next.js code for the web app.
+## 🚀 Development Guide
 
-- **`packages/core`:** This shared folder contains the core model layer,
-  accessible by both the mobile and web apps.
+Ready to contribute? Here's your path from setup to deployment:
 
-## **Getting Started:**
+1. **Fork the repository on GitHub**
 
-Excited to dive in? Here's how to get up and running:
+### 1. Initial Setup
 
-1.  **Clone the repository:** Use
-    `git clone https://github.com/Greenstand/treetracker-wallet-app` to grab the
-    code.
+```bash
+git clone https://github.com/YOUR_USERNAME/treetracker-wallet-app.git
+cd treetracker-wallet-app
+yarn install
+```
 
-2.  **Install dependencies:** Run `yarn` in the main project directory to
-    install all the necessary tools.
+### 2. Choose Your Development Path
 
-3.  **Start Development Server (Choose your platform):**
+#### 🌐 **Web Development**
 
-- **Web App:** Navigate to the `web` directory and run `yarn dev`. This launches
-  the Next.js development server, accessible at http://localhost:3000 in your
-  web browser.
+Perfect for UI/UX improvements and frontend features
 
-- **Mobile App:** Head to the `native` directory and run `yarn start`. This
-  starts the Expo development server for your mobile app.
+```bash
+yarn web:dev
+# → http://localhost:3000
+```
 
-## **Changelog**
+#### 📱 **Mobile Development**
 
-We use
-[Conventional Changelog](https://github.com/conventional-changelog/conventional-changelog)
-to generate our changelog. This means that all changes should be committed using
-the Conventional Commits format.
+For cross-platform mobile features
 
-Here are some examples of commit messages and how they would appear in the
-changelog:
+```bash
+yarn native:start
+# → Scan QR code with Expo Go app
+```
 
-- **feat:** A new feature Commit message:
-  `feat: add support for token transfers`
+#### 🔧 **Backend Development**
 
-- **fix:** A bug fix Commit message:
-  `fix: prevent token balance from being negative`
+For API development and database work
 
-- **docs:** An update to documentation Commit message:
-  `docs: add instructions for contributing`
+```bash
+# Setup environment (first time only)
+cp apps/user/.env.example apps/user/.dev.env
+# → Edit .dev.env with your configuration
 
-## **Contributing:**
+yarn user:dev
+# → http://localhost:8080
+```
 
-We value your input! Here's how to contribute:
+### 3. Full Stack Development
 
-- **Found a bug or have an idea?** Open an issue on our GitHub repository.
+Run all services for integrated development:
 
-- **Want to add code?** Fork the repository, make your changes, and submit a
-  pull request.
+```bash
+# Individual terminals
+yarn web:dev     # Terminal 1
+yarn user:dev    # Terminal 2
+yarn native:start # Terminal 3
+```
 
-- **Testing and Documentation Matter:** Ensure your code is well-tested and
-  adheres to our coding standards before submitting.
+## 🧪 Testing & Quality
 
-**Thank You!**
+### Quick Testing
 
-We appreciate your interest in contributing to Treetracker. Your time and effort
-are invaluable in making this project even better!
+```bash
+# E2E tests (best way to understand the project)
+yarn cypress-e2e-test
 
-**For further details, explore the individual project READMEs:**
+# Headless testing
+yarn cypress-e2e-headless-test
 
-- Web App: [Web README](apps/web/README.md)
+# Unit tests
+yarn test
 
-- Mobile App: [Native README](apps/native/README.md)
+# Lint and format
+yarn lint:fix
+```
 
-- Core Model Layer: [Packages README](packages/core/README.md)
+## 🤝 Contributing
+
+We welcome contributions! Whether you're fixing bugs, adding features, or
+improving documentation, your help makes Treetracker better.
+
+**👉 [Read our full Contributing Guide →](./CONTRIBUTING.md)**
+
+The contributing guide covers everything you need: setup, workflows, coding
+standards, testing, and review processes.
+
+## 🤝 Community & Support
+
+### **Get Help**
+
+- **Documentation:** Start with this README and
+  [Contributing Guide](./CONTRIBUTING.md)
+- **Issues:** Report bugs and request features on
+  [GitHub Issues](https://github.com/Greenstand/treetracker-wallet-app/issues)
+- **Slack:** Join our Slack community (Ask the maintainers for an invite)
+- **Discussions:** Ask questions in Slack
 
 <!-- trigger -->
