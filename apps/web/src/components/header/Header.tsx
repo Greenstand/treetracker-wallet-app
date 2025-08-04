@@ -8,6 +8,7 @@ import NotificationHeader from "./NotificationHeader";
 import { useAtom } from "jotai";
 import { atom } from "jotai";
 
+// Global search state atom
 export const searchAtom = atom("");
 
 const styles = {
@@ -30,6 +31,7 @@ const styles = {
   },
 };
 
+// Default header layout with logo and collapsed search
 function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
   return (
     <Box sx={styles.sharedBox}>
@@ -52,6 +54,7 @@ function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
   );
 }
 
+// Expanded search view (full width search bar)
 function ExpandedSearchView({
   onSearchCollapse,
 }: {
@@ -74,6 +77,7 @@ export default function Header() {
 
   const toggleSearchBar = () => setIsSearchExpanded(prev => !prev);
 
+  // Collapse search and clear search term
   const handleSearchCollapse = () => {
     setIsSearchExpanded(false);
     setSearchTerm("");
@@ -86,6 +90,7 @@ export default function Header() {
       <Box
         sx={{
           width: "100%",
+          // Dynamic background based on page and search state
           backgroundColor:
             pathname === "/notifications"
               ? theme => theme.palette.secondary.main
@@ -97,6 +102,7 @@ export default function Header() {
             : theme => theme.spacing(2, 4),
           transition: "background-color 0.3s ease",
         }}>
+        {/* Conditional header content based on page and search state */}
         {pathname === "/notifications" ? (
           <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
         ) : isSearchExpanded ? (

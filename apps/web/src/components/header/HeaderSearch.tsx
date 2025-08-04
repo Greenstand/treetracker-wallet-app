@@ -20,10 +20,12 @@ export default function HeaderSearch({
   const [searchText, setSearchText] = useState("");
   const [, setGlobalSearchTerm] = useAtom(searchAtom);
 
+  // Sync local search text with global state
   useEffect(() => {
     setGlobalSearchTerm(searchText);
   }, [searchText, setGlobalSearchTerm]);
 
+  // Clear search and collapse
   const handleCollapse = () => {
     setSearchText("");
     setGlobalSearchTerm("");
@@ -41,6 +43,7 @@ export default function HeaderSearch({
       }}>
       {isExpanded ? (
         <>
+          {/* Back button */}
           <IconButton
             onClick={handleCollapse}
             sx={{
@@ -50,6 +53,7 @@ export default function HeaderSearch({
             }}>
             <ArrowBackIcon />
           </IconButton>
+          {/* Expanded search input */}
           <TextField
             placeholder="Search by name, company, or wallet"
             variant="outlined"
@@ -72,6 +76,7 @@ export default function HeaderSearch({
           />
         </>
       ) : (
+        // Collapsed search icon button
         <IconButton
           onClick={onExpand}
           sx={{
