@@ -10,7 +10,7 @@ import {
   Stack,
 } from "@mui/material";
 
-// Function to extract initials from restaurant name
+// Helper function to generate initials from a name
 const getInitials = (name: string) => {
   const words = name.split(" ");
   return words.length > 1 ? words[0][0] + words[1][0] : words[0][0];
@@ -20,19 +20,33 @@ export function ActivityItem({
   title,
   amount,
   status,
+  searchTerm = "",
+  isHighlighted = false,
 }: {
   title: string;
   amount: number;
   status: string;
+  searchTerm?: string;
+  isHighlighted?: boolean;
 }) {
   return (
-    <Card sx={{ my: 0.5, p: 1, flex: 1, minWidth: "80%" }}>
+    <Card
+      sx={{
+        my: 0.5,
+        p: 1,
+        flex: 1,
+        minWidth: "80%",
+        // Highlight card background when search matches
+        backgroundColor: isHighlighted ? "#f7e5c4" : "inherit",
+        border: isHighlighted ? "1px solid #f7e5c4" : "none",
+      }}
+    >
       <CardContent sx={{ py: 0.5, "&:last-child": { pb: 0.5 } }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          {/* Circular Avatar Icon with Initials */}
+          {/* Avatar with initials */}
           <Avatar sx={{ width: 40, height: 40 }}>{getInitials(title)}</Avatar>
 
-          {/* Restaurant Name & Status */}
+          {/* Title and status section */}
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h6" color="textSecondary">
               {title}
@@ -42,12 +56,13 @@ export function ActivityItem({
             </Typography>
           </Box>
 
-          {/* Amount on Right Side */}
+          {/* Amount with conditional styling */}
           <Typography
             variant="h6"
             color={
               amount > 0 && status !== "Pending" ? "green" : "textSecondary"
-            }>
+            }
+          >
             {status === "Pending" ? "" : amount > 0 ? "+" : ""}
             {amount}
           </Typography>
