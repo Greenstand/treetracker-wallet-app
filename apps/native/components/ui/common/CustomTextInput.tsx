@@ -19,6 +19,7 @@ interface CustomTextInputProps {
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
   helperText?: string;
   error?: boolean;
+  showSuccessHelperText?: boolean;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -30,6 +31,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   keyboardType = "default",
   helperText,
   error = false,
+  showSuccessHelperText = false,
 }) => {
   const [isSecure, setIsSecure] = useState(secureTextEntry);
   const [isFocused, setIsFocused] = useState(false);
@@ -124,6 +126,12 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 
       {error && (
         <Text style={[styles.helperText, error && styles.helperTextError]}>
+          {helperText}
+        </Text>
+      )}
+
+      {!error && showSuccessHelperText && helperText && value && isFocused && (
+        <Text style={[styles.helperText, styles.helperTextSuccess]}>
           {helperText}
         </Text>
       )}
