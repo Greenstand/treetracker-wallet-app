@@ -88,6 +88,8 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
           testId="wallet-name-input"
           error={Boolean(name.trim() && isDuplicate)}
           helperText={isDuplicate ? "Wallet name should be unique." : undefined}
+          error={Boolean(name.trim() && isDuplicate)}
+          helperText={isDuplicate ? "Wallet name should be unique." : undefined}
         />
 
         <CustomTextField
