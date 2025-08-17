@@ -64,6 +64,7 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
           )
         }
         data-test={testId}
+        // Do NOT add required here
       />
       {helperText?.trim() && (
         <FormHelperText data-test="error-helper-text">
