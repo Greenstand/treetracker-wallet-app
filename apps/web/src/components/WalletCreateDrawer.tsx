@@ -16,7 +16,6 @@ export interface WalletCreateDrawerProps {
   open: boolean;
   onClose: () => void;
   onCreate: (payload: { name: string; description: string }) => void;
-  /** 现有钱包名称列表，用于唯一性校验（大小写不敏感，去前后空格） */
   existingNames?: string[];
 }
 
@@ -45,7 +44,7 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
   }, [name, existingNames]);
 
   const handleCreate = () => {
-    if (!name.trim() || isDuplicate) return; // 阻止重复名创建
+    if (!name.trim() || isDuplicate) return;
     onCreate({ name: name.trim(), description: description.trim() });
     onClose();
   };
