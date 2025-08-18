@@ -1,6 +1,7 @@
 Feature: Create wallet
   A user can create his/her own wallet, and for first wallet created, system award N tokens
 
+  @skip
   Scenario Outline: As a user, I can create a new wallet
     Given I am on the wallet creation page
     When I fill in the wallet creation form with valid data

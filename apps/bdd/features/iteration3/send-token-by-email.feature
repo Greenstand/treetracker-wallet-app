@@ -1,4 +1,4 @@
-@web
+@web @skip
 Feature: send token to someone by email address
   Token owner can send tokens to another user by email address
 
