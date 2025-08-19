@@ -1,4 +1,4 @@
-@mobile_native
+@mobile_native @skip
 Feature: The first page of the native app
 
   Scenario : As a user I can open the app

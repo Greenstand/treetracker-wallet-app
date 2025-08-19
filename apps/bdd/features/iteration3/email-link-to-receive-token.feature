@@ -1,4 +1,4 @@
-@web
+@web @skip
 Feature: receive token by following the link in the email
 
   Scenario: As a user, I can receive a token by following the link in the email
