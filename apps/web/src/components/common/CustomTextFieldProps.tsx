@@ -20,6 +20,7 @@ interface CustomTextFieldProps {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   testId?: string;
   autoFocus?: boolean;
+  error?: boolean;
 }
 
 const CustomTextField: React.FC<CustomTextFieldProps> = ({
@@ -32,6 +33,7 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
   onChange,
   value,
   testId,
+  error = false,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,8 +41,8 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
   const inputType = isPassword && showPassword ? "text" : type;
 
   return (
-    <FormControl sx={{ width: 1, my: 2 }} variant="filled">
-      <InputLabel>{label}</InputLabel>
+    <FormControl sx={{ width: 1, my: 2 }} variant="filled" error={error}>
+      <InputLabel required={required}>{label}</InputLabel>
       <FilledInput
         type={inputType}
         name={name}
@@ -65,9 +67,7 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
         // Do NOT add required here
       />
       {helperText?.trim() && (
-        <FormHelperText
-          sx={{ fontSize: 12, color: "red" }}
-          data-test="error-helper-text">
+        <FormHelperText data-test="error-helper-text">
           {helperText}
         </FormHelperText>
       )}

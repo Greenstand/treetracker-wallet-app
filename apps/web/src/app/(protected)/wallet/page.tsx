@@ -17,6 +17,8 @@ export default function WalletPage() {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  const normalize = (s: string) => s.trim().toLowerCase();
+
   const handleCreate = ({
     name,
     description,
@@ -24,6 +26,9 @@ export default function WalletPage() {
     name: string;
     description: string;
   }) => {
+    const isDup = wallets.some(w => normalize(w.name) === normalize(name));
+    if (isDup) return;
+
     const createdAt = new Date().toLocaleString("en-US", {
       month: "long",
       day: "numeric",
@@ -76,6 +81,7 @@ export default function WalletPage() {
         open={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onCreate={handleCreate}
+        existingNames={wallets.map(w => w.name)}
       />
     </Box>
   );
