@@ -9,11 +9,10 @@ Feature: Register
     And I click on the register button
     Then I should see a confirmation message
 
-  @skip 
-  Scenario Outline: As a new user, I can register new account by social media
+  @skip @web
+  Scenario: As a new user, I can register new account by social media
     Given I am on the register page
-    When I click on the social media login button
-      | social_media |
-      | Google       |
+    When I click on the social media: google login button
     Then I should be redirected to the social media authentication page
+    And I login with my social media account
     And I should be able to log in with my social media account
