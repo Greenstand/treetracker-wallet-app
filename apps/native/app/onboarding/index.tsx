@@ -84,7 +84,7 @@ const OnboardingScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} testID="onboarding-screen">
       <FlashList
         ref={flashListRef}
         data={DATA}
