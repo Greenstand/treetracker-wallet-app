@@ -15,7 +15,7 @@ import Wrapper from "@/components/common/Wrapper";
 import Logo from "@/components/common/Logo";
 import CenteredColumnBox from "@/components/common/CenteredColumnBox";
 import CustomHeadingTitle from "@/components/common/CustomHeadingTitle";
-import CustomTextField from "@/components/common/CustomTextFieldProps";
+import CustomTextField from "@/components/common/CustomTextField";
 import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";

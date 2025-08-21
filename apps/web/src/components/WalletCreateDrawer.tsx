@@ -10,7 +10,7 @@ import {
   Divider,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import CustomTextField from "@/components/common/CustomTextFieldProps";
+import CustomTextField from "@/components/common/CustomTextField";
 
 interface WalletCreateDrawerProps {
   open: boolean;
