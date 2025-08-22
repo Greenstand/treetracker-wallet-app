@@ -13,6 +13,3 @@ Feature: send token to someone by email address
       Email content:
         | subject                     | Greenstand Token sent to you! |
         | body                        | You have received a token from wallet-1. Please click link below to claim it. |
-
-
-
