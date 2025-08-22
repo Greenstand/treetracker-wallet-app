@@ -106,7 +106,7 @@ yarn bdd:e2e:update-driver
 
 Sample Output:
 
-\<img width="976" height="632" alt="image" src="[https://github.com/user-attachments/assets/456c64cf-b92f-4030-bf96-7b56bfdaa800](https://github.com/user-attachments/assets/456c64cf-b92f-4030-bf96-7b56bfdaa800)" /\>
+![Sample Output](https://github.com/user-attachments/assets/456c64cf-b92f-4030-bf96-7b56bfdaa800)
 
 ```bash
 $ yarn test:e2e
