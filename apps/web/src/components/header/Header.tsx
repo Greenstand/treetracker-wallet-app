@@ -5,6 +5,11 @@ import { Box, Typography } from "@mui/material";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
+import { useAtom } from "jotai";
+import { atom } from "jotai";
+
+// Global search state atom
+export const searchAtom = atom("");
 
 const styles = {
   sharedBox: {
@@ -26,6 +31,7 @@ const styles = {
   },
 };
 
+// Default header layout with logo and collapsed search
 function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
   return (
     <Box sx={styles.sharedBox}>
@@ -41,13 +47,14 @@ function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
           data-cy="search-toggle"
           onExpand={onSearchExpand}
           isExpanded={false}
-          onCollapse={() => {}}
+          onCollapse={() => { }}
         />
       </Box>
     </Box>
   );
 }
 
+// Expanded search view (full width search bar)
 function ExpandedSearchView({
   onSearchCollapse,
 }: {
@@ -58,7 +65,7 @@ function ExpandedSearchView({
       <HeaderSearch
         isExpanded={true}
         onCollapse={onSearchCollapse}
-        onExpand={() => {}}
+        onExpand={() => { }}
       />
     </Box>
   );
@@ -66,8 +73,15 @@ function ExpandedSearchView({
 
 export default function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [, setSearchTerm] = useAtom(searchAtom);
 
   const toggleSearchBar = () => setIsSearchExpanded(prev => !prev);
+
+  // Collapse search and clear search term
+  const handleSearchCollapse = () => {
+    setIsSearchExpanded(false);
+    setSearchTerm("");
+  };
 
   const pathname = usePathname();
 
@@ -76,6 +90,7 @@ export default function Header() {
       <Box
         sx={{
           width: "100%",
+          // Dynamic background based on page and search state
           backgroundColor:
             pathname === "/notifications"
               ? theme => theme.palette.secondary.main
@@ -87,10 +102,11 @@ export default function Header() {
             : theme => theme.spacing(2, 4),
           transition: "background-color 0.3s ease",
         }}>
+        {/* Conditional header content based on page and search state */}
         {pathname === "/notifications" ? (
           <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
         ) : isSearchExpanded ? (
-          <ExpandedSearchView onSearchCollapse={toggleSearchBar} />
+          <ExpandedSearchView onSearchCollapse={handleSearchCollapse} />
         ) : (
           <DefaultHeaderView onSearchExpand={toggleSearchBar} />
         )}
