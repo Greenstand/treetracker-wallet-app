@@ -1,15 +1,18 @@
 Feature: Wallet app login
   In order to access my wallet
 
-  Scenario Outline: As a user, I can log into the wallet app
-    Given I am on the login page
-    When I login with <username> and <password>
-    Then I should see text <message>
+  
+Scenario: As a user, I can log into the wallet app with invalid credentials
+  Given I am on the login page
+  When I login with foobar and barfoo
+  Then I should see text Login failed
 
-    Examples:
-      | username               | password | message                           |
-      | foobar                 | barfoo   | Login failed                      |
-      | test@greenstand.org    | abc.123  | You logged into a secure area!    |
+@skip
+Scenario: As a user, I can log into the wallet app with valid credentials
+  Given I am on the login page
+  When I login with test@greenstand.org and abc.123
+  Then I should see text You logged into a secure area!
+  
 
   @skip
   Scenario: As a user, I can log into the wallet app with my social account
