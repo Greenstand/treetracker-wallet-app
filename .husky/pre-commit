@@ -1,28 +1,40 @@
 # .husky/pre-commit
-bash << EOF
+#!/bin/bash
 
 echo "🔍 Running lint-staged..."
 yarn lint-staged || exit 1
 
-# Get list of staged files
-CHANGED_FILES=$(git diff --cached --name-only)
+# Get list of staged files, handle spaces/special chars
+TMPFILE=$(mktemp)
+git diff --cached --name-only -z > "$TMPFILE"
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "🔁 Running tests on branch: $CURRENT_BRANCH"
 
-# Flags for changes
-WEB_CHANGED=$(echo "$CHANGED_FILES" | grep '^apps/web/')
-USER_CHANGED=$(echo "$CHANGED_FILES" | grep '^apps/user/')
+# Flags for changes (use null delimiter)
+WEB_CHANGED=false
+USER_CHANGED=false
+while IFS= read -r -d '' file; do
+  case "$file" in
+    apps/web/*)
+      WEB_CHANGED=true
+      ;;
+    apps/user/*)
+      USER_CHANGED=true
+      ;;
+  esac
+done < "$TMPFILE"
+rm -f "$TMPFILE"
 
 FAILED=0
 
-if [ -n "$WEB_CHANGED" ]; then
+if [ "$WEB_CHANGED" = true ]; then
   echo "🧪 Detected changes in apps/web — running Cypress tests"
   yarn workspace web cy:component || FAILED=1
   yarn workspace web cy:e2e-headless  || FAILED=1
 fi
 
-if [ -n "$USER_CHANGED" ]; then
+if [ "$USER_CHANGED" = true ]; then
   echo "🧪 Detected changes in apps/user — running e2e tests"
   yarn workspace user test:unit || FAILED=1
   yarn workspace user test || FAILED=1
@@ -30,7 +42,7 @@ if [ -n "$USER_CHANGED" ]; then
   yarn workspace user int-test || FAILED=1
 fi
 
-if [ -z "$WEB_CHANGED" ] && [ -z "$USER_CHANGED" ]; then
+if [ "$WEB_CHANGED" = false ] && [ "$USER_CHANGED" = false ]; then
   echo "✅ No changes in apps/web or apps/user — skipping tests"
 fi
 
@@ -41,6 +53,4 @@ fi
 
 echo "✅ All tests passed — continuing with commit"
 exit 0
-
-EOF
 

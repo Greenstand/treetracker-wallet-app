@@ -67,6 +67,78 @@ yarn cypress-e2e-headless-test
 > 💡 **Tip:** Run the E2E tests to understand what this project does and how the
 > apps work together!
 
+## Behavior Driven Development (BDD)
+
+### 🚀 Overview
+
+Added comprehensive end-to-end testing using **WebdriverIO** for the wallet application, covering:
+
+  * ✅ **Login flow** (success & failure cases)
+  * ✅ **Wallet creation** process
+  * ✅ **User registration** workflow
+  * and more
+
+-----
+
+### 🧪 Test Commands
+
+Run these from the repository root:
+
+```bash
+# Run all E2E tests
+yarn bdd:e2e
+
+# Run specific test suite
+yarn bdd:e2e:login
+yarn bdd:e2e:register
+yarn bdd:e2e:wallet
+
+# Debug mode (verbose output)
+yarn bdd:e2e:debug
+
+# Update ChromeDriver (if tests fail)
+yarn bdd:e2e:update-driver
+```
+
+-----
+
+### 🖼️ Test Evidence
+
+Sample Output:
+
+![Sample Output](https://github.com/user-attachments/assets/456c64cf-b92f-4030-bf96-7b56bfdaa800)
+
+```bash
+$ yarn test:e2e
+[chrome] ✔ Login - Valid credentials (4.2s)
+[chrome] ✔ Wallet Creation - Basic flow (6.1s)
+[chrome] ✔ Registration - Email signup (5.8s)
+```
+
+-----
+
+### ✅ Verification Checklist
+
+  * All tests pass locally (`yarn test:e2e`)
+  * No production code modified
+  * Test data follows PII guidelines
+  * ChromeDriver version (v136) matches CI
+  * Documentation updated if needed
+
+-----
+
+### ⚠️ Requirements
+
+The backend must be running for the tests to function. You can start it with:
+
+```bash
+yarn workspace web dev
+```
+
+Also, ensure you have Chrome v136+ installed.
+
+
+
 ## 🏗️ Project Structure
 
 ```
@@ -155,6 +227,12 @@ yarn test
 # Lint and format
 yarn lint:fix
 ```
+## How to set up: lint, code format, Typescript for a new package/app
+
+Follow this PR too add shared configuration package to standardize linting, formatting, and TypeScript setup across the project.
+
+https://github.com/Greenstand/treetracker-wallet-app/pull/537/files
+
 
 ## 🤝 Contributing
 

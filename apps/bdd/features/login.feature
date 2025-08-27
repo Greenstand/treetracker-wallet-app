@@ -12,7 +12,7 @@ Scenario: As a user, I can log into the wallet app with valid credentials
   Given I am on the login page
   When I login with test@greenstand.org and abc.123
   Then I should see text You logged into a secure area!
-  
+
 
   @skip
   Scenario: As a user, I can log into the wallet app with my social account
