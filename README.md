@@ -227,6 +227,12 @@ yarn test
 # Lint and format
 yarn lint:fix
 ```
+## How to set up: lint, code format, Typescript for a new package/app
+
+Follow this PR too add shared configuration package to standardize linting, formatting, and TypeScript setup across the project.
+
+https://github.com/Greenstand/treetracker-wallet-app/pull/537/files
+
 
 ## 🤝 Contributing
 
