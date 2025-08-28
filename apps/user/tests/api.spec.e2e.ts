@@ -1,5 +1,5 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
 import supertest from "supertest";
 import { AppModule } from "../src/app.module";
 
@@ -89,5 +89,18 @@ describe("UserController (e2e)", () => {
     expect(response.body).toHaveProperty("access_token");
     expect(typeof response.body.access_token).toBe("string");
     expect(response.body.access_token.length).toBeGreaterThan(100);
+  });
+
+  it("should return 204 when a user is deleted successfully", () => {
+    function userToDelete() {
+      return {
+        email: ``, // Replace with existing user email from keycloak
+      };
+    }
+    const newUser = userToDelete();
+    return supertest(app.getHttpServer())
+      .post("/delete")
+      .send(newUser)
+      .expect(204);
   });
 });
