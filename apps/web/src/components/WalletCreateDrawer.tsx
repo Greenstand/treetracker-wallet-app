@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useEffect, useMemo, useState, ChangeEvent } from "react";
 import {
   Box,
   Drawer,
@@ -12,16 +12,18 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CustomTextField from "@/components/common/CustomTextField";
 
-interface WalletCreateDrawerProps {
+export interface WalletCreateDrawerProps {
   open: boolean;
   onClose: () => void;
   onCreate: (payload: { name: string; description: string }) => void;
+  existingNames?: string[];
 }
 
 const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
   open,
   onClose,
   onCreate,
+  existingNames = [],
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -33,8 +35,16 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
     }
   }, [open]);
 
+  const normalize = (s: string) => s.trim().toLowerCase();
+
+  const isDuplicate = useMemo(() => {
+    if (!name.trim()) return false;
+    const norm = normalize(name);
+    return existingNames.some(n => normalize(n) === norm);
+  }, [name, existingNames]);
+
   const handleCreate = () => {
-    if (!name.trim()) return;
+    if (!name.trim() || isDuplicate) return;
     onCreate({ name: name.trim(), description: description.trim() });
     onClose();
   };
@@ -76,6 +86,8 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
             setName(e.target.value)
           }
           testId="wallet-name-input"
+          error={Boolean(name.trim() && isDuplicate)}
+          helperText={isDuplicate ? "Wallet name should be unique." : undefined}
         />
 
         <CustomTextField
@@ -93,14 +105,11 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
           fullWidth
           size="large"
           variant="contained"
-          disabled={!name.trim()}
+          disabled={!name.trim() || isDuplicate}
           onClick={handleCreate}
           sx={{
             mt: 1.5,
-            ":disabled": {
-              backgroundColor: "#E0E0E0",
-              color: "#9E9E9E",
-            },
+            ":disabled": { backgroundColor: "#E0E0E0", color: "#9E9E9E" },
             textTransform: "uppercase",
           }}>
           Create Wallet
