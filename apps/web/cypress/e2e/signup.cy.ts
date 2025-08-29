@@ -61,7 +61,7 @@ describe("Register Page", () => {
       });
       expectValidationError(
         SELECTORS.signupError,
-        this.authData.errorMessages.registration.emailAlreadyExists,
+        this.authData.errorMessages.registration.existingUsername,
       );
     });
   });
