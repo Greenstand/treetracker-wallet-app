@@ -61,6 +61,7 @@ export default function BottomNavigationBar() {
           />
           <BottomNavigationAction
             label=""
+            data-test="bottom-nav-send"
             icon={
               <Image
                 src="/assets/images/send.svg"

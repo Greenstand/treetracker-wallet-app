@@ -18,9 +18,16 @@ export default defineConfig({
   },
 
   e2e: {
-    baseUrl: "http://localhost:3000",
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+    env: {
+      api_server:
+        process.env.NEXT_PUBLIC_WALLET_APP_API || "http://localhost:8080",
+    },
+
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
   },
+  video: false,
+  retries: 1,
 });

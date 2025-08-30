@@ -7,6 +7,8 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { tokenAtom } from "core";
 import Header from "@/components/header/Header";
 import BottomNavigationBar from "@/components/navigation/BottomNavigatorBar";
+import { HeaderProvider } from "@/context/HeaderContext";
+import { SnackbarProvider } from "@/context/SnackbarContext";
 
 export default function ProtectedLayout({
   children,
@@ -64,10 +66,12 @@ export default function ProtectedLayout({
   if (!mounted || !checked || !token) return <LoadingSpinner />;
 
   return (
-    <>
-      <Header />
-      {children}
-      <BottomNavigationBar />
-    </>
+    <SnackbarProvider>
+      <HeaderProvider>
+        <Header />
+        {children}
+        <BottomNavigationBar />
+      </HeaderProvider>
+    </SnackbarProvider>
   );
 }

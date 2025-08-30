@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { usePathname } from "next/navigation";
 import { Box, Typography } from "@mui/material";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
+import { useHeader } from "@/context/HeaderContext";
 
 const styles = {
   sharedBox: {
@@ -65,9 +66,8 @@ function ExpandedSearchView({
 }
 
 export default function Header() {
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-
-  const toggleSearchBar = () => setIsSearchExpanded(prev => !prev);
+  const { isSearchExpanded, setIsSearchExpanded, toggleSearchExpanded } =
+    useHeader();
 
   const pathname = usePathname();
 
@@ -90,9 +90,9 @@ export default function Header() {
         {pathname === "/notifications" ? (
           <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
         ) : isSearchExpanded ? (
-          <ExpandedSearchView onSearchCollapse={toggleSearchBar} />
+          <ExpandedSearchView onSearchCollapse={toggleSearchExpanded} />
         ) : (
-          <DefaultHeaderView onSearchExpand={toggleSearchBar} />
+          <DefaultHeaderView onSearchExpand={toggleSearchExpanded} />
         )}
       </Box>
     </>
