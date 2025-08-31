@@ -20,7 +20,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import CustomTextField from "@/components/common/CustomTextFieldProps";
+import CustomTextField from "@/components/common/CustomTextField";
 
 export interface WalletCreateDrawerProps {
   open: boolean;
