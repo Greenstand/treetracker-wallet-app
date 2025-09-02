@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Box, Typography, Button, IconButton } from "@mui/material";
@@ -22,13 +22,11 @@ export default function VerifyEmail() {
         px: 3,
         textAlign: "center",
         position: "relative",
-      }}
-    >
+      }}>
       <IconButton
         aria-label="Back to login"
         onClick={() => router.push("/login")}
-        sx={{ position: "absolute", left: 0, top: 0 }}
-      >
+        sx={{ position: "absolute", left: 0, top: 0 }}>
         <ArrowBackIcon />
       </IconButton>
 
@@ -49,8 +47,7 @@ export default function VerifyEmail() {
           backgroundColor: "#61892F",
           color: "#fff",
           mb: 2,
-        }}
-      >
+        }}>
         BACK TO LOGIN
       </Button>
 
@@ -61,8 +58,7 @@ export default function VerifyEmail() {
         sx={{
           borderColor: "#61892F",
           color: "#61892F",
-        }}
-      >
+        }}>
         RESEND LINK
       </Button>
     </Box>

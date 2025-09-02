@@ -1,37 +1,39 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(username?: string, password?: string): Chainable<void>;
+      logout(): Chainable<void>;
+    }
+  }
+}
+
+Cypress.Commands.add("login", () => {
+  const user = Cypress.env("TEST_USER") || {
+    username: "demo",
+    password: "demodemon",
+  };
+
+  cy.request({
+    method: "POST",
+    url: `${Cypress.env("api_server")}/login`,
+    body: { username: user.username, password: user.password },
+  }).then(res => {
+    cy.log(`Logging in as ${user.username}...`);
+    expect(res.status).to.eq(200);
+    const { access_token } = res.body;
+
+    cy.window().then(win => {
+      win.sessionStorage.setItem("token", JSON.stringify(access_token));
+    });
+  });
+});
+
+Cypress.Commands.add("logout", () => {
+  cy.window().then(win => {
+    win.sessionStorage.removeItem("token");
+  });
+});
+
+export {};

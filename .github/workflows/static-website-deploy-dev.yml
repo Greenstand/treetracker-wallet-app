@@ -1,0 +1,92 @@
+name: Deploy NextJS to AWS Dev
+
+on:
+  # Trigger the workflow on push events to the main branch
+  # only when files in the 'apps/web/' directory change.
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/**"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  PROJECT_DIRECTORY: ./apps/web
+
+# Security Best Practice: Define permissions for the GITHUB_TOKEN
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Next.js Static Site
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      !contains(github.event.head_commit.message, 'skip-ci')
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Set Environment Variables for Build
+        run: |
+          echo "NEXT_PUBLIC_HOSTNAME=https://wallet-dev.treetracker.org" >> ${{ env.PROJECT_DIRECTORY }}/.env.local
+          echo "Generated .env.local:"
+          cat ${{ env.PROJECT_DIRECTORY }}/.env.local
+
+      - name: Build Static Site
+        run: |
+          cd ${{ env.PROJECT_DIRECTORY }}
+          yarn build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-site-build
+          path: ${{ env.PROJECT_DIRECTORY }}/out
+          retention-days: 1
+
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: [build]
+    # Only run this job if it's the main repository, not a fork.
+    if: github.repository == 'Greenstand/treetracker-wallet-app'
+
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: static-site-build
+          path: build/
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # CloudFront requires us-east-1 for some operations
+
+      - name: Deploy to S3 Bucket
+        run: |
+          aws s3 sync build/ s3://${{ secrets.DEV_CDN_S3_BUCKET }}/ --delete
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.DEV_CDN_DISTRIBUTION_ID }} --paths "/*"
+
+      - name: Deployment Complete
+        run: |
+          echo "::notice title=Deployment Complete::Website deployed to https://wallet-dev.treetracker.org"

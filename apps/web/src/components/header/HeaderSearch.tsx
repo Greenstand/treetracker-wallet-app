@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Box, TextField, IconButton, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useHeader } from "@/context/HeaderContext";
 
 interface HeaderSearchProps {
   isExpanded: boolean;
@@ -15,7 +16,7 @@ export default function HeaderSearch({
   onExpand,
   onCollapse,
 }: HeaderSearchProps) {
-  const [searchText, setSearchText] = useState("");
+  const { searchQuery, setSearchQuery } = useHeader();
 
   return (
     <Box
@@ -41,8 +42,8 @@ export default function HeaderSearch({
             placeholder="Search by name, company, or wallet"
             variant="outlined"
             size="small"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

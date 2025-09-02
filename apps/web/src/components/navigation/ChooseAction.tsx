@@ -48,13 +48,19 @@ const ChooseAction: React.FC<ChooseActionProps> = ({ open, onClose }) => {
 
         <List>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton
+              component="a"
+              href="/search?action=send"
+              data-test="choose-action-send">
               <ListItemText primary="Send" />
               <NavigateNextIcon htmlColor="grey" />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component="a" href="#simple-list">
+            <ListItemButton
+              component="a"
+              href="/search?action=request"
+              data-test="choose-action-request">
               <ListItemText primary="Request" />
               <NavigateNextIcon htmlColor="grey" />
             </ListItemButton>
