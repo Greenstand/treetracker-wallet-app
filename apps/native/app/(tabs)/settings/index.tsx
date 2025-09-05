@@ -73,7 +73,14 @@ const SettingsItem = ({
   onPress: () => void;
 }) => {
   return (
-    <Pressable style={styles.settingsItem} onPress={onPress}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.settingsItem,
+        pressed && styles.pressedItem
+      ]}
+      onPress={onPress}
+      android_ripple={{ color: '#e0e0e0' }}
+    >
       <View style={styles.itemLeftSection}>
         <View style={styles.iconContainer}>
           <MaterialIcons name={item.icon} size={24} color="#666" />
@@ -182,6 +189,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 16,
+  },
+  pressedItem: {
+    backgroundColor: "#f0f0f0",
   },
   itemLeftSection: {
     flexDirection: "row",
