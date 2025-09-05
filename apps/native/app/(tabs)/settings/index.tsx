@@ -80,6 +80,8 @@ const SettingsItem = ({
       ]}
       onPress={onPress}
       android_ripple={{ color: '#e0e0e0' }}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.title}${item.subtitle ? `, ${item.subtitle}` : ''}`}
     >
       <View style={styles.itemLeftSection}>
         <View style={styles.iconContainer}>
@@ -139,7 +141,11 @@ export default function Settings() {
 
         {/* Logout Button */}
         <View style={styles.logoutContainer}>
-          <Pressable onPress={handleLogout}>
+          <Pressable 
+            onPress={handleLogout}
+            accessibilityRole="button"
+            accessibilityLabel="Log out"
+          >
             <Text style={styles.logoutText}>LOG OUT</Text>
           </Pressable>
         </View>
