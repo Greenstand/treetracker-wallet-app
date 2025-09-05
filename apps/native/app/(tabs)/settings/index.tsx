@@ -11,7 +11,15 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
-const settingsItems = [
+type SettingsItemType = {
+  id: string;
+  title: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  route: string;
+  subtitle?: string;
+};
+
+const settingsItems: SettingsItemType[] = [
   {
     id: "account",
     title: "Account",
@@ -61,14 +69,14 @@ const SettingsItem = ({
   item,
   onPress,
 }: {
-  item: typeof settingsItems[0];
+  item: SettingsItemType;
   onPress: () => void;
 }) => {
   return (
     <Pressable style={styles.settingsItem} onPress={onPress}>
       <View style={styles.itemLeftSection}>
         <View style={styles.iconContainer}>
-          <MaterialIcons name={item.icon as any} size={24} color="#666" />
+          <MaterialIcons name={item.icon} size={24} color="#666" />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.itemTitle}>{item.title}</Text>
