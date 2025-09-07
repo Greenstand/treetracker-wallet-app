@@ -107,6 +107,7 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
           variant="contained"
           disabled={!name.trim() || isDuplicate}
           onClick={handleCreate}
+          data-test="wallet-create-submit"
           sx={{
             mt: 1.5,
             ":disabled": { backgroundColor: "#E0E0E0", color: "#9E9E9E" },

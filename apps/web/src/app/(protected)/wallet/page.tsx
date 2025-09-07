@@ -42,6 +42,7 @@ export default function WalletPage() {
     <Box sx={{ p: 2 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Button
+          data-test="wallet-create-open"
           variant="text"
           startIcon={<AddIcon />}
           onClick={() => setIsCreateOpen(true)}
@@ -62,9 +63,11 @@ export default function WalletPage() {
         Your Wallets
       </Typography>
 
-      <Stack spacing={0.5}>
+      <Stack spacing={0.5} data-test="wallet-list">
         {wallets.map((wallet, idx) => (
-          <WalletItem key={idx} {...wallet} />
+          <div key={idx} data-test={`wallet-list-item-${idx}`}>
+            <WalletItem {...wallet} />
+          </div>
         ))}
       </Stack>
 
