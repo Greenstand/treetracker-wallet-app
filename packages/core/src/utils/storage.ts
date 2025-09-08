@@ -1,35 +1,28 @@
-import { isWeb } from "./platform";
+// core/src/utils/storage.ts
+import type { AsyncStringStorage } from "jotai/vanilla/utils/atomWithStorage";
+import { isNative } from "./platform";
 
-let AsyncStorage: any;
-
-if (!isWeb) {
-  import("@react-native-async-storage/async-storage")
-    .then(module => {
-      AsyncStorage = module.default;
-    })
-    .catch(err => console.error("AsyncStorage import failed", err));
-}
-
-export const storage = {
-  getItem: async (key: string) => {
-    if (isWeb) {
-      return localStorage.getItem(key);
-    } else {
-      return AsyncStorage ? await AsyncStorage.getItem(key) : null;
-    }
-  },
-  setItem: async (key: string, value: string) => {
-    if (isWeb) {
-      localStorage.setItem(key, value);
-    } else if (AsyncStorage) {
-      await AsyncStorage.setItem(key, value);
-    }
-  },
-  removeItem: async (key: string) => {
-    if (isWeb) {
-      localStorage.removeItem(key);
-    } else if (AsyncStorage) {
-      await AsyncStorage.removeItem(key);
-    }
-  },
+export const getAsyncStorage = (): AsyncStringStorage => {
+  if (!isNative) {
+    const asyncSessionStorage: AsyncStringStorage = {
+      getItem: async key => Promise.resolve(sessionStorage.getItem(key)),
+      setItem: async (key, value) => {
+        sessionStorage.setItem(key, value);
+        return Promise.resolve();
+      },
+      removeItem: async key => {
+        sessionStorage.removeItem(key);
+        return Promise.resolve();
+      },
+    };
+    return asyncSessionStorage;
+  } else {
+    const AsyncStorage =
+      require("@react-native-async-storage/async-storage").default;
+    return {
+      getItem: key => AsyncStorage.getItem(key),
+      setItem: (key, value) => AsyncStorage.setItem(key, value),
+      removeItem: key => AsyncStorage.removeItem(key),
+    };
+  }
 };

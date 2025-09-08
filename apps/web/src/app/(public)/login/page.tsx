@@ -1,119 +1,123 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import {
   Email as EmailIcon,
   Facebook as FacebookIcon,
   GitHub as GitHubIcon,
 } from "@mui/icons-material";
-import Link from "@mui/material/Link";
+import { Box, Typography, Link } from "@mui/material";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
+import { useSetAtom } from "jotai";
 
 import Wrapper from "@/components/common/Wrapper";
+import Logo from "@/components/common/Logo";
+import CenteredColumnBox from "@/components/common/CenteredColumnBox";
 import CustomHeadingTitle from "@/components/common/CustomHeadingTitle";
-import CustomTextField from "@/components/common/CustomTextFieldProps";
-import { Box, Typography } from "@mui/material";
+import CustomTextField from "@/components/common/CustomTextField";
 import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
-import CenteredColumnBox from "@/components/common/CenteredColumnBox";
-import Logo from "@/components/common/Logo";
-import { useRouter } from "next/navigation";
 
-export default function Login() {
-  const [formData, setFormData] = useState({
-    username: "demo",
-    password: "demodemon",
-  });
-  const [error, setError] = useState("");
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+import { loginAtom, tokenAtom } from "core";
 
+const Login = () => {
   const router = useRouter();
+  const loginUser = useSetAtom(loginAtom);
+  const setToken = useSetAtom(tokenAtom);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [formState, setFormState] = useState({ username: "", password: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormState(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
+    setIsSubmitting(true);
+    setFieldErrors({});
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: formData.username,
-            password: formData.password,
-          }),
-        },
-      );
+      const response = await loginUser(formState);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error_description || "Login failed");
+      if (response?.access_token) {
+        setToken(response.access_token);
+        router.push("/");
         return;
       }
 
-      localStorage.setItem("isAuth", "true");
+      if (response?.fieldErrors && typeof response.fieldErrors === "object") {
+        setFieldErrors(response.fieldErrors);
+        return;
+      }
 
-      localStorage.setItem("token", data.access_token);
-      //@ts-ignore
+      if (response?.message) {
+        setFieldErrors({ general: response.message });
+        return;
+      }
 
-      router.push("/home");
-    } catch (err) {
-      console.log(err);
-      setError("Something went wrong. Please try again.");
+      setFieldErrors({ general: "Login failed. Please try again." });
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong. Please try again.";
+      setFieldErrors({ general: message });
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    const isFormValid = formData.username !== "" && formData.password !== "";
-    setIsButtonDisabled(!isFormValid);
-  }, [formData]);
-
   return (
     <Wrapper>
       <CenteredColumnBox>
         <Logo />
         <CustomHeadingTitle title="Log in" />
+
         <form onSubmit={handleSubmit}>
           <CustomTextField
             label="Username"
             name="username"
-            value={formData.username}
-            handleChange={handleChange}
+            value={formState.username}
+            onChange={handleChange}
             type="text"
             required
+            helperText={fieldErrors.username}
+            testId="login-username"
           />
+
           <CustomTextField
             label="Password"
             name="password"
-            value={formData.password}
-            handleChange={handleChange}
+            value={formState.password}
+            onChange={handleChange}
             type="password"
             required
+            helperText={fieldErrors.password}
+            testId="login-password"
           />
-          {error && (
-            <Typography color="error" sx={{ mt: 1 }}>
-              {error}
+
+          {fieldErrors.general && (
+            <Typography
+              variant="body2"
+              color="error"
+              sx={{ mt: 1 }}
+              data-test="login-error">
+              {fieldErrors.general}
             </Typography>
           )}
-          <CustomSubmitButton text="Log In" isDisabled={isButtonDisabled} />
+
+          <CustomSubmitButton
+            text="Log In"
+            isDisabled={isSubmitting}
+            testId="login-submit-button"
+          />
         </form>
 
-        <Box
-          sx={{
-            my: 3,
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-          }}>
+        <Box sx={{ my: 3, display: "flex", justifyContent: "center" }}>
           <Typography variant="body2">Or</Typography>
         </Box>
 
@@ -124,31 +128,22 @@ export default function Login() {
             display: "flex",
             flexDirection: "column",
           }}>
-          <SocialButtons
-            text="Login With Gmail"
-            type="submit"
-            icon={<EmailIcon />}
-          />
-          <SocialButtons
-            text="Login With Facebook"
-            type="submit"
-            icon={<FacebookIcon />}
-          />
-          <SocialButtons
-            text="Login With Github"
-            type="submit"
-            icon={<GitHubIcon />}
-          />
+          <SocialButtons text="Login With Gmail" icon={<EmailIcon />} />
+          <SocialButtons text="Login With Facebook" icon={<FacebookIcon />} />
+          <SocialButtons text="Login With GitHub" icon={<GitHubIcon />} />
 
           <Box sx={{ display: "flex", gap: "0.3rem" }}>
-            <Typography>Not have an Account?</Typography>
-            <Link href="/signup" component={NextLink}>
-              SignUp
+            <Typography>Don't have an account?</Typography>
+            <Link href="/signup" component={NextLink} data-test="signup-link">
+              Sign Up
             </Link>
           </Box>
+
           <TermsSection />
         </Box>
       </CenteredColumnBox>
     </Wrapper>
   );
-}
+};
+
+export default Login;

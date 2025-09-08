@@ -1,1 +1,2 @@
-export const isWeb = typeof window !== "undefined";
+export const isNative =
+  typeof navigator !== "undefined" && navigator.product === "ReactNative";

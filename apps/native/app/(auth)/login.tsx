@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Text,
 } from "react-native";
 import { router, Link } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
@@ -12,6 +13,8 @@ import CustomTitle from "@/components/ui/common/CustomTitle";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
+import SocialLoginButton from "@/components/ui/common/SocialLoginButton";
+import { Colors } from "@/constants/Colors";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -28,6 +31,11 @@ const LoginScreen = () => {
       AsyncStorage.setItem("isAuth", `${isAuth}`);
     }
     console.log("login....");
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    //Functionality to handle social login
+    console.log(`Logging in with ${provider}`);
   };
 
   return (
@@ -78,12 +86,32 @@ const LoginScreen = () => {
                 type="link"
                 lightColor="black"
                 darkColor="white"
-                style={[styles.commonText, styles.resetText]}>
+                style={[styles.commonText, styles.linkText]}>
                 Reset
               </ThemedText>
             </Link>
           </ThemedText>
         </View>
+        <Text style={styles.commonText}>or</Text>
+        <SocialLoginButton
+          provider="Gmail"
+          onPress={() => handleSocialLogin("Gmail")}
+        />
+        <SocialLoginButton
+          provider="Facebook"
+          onPress={() => handleSocialLogin("Facebook")}
+        />
+        <SocialLoginButton
+          provider="GitHub"
+          onPress={() => handleSocialLogin("GitHub")}
+        />
+
+        <Text style={styles.commonText}>
+          Don’t have an account?{" "}
+          <Link href="/register">
+            <Text style={styles.linkText}>Sign up</Text>
+          </Link>
+        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -107,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonActive: {
-    backgroundColor: "#61892F",
+    backgroundColor: Colors.green,
     paddingVertical: 15,
     width: "100%",
     alignItems: "center",
@@ -126,12 +154,13 @@ const styles = StyleSheet.create({
   },
   commonText: {
     textAlign: "center",
-    color: "#222629DE",
-    fontSize: 16,
+    color: "#222629",
+    fontSize: 14,
+    marginVertical: 10,
   },
-  resetText: {
-    color: "#61892F",
-    fontWeight: "bold",
+  linkText: {
+    color: Colors.green,
+    fontSize: 16,
   },
 });
 

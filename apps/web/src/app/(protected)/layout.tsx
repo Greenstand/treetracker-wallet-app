@@ -1,37 +1,77 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { tokenAtom } from "core";
+import Header from "@/components/header/Header";
+import BottomNavigationBar from "@/components/navigation/BottomNavigatorBar";
+import { HeaderProvider } from "@/context/HeaderContext";
+import { SnackbarProvider } from "@/context/SnackbarContext";
 
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [mounted, setMounted] = useState(false);
+  const [token, setToken] = useAtom(tokenAtom);
+  const [checked, setChecked] = useState(false);
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    setMounted(true);
+  }, []);
 
-    if (!token) {
-      router.replace("/login");
-    } else {
-      setIsAuthenticated(true);
+  useEffect(() => {
+    if (mounted) {
+      setChecked(true);
     }
+  }, [mounted, token]);
 
-    setIsLoading(false);
-  }, [router]);
+  useEffect(() => {
+    if (checked && !token) {
+      router.replace("/login");
+    }
+  }, [checked, token, router]);
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.storageArea === sessionStorage) {
+        if (e.key === "token" && e.newValue === null) {
+          setToken(null);
+          router.replace("/login");
+        } else if (e.key === null) {
+          setToken(null);
+          router.replace("/login");
+        }
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [router, setToken]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentToken = sessionStorage.getItem("token");
+      if (token && !currentToken) {
+        setToken(null);
+        router.replace("/login");
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [token, router, setToken]);
 
-  return <>{children}</>;
+  if (!mounted || !checked || !token) return <LoadingSpinner />;
+
+  return (
+    <SnackbarProvider>
+      <HeaderProvider>
+        <Header />
+        {children}
+        <BottomNavigationBar />
+      </HeaderProvider>
+    </SnackbarProvider>
+  );
 }
