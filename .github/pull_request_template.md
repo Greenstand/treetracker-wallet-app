@@ -13,9 +13,9 @@ with apps and packages folders" title: "[Feature/Bug] - Title" labels:
 Please provide a clear and concise description of the changes made, including
 the purpose and context.
 
-**Fixes**: # (issue number)  
+Fixes: # (issue number)  
 or  
-**Resolves**: # (issue number)
+Resolves: # (issue number)
 
 ---
 
@@ -23,7 +23,6 @@ or
 
 - [ ] Changes in **`apps`** folder (specify the app and briefly describe the
       changes):
-
   - [ ] `Web`
   - [ ] `Native`
 
