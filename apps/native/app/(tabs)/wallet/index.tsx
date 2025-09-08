@@ -28,6 +28,36 @@ export default function Wallet() {
             <Text style={styles.infoIconText}>i</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={styles.walletsSection}>
+          <Text style={styles.walletsTitle}>Your wallets</Text>
+
+          <View style={styles.walletsContainer}>
+            <TouchableOpacity style={styles.walletItem}>
+              <View style={styles.walletInfo}>
+                <Text style={styles.walletName}>Wallet 2</Text>
+                <Text style={styles.walletDate}>May 22, 2024</Text>
+              </View>
+              <View style={styles.walletRight}>
+                <Text style={styles.walletAmount}>1000</Text>
+                <Text style={styles.chevron}>›</Text>
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.separator} />
+
+            <TouchableOpacity style={styles.walletItem}>
+              <View style={styles.walletInfo}>
+                <Text style={styles.walletName}>Wallet 1</Text>
+                <Text style={styles.walletDate}>May 16, 2024</Text>
+              </View>
+              <View style={styles.walletRight}>
+                <Text style={styles.walletAmount}>3455</Text>
+                <Text style={styles.chevron}>›</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -99,6 +129,61 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     fontWeight: "bold",
+  },
+  walletsSection: {
+    marginTop: 24,
+  },
+  walletsTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 16,
+  },
+  walletsContainer: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  walletItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    backgroundColor: "white",
+  },
+  walletInfo: {
+    flex: 1,
+  },
+  walletName: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#333",
+    marginBottom: 4,
+  },
+  walletDate: {
+    fontSize: 14,
+    color: "#666",
+  },
+  walletRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  walletAmount: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#7CB342",
+    marginRight: 8,
+  },
+  chevron: {
+    fontSize: 20,
+    color: "#666",
+    fontWeight: "300",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#e0e0e0",
+    marginHorizontal: 16,
   },
   content: {
     marginTop: 32,
