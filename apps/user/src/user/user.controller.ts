@@ -1,7 +1,8 @@
+import { LoginUserDto } from "@dtos/login-user.dto";
+import { RegisterUserDto } from "@dtos/register-user.dto";
+import { UserDto } from "@dtos/user.dto";
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { RegisterUserDto } from "@dtos/register-user.dto";
-import { LoginUserDto } from "@dtos/login-user.dto";
 
 @Controller()
 export class UserController {
@@ -16,6 +17,13 @@ export class UserController {
   @Post("register")
   registerUser(@Body() registerUserDto: RegisterUserDto) {
     return this.userService.createUser(registerUserDto);
+  }
+
+  //Route to delete a user from keycloak
+  @Post("delete")
+  @HttpCode(204)
+  async deleteUser(@Body() userDto: UserDto) {
+    await this.userService.deleteAccount(userDto);
   }
 
   @Get("healthz")
