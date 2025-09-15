@@ -1,8 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView } from "react-native";
-import { SvgXml } from "react-native-svg";
-import PlusIcon from "../../../assets/plus-icon.svg";
-import InfoIcon from "../../../assets/info-icon.svg";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 export default function Wallet() {
   const handleCreateWallet = () => {
@@ -18,16 +17,25 @@ export default function Wallet() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Wallet</Text>
       </View>
-     
 
       <View style={styles.container}>
         <View style={styles.createWalletSection}>
-          <TouchableOpacity style={styles.createWalletButton} onPress={handleCreateWallet}>
-            <PlusIcon width={14} height={14} style={styles.plusIcon} />
+          <TouchableOpacity 
+            style={styles.createWalletButton} 
+            onPress={handleCreateWallet}
+            accessibilityRole="button"
+            accessibilityLabel="Create new wallet"
+          >
+            <Ionicons name="add" size={14} color="#222629" style={styles.plusIcon} />
             <Text style={styles.createWalletText}>CREATE WALLET</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.infoIcon} onPress={handleInfoPress}>
-            <InfoIcon width={18} height={18} />
+          <TouchableOpacity 
+            style={styles.infoIcon} 
+            onPress={handleInfoPress}
+            accessibilityRole="button"
+            accessibilityLabel="More information"
+          >
+            <Ionicons name="information-circle" size={18} color="#222629" />
           </TouchableOpacity>
         </View>
       </View>
@@ -38,7 +46,7 @@ export default function Wallet() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: "row",
@@ -46,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.background,
   },
   headerTitle: {
     fontSize: 18,
@@ -56,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.background,
   },
   createWalletSection: {
     flexDirection: "row",
@@ -76,7 +84,6 @@ const styles = StyleSheet.create({
   plusIcon: {
     marginRight: 8,
     alignSelf: "center",
-    marginBottom: 0,
   },
   createWalletText: {
     fontFamily: "Roboto",
