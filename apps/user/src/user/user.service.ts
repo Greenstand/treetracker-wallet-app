@@ -39,6 +39,7 @@ export class UserService {
     };
 
     try {
+      Logger.error("xxx........");
       const response = await firstValueFrom(
         this.httpService.post(tokenUrl, body.toString(), { headers }),
       );
@@ -125,52 +126,13 @@ export class UserService {
   }
 
   public async deleteAccount(userData: UserDto) {
-    const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
-    const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
 
-    try {
-      // Step 1: Get access token
-      const tokenData = await this.authService.getToken();
-      const headers = {
-        Authorization: `Bearer ${tokenData}`,
-        "Content-Type": "application/json",
-      };
-
-      // Step 2: Lookup user by username (email)
-      const getUserApiUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users?email=${userData.email}`;
-      const users = await firstValueFrom(
-        this.httpService.get(getUserApiUrl, { headers }),
-      );
-
-      const userId = users.data[0]?.id;
-      if (!userId) {
-        return { success: false, message: "User not found" };
-      }
-
-      // Step 3: DELETE the user
-      const deleteUserApiUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users/${userId}`;
-      const response = await firstValueFrom(
-        this.httpService.delete(deleteUserApiUrl, { headers }),
-      );
-
-      if (response?.status === 204) {
-        return { success: true, message: "User deleted successfully!" };
-      } else {
-        return {
-          success: false,
-          message: `Unexpected response: ${response.status}`,
-        };
-      }
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.errorMessage || error.message;
-
-      if (error.response?.status === 404) {
-        return { success: false, message: "User not found" };
-      } else if (error.response?.status === 403) {
-        throw new HttpException("Unauthorized to delete user", 403);
-      } else {
-        throw new HttpException(errorMessage || "Error deleting user", 500);
-      }
+    try{
+      deleteAccountFromKeycloak(userData.email)
+    }catch(e){
+      throw e;
     }
+
+
   }
 }
