@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-export * from "./fetchTokenFromKeycloak";
-=======
-export * from "./fetchTokenFromKeycloak.ts";
+// use index.ts to expose functions as a convention
 export * from "./deleteAccountFromKeycloak.ts";
->>>>>>> d082f68 (chore: refactor the keycloak)
+export * from "./fetchTokenFromKeycloak.ts";
