@@ -51,17 +51,51 @@ Then(/^I should see my new wallet in the list of wallets$/, async () => {
 });
 
 // Registration steps
-When(/^I fill in the registration form with valid data$/, async table => {
-  const data = table.rowsHash();
-  await $('input[name="email"]').setValue(data.email);
-  await $('input[name="password"]').setValue(data.password);
+Given(/^(.+) is not registered in the system$/, async email => {
+  try {
+    await fetch(
+      `http://localhost:8080/e2e/users?email=${encodeURIComponent(email)}`,
+      { method: "DELETE" },
+    );
+  } catch {
+    // ignore errors (e.g., user doesn't exist)
+  }
 });
 
-When(/^I click on the register button$/, async () => {
-  await $("button*=Register").click();
+When(
+  /^I fill in the registration form with (.+) and (.+)$/,
+  async (email, password) => {
+    const emailInput = await $('input[name="email"]');
+    await emailInput.setValue(email);
+
+    const passwordInput = await $('input[name="password"]');
+    await passwordInput.setValue(password);
+  },
+);
+
+When(/^I click on the signup button$/, async () => {
+  const signupBtn = await $("button*=Sign Up"); // Match SIGN UP button text
+  await signupBtn.waitForClickable({ timeout: 10000 });
+  await signupBtn.click();
 });
 
-When(/^I click on the social media login button$/, async table => {
-  const data = table.rowsHash();
-  await $(`button*=Login with ${data.social_media}`).click();
+Then(/^I should see a confirmation message$/, async () => {
+  await $("body").waitUntil(
+    async () => {
+      const text = await $("body").getText();
+      return (
+        /User created successfully!/i.test(text) ||
+        /registration successful/i.test(text) ||
+        /successfully registered/i.test(text) ||
+        /check your email/i.test(text) ||
+        /confirmation email sent/i.test(text) ||
+        /verify your email/i.test(text) ||
+        /account created/i.test(text)
+      );
+    },
+    {
+      timeout: 10000,
+      timeoutMsg: "Expected a registration confirmation message",
+    },
+  );
 });
