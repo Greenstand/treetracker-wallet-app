@@ -10,6 +10,5 @@ Feature: send token to someone by email address
     And I input the email address and click 'submit'
     Then I should see a confirmation message that the token has been sent
     And I should receive an email with the token details
-      Email content:
-        | subject                     | Greenstand Token sent to you! |
-        | body                        | You have received a token from wallet-1. Please click link below to claim it. |
+      | subject | Greenstand Token sent to you! |
+      | body    | You have received a token from wallet-1. Please click link below to claim it. |

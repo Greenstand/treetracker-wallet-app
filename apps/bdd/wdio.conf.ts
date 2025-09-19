@@ -1,4 +1,7 @@
 import type { Options } from "@wdio/types";
+import path from "node:path";
+// Video reporter for recording test execution - useful for debugging and demos
+import Video from "wdio-video-reporter";
 
 export const config: Options.Testrunner = {
   //
@@ -140,7 +143,20 @@ export const config: Options.Testrunner = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ["spec"],
+  reporters: [
+    "spec",
+    // Video reporter: Records test execution for debugging and analysis
+    // Videos are saved to apps/bdd/test-videos/ directory
+    [
+      Video as any,
+      {
+        saveAllVideos: true, // record all test runs including passing tests
+        outputDir: path.resolve(__dirname, "test-videos"), // output directory for video files
+        videoSlowdownMultiplier: 1,
+        videoFormat: "mp4", // MP4 format for better compatibility
+      },
+    ],
+  ],
 
   // If you are using Cucumber you need to specify the location of your step definitions.
   cucumberOpts: {
