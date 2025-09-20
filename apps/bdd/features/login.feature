@@ -1,17 +1,19 @@
 Feature: Wallet app login
   In order to access my wallet
 
-  Scenario: Wrong login
+  Scenario Outline: As a user, I can log into the wallet app
     Given I am on the login page
     When I login with foobar and barfoo
-    Then I should see text Login failed
+    Then I should see text <message>
 
-  @skip
-  Scenario: Correct login
-    Given I am on the login page
-    And test@greenstand.org is a registered user
-    When I login with test@greenstand.org and abc.123
-    Then I am on the home page
+    Examples:
+      | username               | password | message                           |
+      | foobar                 | barfoo   | Login failed                      |
+      
+    @skip
+    Examples:
+      | username            | password | message                        |
+      | test@greenstand.org | abc.123  | You logged into a secure area! |
 
   @skip
   Scenario: As a user, I can log into the wallet app with my social account
