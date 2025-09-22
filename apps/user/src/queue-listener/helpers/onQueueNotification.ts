@@ -1,5 +1,5 @@
-import { pgClient } from "@packages/queue/pgClient.js";
-import subscribe from "@packages/queue/subscribe.js";
+import { pgClient } from "@packages/queue/pgClient";
+import subscribe from "@packages/queue/subscribe";
 import { randomUUID } from "crypto";
 
 type NotificationPayload = {
@@ -31,32 +31,5 @@ export function onQueueNotification(callback: (accountId: string) => void) {
     }),
   );
 }
-
-// const subscribe = (callback: (account_id: string) => Promise<void>) => {
-//   console.log("Subscribing to PostgreSQL notifications...");
-
-//   const clientId = "user-api-client"; // unique id to identify client
-//   const channel = "wallets/creation"; // channel name
-//   pgClient.query(`LISTEN ${channel}`);
-//   pgClient.on("notification", async (msg: Notification) => {
-//     if (msg.channel === channel) {
-//       try {
-//         const payload: NotificationPayload = JSON.parse(msg.payload);
-//         const date = new Date();
-//         const dateStr = date.toISOString();
-
-//         await callback(payload.account_id);
-//         await ack({
-//           pgClient,
-//           id: payload.capture_id,
-//           dateStr,
-//           clientId,
-//         });
-//       } catch (error) {
-//         console.error("Error parsing wallet creation event:", error);
-//       }
-//     }
-//   });
-// };
 
 export default onQueueNotification;
