@@ -1,9 +1,13 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { RegisterUserDto } from "@dtos/register-user.dto";
+import { UserDto } from "@dtos/user.dto";
 import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { deleteAccountFromKeycloak } from "@treetracker/keycloak";
 import { HttpStatusCode } from "axios";
+import * as dotenv from "dotenv";
+import { firstValueFrom } from "rxjs";
 import { AuthService } from "../auth/auth.service";
+dotenv.config();
 
 @Injectable()
 export class UserService {
@@ -38,6 +42,7 @@ export class UserService {
     };
 
     try {
+      Logger.error("xxx........");
       const response = await firstValueFrom(
         this.httpService.post(tokenUrl, body.toString(), { headers }),
       );
@@ -120,6 +125,19 @@ export class UserService {
           HttpStatusCode.Forbidden,
         );
       }
+    }
+  }
+
+  public async deleteAccount(userData: UserDto) {
+    //const tokenData = await this.authService.getToken();
+    try {
+      deleteAccountFromKeycloak(
+        this.httpService,
+        () => this.authService.getToken(),
+        userData.email,
+      );
+    } catch (e) {
+      throw e;
     }
   }
 }
