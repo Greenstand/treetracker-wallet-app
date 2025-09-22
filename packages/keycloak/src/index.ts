@@ -1,3 +1,4 @@
 // use index.ts to expose functions as a convention
-export * from "./fetchTokenFromKeycloak.ts";
-export * from "./deleteAccountFromKeycloak.ts";
+export * from "./deleteAccountFromKeycloak";
+export * from "./fetchTokenFromKeycloak";
+export * from "./getToken";
