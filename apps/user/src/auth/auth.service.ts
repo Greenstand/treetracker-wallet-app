@@ -1,13 +1,28 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable, Logger } from "@nestjs/common";
-import { firstValueFrom } from "rxjs";
+import { Injectable } from "@nestjs/common";
 import { fetchTokenFromKeycloak } from "@treetracker/keycloak";
-
-type KeycloakResponse = {
-  data: { access_token: string; expires_in: number };
-};
 
 @Injectable()
 export class AuthService {
   constructor(private readonly httpService: HttpService) {}
+
+  private bearerToken: string | null = null;
+  private tokenExpiresAt: number | null = null;
+
+  private isExpired(): boolean {
+    return !this.tokenExpiresAt || Date.now() >= this.tokenExpiresAt;
+  }
+
+  /**
+   * Returns a cached service-account token.
+   * Refreshes from Keycloak when missing/expired.
+   */
+  public async getToken(): Promise<string> {
+    if (!this.bearerToken || this.isExpired()) {
+      const { access_token, tokenExpiresAt } = await fetchTokenFromKeycloak();
+      this.bearerToken = access_token;
+      this.tokenExpiresAt = tokenExpiresAt;
+    }
+    return this.bearerToken!;
+  }
 }
