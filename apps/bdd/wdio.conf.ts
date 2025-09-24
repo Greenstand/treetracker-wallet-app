@@ -151,10 +151,9 @@ export const config: Options.Testrunner = {
       Video as any,
       {
         saveAllVideos: true, // record all test runs including passing tests
-        outputDir: path.resolve(__dirname, "test-videos"), // output directory for video files
+        // outputDir: path.resolve(__dirname, "test-videos"), // Removed per Stack Overflow fix
         videoSlowdownMultiplier: 1,
         videoFormat: "mp4", // MP4 format for better compatibility
-        videoRenderTimeout: 100, // Wait up to 100 seconds for video to render before session cleanup
       },
     ],
   ],
@@ -236,8 +235,9 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {string} cid worker id (e.g. 0-0)
    */
-  // beforeSession: function (config, capabilities, specs, cid) {
-  // },
+  beforeSession: function (config, capabilities, specs, cid) {
+    console.log("🔍 BEFORE_SESSION: Initializing reporters...");
+  },
   /**
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.
@@ -330,16 +330,22 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // after: function (result, capabilities, specs) {
-  // },
+  after: async function (result, capabilities, specs) {
+    console.log("🔍 AFTER: Video reporter finishing...");
+    // Add small delay to let video reporter finish
+    await new Promise(resolve => setTimeout(resolve, 100));
+  },
   /**
    * Gets executed right after terminating the webdriver session.
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // afterSession: function (config, capabilities, specs) {
-  // },
+  afterSession: async function (config, capabilities, specs) {
+    console.log("🔍 AFTER_SESSION: JSON formatter finishing...");
+    // Add delay to let video reporter finish before session cleanup
+    await new Promise(resolve => setTimeout(resolve, 500));
+  },
   /**
    * Gets executed after all workers got shut down and the process is about to exit. An error
    * thrown in the onComplete hook will result in the test run failing.
@@ -349,8 +355,7 @@ export const config: Options.Testrunner = {
    * @param {<Object>} results object containing test results
    */
   onComplete: function (exitCode, config, capabilities, results) {
-    // Note: The "invalid session id" error is a known issue with wdio-video-reporter
-    // It occurs during cleanup and is harmless - tests are still passing correctly
+    console.log("🔍 ON_COMPLETE: Final cleanup...");
     console.log("Test run completed. Exit code:", exitCode);
   },
   /**
