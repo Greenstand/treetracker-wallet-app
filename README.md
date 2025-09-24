@@ -71,14 +71,17 @@ yarn cypress-e2e-headless-test
 
 ### 🚀 Overview
 
-Added comprehensive end-to-end testing using **WebdriverIO** for the wallet application, covering:
+Added comprehensive end-to-end testing using **WebdriverIO** for the wallet
+application, covering:
 
-  * ✅ **Login flow** (success & failure cases)
-  * ✅ **Wallet creation** process
-  * ✅ **User registration** workflow
-  * and more
+- ✅ **Login flow** (success & failure cases)
+- ✅ **Wallet creation** process
+- ✅ **User registration** workflow
+- ✅ **HTML test reports** with detailed execution analysis
+- ✅ **Video recordings** for debugging failed tests
+- and more
 
------
+---
 
 ### 🧪 Test Commands
 
@@ -98,9 +101,13 @@ yarn bdd:e2e:debug
 
 # Update ChromeDriver (if tests fail)
 yarn bdd:e2e:update-driver
+
+# Generate HTML test reports
+yarn bdd:report          # Generate HTML report from existing test results
+yarn bdd:test:report     # Run tests + generate HTML report
 ```
 
------
+---
 
 ### 🖼️ Test Evidence
 
@@ -115,17 +122,26 @@ $ yarn test:e2e
 [chrome] ✔ Registration - Email signup (5.8s)
 ```
 
------
+**HTML Test Reports:**
+
+- Detailed execution analysis with pass/fail status
+- Video recordings for debugging failed tests
+- Browser metadata and execution timing
+- Generated in `apps/bdd/reports/cucumber-html/index.html`
+
+---
 
 ### ✅ Verification Checklist
 
-  * All tests pass locally (`yarn test:e2e`)
-  * No production code modified
-  * Test data follows PII guidelines
-  * ChromeDriver version (v136) matches CI
-  * Documentation updated if needed
+- All tests pass locally (`yarn test:e2e`)
+- HTML reports generated successfully (`yarn bdd:report`)
+- Video recordings captured for failed tests
+- No production code modified
+- Test data follows PII guidelines
+- ChromeDriver version (v136) matches CI
+- Documentation updated if needed
 
------
+---
 
 ### ⚠️ Requirements
 
@@ -137,8 +153,6 @@ yarn workspace web dev
 
 Also, ensure you have Chrome v136+ installed.
 
-
-
 ## 🏗️ Project Structure
 
 ```
@@ -146,7 +160,8 @@ treetracker-wallet-app/
 ├── apps/
 │   ├── web/             # Next.js 14 web application
 │   ├── native/          # React Native mobile app (Expo)
-│   └── user/            # NestJS backend API service
+│   ├── user/            # NestJS backend API service
+│   └── bdd/             # BDD E2E tests (WebdriverIO + Cucumber)
 ├── packages/
 │   ├── core/            # Shared business logic (jotai)
 │   └── queue/           # Message queue utilities
@@ -227,12 +242,13 @@ yarn test
 # Lint and format
 yarn lint:fix
 ```
+
 ## How to set up: lint, code format, Typescript for a new package/app
 
-Follow this PR too add shared configuration package to standardize linting, formatting, and TypeScript setup across the project.
+Follow this PR too add shared configuration package to standardize linting,
+formatting, and TypeScript setup across the project.
 
 https://github.com/Greenstand/treetracker-wallet-app/pull/537/files
-
 
 ## 🤝 Contributing
 

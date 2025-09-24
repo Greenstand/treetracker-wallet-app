@@ -226,7 +226,21 @@ yarn cypress-e2e-test
 
 # Component tests (Cypress)
 yarn cypress-component-test
+
+# BDD E2E tests (WebdriverIO)
+yarn bdd:e2e
+
+# BDD tests with HTML reports
+yarn bdd:test:report
 ```
+
+#### BDD Tests (apps/bdd)
+
+- **Technology:** WebdriverIO, Cucumber, TypeScript
+- **Development:** `yarn bdd:e2e`
+- **Testing:** `yarn bdd:test:report` (includes HTML report generation)
+- **Reports:** HTML reports generated in `apps/bdd/reports/cucumber-html/`
+- **Videos:** Test recordings saved in `apps/bdd/test-videos/`
 
 ### Writing Tests should be clear and descriptive. Use `describe` and `it` blocks effectively.
 
@@ -262,6 +276,10 @@ yarn user:test:e2e       # Run E2E tests for user service
 
 yarn cypress-e2e-test     # Interactive E2E tests
 yarn cypress-e2e-headless-test # Headless E2E tests
+
+yarn bdd:e2e             # Run BDD E2E tests
+yarn bdd:test:report     # Run BDD tests with HTML reports
+yarn bdd:report          # Generate HTML reports from existing results
 
 # Code Quality
 yarn lint:check           # Check code style

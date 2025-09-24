@@ -38,11 +38,10 @@ const reportPath = path.resolve(
 
 console.log("✅ HTML report generated successfully!");
 console.log("📊 Report location:", reportPath);
-console.log("");
-console.log("🌐 To open in browser:");
-console.log("   • Copy this path: file://" + reportPath);
-console.log("   • Paste into your browser address bar");
-console.log("   • Or run: open apps/bdd/reports/cucumber-html/index.html");
+console.log("🌐 Open in browser:");
+console.log(
+  `   \x1b]8;;file://${reportPath}\x1b\\file://${reportPath}\x1b]8;;\x1b\\`,
+);
 console.log("");
 console.log("💡 Quick commands:");
 console.log("   • Open report: open apps/bdd/reports/cucumber-html/index.html");
