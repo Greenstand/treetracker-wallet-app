@@ -8,6 +8,7 @@ export const Colors = {
   lightGray: "#eeee",
   darkGray: "#2226298F",
   gray: "#E0E0E0",
+  background: "#f5f5f5",
   blackOverlay: "rgba(0, 0, 0, 0.5)",
   shadowLight: "rgba(0, 0, 0, 0.1)",
   shadowDark: "rgba(0, 0, 0, 0.2)",
