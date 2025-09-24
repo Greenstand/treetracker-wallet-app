@@ -150,10 +150,10 @@ export const config: Options.Testrunner = {
     [
       Video as any,
       {
-        saveAllVideos: true, // record all test runs including passing tests
-        outputDir: path.resolve(__dirname, "test-videos"), // Custom directory for video files
+        saveAllVideos: true,
+        outputDir: path.resolve(__dirname, "test-videos"),
         videoSlowdownMultiplier: 1,
-        videoFormat: "mp4", // MP4 format for better compatibility
+        videoFormat: "mp4",
       },
     ],
   ],
@@ -235,9 +235,8 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {string} cid worker id (e.g. 0-0)
    */
-  beforeSession: function (config, capabilities, specs, cid) {
-    console.log("🔍 BEFORE_SESSION: Initializing reporters...");
-  },
+  // beforeSession: function (config, capabilities, specs, cid) {
+  // },
   /**
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.
@@ -331,8 +330,8 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    console.log("🔍 AFTER: Video reporter finishing...");
-    // Add small delay to let video reporter finish
+    // Small delay to ensure video reporter finishes processing
+    // This prevents race conditions with wdio-video-reporter
     await new Promise(resolve => setTimeout(resolve, 100));
   },
   /**
@@ -342,8 +341,8 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   afterSession: async function (config, capabilities, specs) {
-    console.log("🔍 AFTER_SESSION: JSON formatter finishing...");
-    // Add delay to let video reporter finish before session cleanup
+    // Delay to ensure video reporter finishes before session cleanup
+    // This prevents "invalid session id" errors during WebDriver cleanup
     await new Promise(resolve => setTimeout(resolve, 500));
   },
   /**
@@ -355,7 +354,6 @@ export const config: Options.Testrunner = {
    * @param {<Object>} results object containing test results
    */
   onComplete: function (exitCode, config, capabilities, results) {
-    console.log("🔍 ON_COMPLETE: Final cleanup...");
     console.log("Test run completed. Exit code:", exitCode);
   },
   /**

@@ -1,3 +1,12 @@
+/**
+ * HTML Report Generator for BDD Tests
+ *
+ * This script processes JSON test results from Cucumber and generates
+ * a beautiful HTML report using multiple-cucumber-html-reporter.
+ *
+ * Usage: yarn report:cucumber
+ */
+
 const report = require("multiple-cucumber-html-reporter");
 const path = require("path");
 
@@ -29,8 +38,11 @@ const reportPath = path.resolve(
 
 console.log("✅ HTML report generated successfully!");
 console.log("📊 Report location:", reportPath);
-console.log("🌐 Open in browser:");
-console.log(`   file://${reportPath}`);
+console.log("");
+console.log("🌐 To open in browser:");
+console.log("   • Copy this path: file://" + reportPath);
+console.log("   • Paste into your browser address bar");
+console.log("   • Or run: open apps/bdd/reports/cucumber-html/index.html");
 console.log("");
 console.log("💡 Quick commands:");
 console.log("   • Open report: open apps/bdd/reports/cucumber-html/index.html");
