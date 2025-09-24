@@ -151,7 +151,7 @@ export const config: Options.Testrunner = {
       Video as any,
       {
         saveAllVideos: true, // record all test runs including passing tests
-        // outputDir: path.resolve(__dirname, "test-videos"), // Removed per Stack Overflow fix
+        outputDir: path.resolve(__dirname, "test-videos"), // Custom directory for video files
         videoSlowdownMultiplier: 1,
         videoFormat: "mp4", // MP4 format for better compatibility
       },
