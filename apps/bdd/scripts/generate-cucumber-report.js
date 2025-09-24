@@ -22,4 +22,18 @@ report.generate({
   },
 });
 
-console.log("HTML report generated at: ./reports/cucumber-html/index.html");
+const reportPath = path.resolve(
+  __dirname,
+  "../reports/cucumber-html/index.html",
+);
+
+console.log("✅ HTML report generated successfully!");
+console.log("📊 Report location:", reportPath);
+console.log("🌐 Open in browser:");
+console.log(`   file://${reportPath}`);
+console.log("");
+console.log("💡 Quick commands:");
+console.log("   • Open report: open apps/bdd/reports/cucumber-html/index.html");
+console.log(
+  "   • View in terminal: cat apps/bdd/reports/cucumber-html/index.html | head -20",
+);
