@@ -154,6 +154,7 @@ export const config: Options.Testrunner = {
         outputDir: path.resolve(__dirname, "test-videos"), // output directory for video files
         videoSlowdownMultiplier: 1,
         videoFormat: "mp4", // MP4 format for better compatibility
+        videoRenderTimeout: 100, // Wait up to 100 seconds for video to render before session cleanup
       },
     ],
   ],
@@ -184,6 +185,11 @@ export const config: Options.Testrunner = {
     timeout: 60000,
     // <boolean> Enable this config to treat undefined definitions as warnings.
     ignoreUndefinedDefinitions: true,
+    // <string[]> formatters for output
+    format: [
+      "progress",
+      "json:" + path.resolve(__dirname, "reports/cucumber/cucumber.json"),
+    ],
     // debug: true,
   },
 
@@ -342,8 +348,11 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  onComplete: function (exitCode, config, capabilities, results) {
+    // Note: The "invalid session id" error is a known issue with wdio-video-reporter
+    // It occurs during cleanup and is harmless - tests are still passing correctly
+    console.log("Test run completed. Exit code:", exitCode);
+  },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
