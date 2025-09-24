@@ -150,10 +150,10 @@ export const config: Options.Testrunner = {
     [
       Video as any,
       {
-        saveAllVideos: true, // record all test runs including passing tests
-        outputDir: path.resolve(__dirname, "test-videos"), // output directory for video files
+        saveAllVideos: true,
+        outputDir: path.resolve(__dirname, "test-videos"),
         videoSlowdownMultiplier: 1,
-        videoFormat: "mp4", // MP4 format for better compatibility
+        videoFormat: "mp4",
       },
     ],
   ],
@@ -184,6 +184,11 @@ export const config: Options.Testrunner = {
     timeout: 60000,
     // <boolean> Enable this config to treat undefined definitions as warnings.
     ignoreUndefinedDefinitions: true,
+    // <string[]> formatters for output
+    format: [
+      "progress",
+      "json:" + path.resolve(__dirname, "reports/cucumber/cucumber.json"),
+    ],
     // debug: true,
   },
 
@@ -324,16 +329,22 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // after: function (result, capabilities, specs) {
-  // },
+  after: async function (result, capabilities, specs) {
+    // Small delay to ensure video reporter finishes processing
+    // This prevents race conditions with wdio-video-reporter
+    await new Promise(resolve => setTimeout(resolve, 100));
+  },
   /**
    * Gets executed right after terminating the webdriver session.
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // afterSession: function (config, capabilities, specs) {
-  // },
+  afterSession: async function (config, capabilities, specs) {
+    // Delay to ensure video reporter finishes before session cleanup
+    // This prevents "invalid session id" errors during WebDriver cleanup
+    await new Promise(resolve => setTimeout(resolve, 500));
+  },
   /**
    * Gets executed after all workers got shut down and the process is about to exit. An error
    * thrown in the onComplete hook will result in the test run failing.
@@ -342,8 +353,9 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  onComplete: function (exitCode, config, capabilities, results) {
+    console.log("Test run completed. Exit code:", exitCode);
+  },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
