@@ -6,19 +6,32 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-format:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
-          cache: "yarn"
+          node-version: "20"
+          cache: yarn
+          cache-dependency-path: "yarn.lock"
+
+      - name: Ensure Yarn v1.22+
+        run: npm i -g yarn@^1.22.0 && yarn --version
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -29,5 +42,45 @@ jobs:
       - name: Run Lint-Staged (Prettier & ESLint)
         run: yarn lint-staged
 
+      - name: Run lint:check
+        run: yarn lint:check
+
       - name: Run Commitlint on Last Commit
+        if: github.event_name == 'pull_request'
         run: git log -1 --pretty=format:%s | npx --no -- commitlint
+
+  e2e-web:
+    name: Web E2E (headless)
+    runs-on: ubuntu-latest
+    needs: lint-format
+    if: github.event_name == 'pull_request' && (github.event.action == 'ready_for_review' || github.event.action == 'opened' || github.event.action == 'synchronize')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: yarn
+          cache-dependency-path: "yarn.lock"
+
+      - name: Ensure Yarn v1.22+
+        run: npm i -g yarn@^1.22.0 && yarn --version
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Run Web E2E Tests
+        run: yarn workspace web cy:e2e-headless
+        env:
+          CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+          CI: true
