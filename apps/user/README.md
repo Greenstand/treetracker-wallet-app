@@ -139,3 +139,19 @@ wallet api.
 
 The wallet api will verify the access token by checking the role
 `wallet-operator-microservice` in the access token.
+
+### .env
+
+Create a .env file in the project root with the following variables:
+
+PRIVATE_KEYCLOAK_REALM=treetracker
+PRIVATE_KEYCLOAK_BASE_URL=https://dev-k8s.treetracker.org/keycloak
+PRIVATE_KEYCLOAK_CLIENT_SECRET= # request from admins DATABASE_URL= # request
+from admins PRIVATE_KEYCLOAK_CLIENT_ID=wallet-app-user-dev-svc
+PRIVATE_WALLET_API_KEY=FORTESTFORTESTFORTESTFORTESTFORTEST CORS_ORIGINS=
+CORS_ORIGINS_DEV=http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000
+
+Request PRIVATE_KEYCLOAK_CLIENT_SECRET and DATABASE_URL from the admins.
+
+Variables are loaded automatically at runtime (via dotenv), so just copy
+.env.example → .env and fill in missing values.
