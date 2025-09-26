@@ -140,18 +140,24 @@ wallet api.
 The wallet api will verify the access token by checking the role
 `wallet-operator-microservice` in the access token.
 
-### .env
+### .env setup
 
-Create a .env file in the project root with the following variables:
+To run the tests, first navigate to the apps/user folder in your terminal. Once
+inside the folder, create a new .env file by copying the contents of
+.env.example. This file contains the environment variable names you will need.
 
-PRIVATE_KEYCLOAK_REALM=treetracker
-PRIVATE_KEYCLOAK_BASE_URL=https://dev-k8s.treetracker.org/keycloak
-PRIVATE_KEYCLOAK_CLIENT_SECRET= # request from admins DATABASE_URL= # request
-from admins PRIVATE_KEYCLOAK_CLIENT_ID=wallet-app-user-dev-svc
-PRIVATE_WALLET_API_KEY=FORTESTFORTESTFORTESTFORTESTFORTEST CORS_ORIGINS=
-CORS_ORIGINS_DEV=http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000
+Next, open the .env file and replace the placeholders with the actual values.
+You will need to request the secret and the database URL from the project admin
+in order to complete this step.
 
-Request PRIVATE_KEYCLOAK_CLIENT_SECRET and DATABASE_URL from the admins.
+After the .env file has been properly configured, you can run the tests by
+executing either yarn test or npm test in your terminal. If everything is set up
+correctly, the tests will run successfully.
 
-Variables are loaded automatically at runtime (via dotenv), so just copy
-.env.example → .env and fill in missing values.
+## Once the .env is set, run the following commands for e2e, integration and unit testing
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn test:e2e
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn int-test
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn test:unit
