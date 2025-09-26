@@ -139,3 +139,25 @@ wallet api.
 
 The wallet api will verify the access token by checking the role
 `wallet-operator-microservice` in the access token.
+
+### .env setup
+
+To run the tests, first navigate to the apps/user folder in your terminal. Once
+inside the folder, create a new .env file by copying the contents of
+.env.example. This file contains the environment variable names you will need.
+
+Next, open the .env file and replace the placeholders with the actual values.
+You will need to request the secret and the database URL from the project admin
+in order to complete this step.
+
+After the .env file has been properly configured, you can run the tests by
+executing either yarn test or npm test in your terminal. If everything is set up
+correctly, the tests will run successfully.
+
+## Once the .env is set, run the following commands for e2e, integration and unit testing
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn test:e2e
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn int-test
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn test:unit
