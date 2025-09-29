@@ -1,5 +1,6 @@
 module.exports = {
   branches: ["main"],
+  extends: ['semantic-release-commit-filter'],
   plugins: [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -19,4 +20,5 @@ module.exports = {
     ],
     ["@semantic-release/github", {}],
   ],
+  "tagFormat": "${package.name}-${version}"
 };
