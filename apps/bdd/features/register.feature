@@ -1,12 +1,11 @@
 Feature: Register
   New user register by email, social media
 
-  @skip @web
   Scenario: As a new user, I can register new account by email address
-    Given I am on the register page
+    Given I am on the signup page
     And test@greenstand.org is not registered in the system
-    When I fill in the registration form with test@greenstand.org password: abc.123
-    And I click on the register button
+    When I fill in the registration form with test@greenstand.org and abc.123
+    And I click on the signup button
     Then I should see a confirmation message
 
   @skip @web
