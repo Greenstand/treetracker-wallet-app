@@ -71,14 +71,15 @@ yarn cypress-e2e-headless-test
 
 ### 🚀 Overview
 
-Added comprehensive end-to-end testing using **WebdriverIO** for the wallet application, covering:
+Added comprehensive end-to-end testing using **WebdriverIO** for the wallet
+application, covering:
 
-  * ✅ **Login flow** (success & failure cases)
-  * ✅ **Wallet creation** process
-  * ✅ **User registration** workflow
-  * and more
+- ✅ **Login flow** (success & failure cases)
+- ✅ **Wallet creation** process
+- ✅ **User registration** workflow
+- and more
 
------
+---
 
 ### 🧪 Test Commands
 
@@ -100,7 +101,7 @@ yarn bdd:e2e:debug
 yarn bdd:e2e:update-driver
 ```
 
------
+---
 
 ### 🖼️ Test Evidence
 
@@ -115,17 +116,17 @@ $ yarn test:e2e
 [chrome] ✔ Registration - Email signup (5.8s)
 ```
 
------
+---
 
 ### ✅ Verification Checklist
 
-  * All tests pass locally (`yarn test:e2e`)
-  * No production code modified
-  * Test data follows PII guidelines
-  * ChromeDriver version (v136) matches CI
-  * Documentation updated if needed
+- All tests pass locally (`yarn test:e2e`)
+- No production code modified
+- Test data follows PII guidelines
+- ChromeDriver version (v136) matches CI
+- Documentation updated if needed
 
------
+---
 
 ### ⚠️ Requirements
 
@@ -136,8 +137,6 @@ yarn workspace web dev
 ```
 
 Also, ensure you have Chrome v136+ installed.
-
-
 
 ## 🏗️ Project Structure
 
@@ -227,12 +226,13 @@ yarn test
 # Lint and format
 yarn lint:fix
 ```
+
 ## How to set up: lint, code format, Typescript for a new package/app
 
-Follow this PR too add shared configuration package to standardize linting, formatting, and TypeScript setup across the project.
+Follow this PR too add shared configuration package to standardize linting,
+formatting, and TypeScript setup across the project.
 
 https://github.com/Greenstand/treetracker-wallet-app/pull/537/files
-
 
 ## 🤝 Contributing
 
