@@ -20,6 +20,5 @@ module.exports = {
     ],
     ["@semantic-release/github", {}],
   ],
-  tagFormat: "${package.name}-${version}",
   pkgRoot: ".",
 };
