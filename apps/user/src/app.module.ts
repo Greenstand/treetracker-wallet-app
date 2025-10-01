@@ -17,7 +17,7 @@ const ENV = process.env.NODE_ENV;
   imports: [
     UserModule,
     HttpModule,
-    QueueModule,
+    //QueueModule,
     ConfigModule.forRoot({ envFilePath: ENV === "dev" ? ".dev.env" : ".env" }),
     AuthModule,
   ],
