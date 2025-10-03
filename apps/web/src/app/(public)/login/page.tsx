@@ -75,7 +75,7 @@ const Login = () => {
     <Wrapper>
       <CenteredColumnBox>
         <Logo />
-        <CustomHeadingTitle title="Log in" />
+        <CustomHeadingTitle title="Log In" />
 
         <form onSubmit={handleSubmit}>
           <CustomTextField

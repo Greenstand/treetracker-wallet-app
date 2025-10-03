@@ -1,44 +1,29 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
+import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
+import { YourWallets } from "../../../components/wallet/YourWallets";
+
+const mockWallets = [
+  { id: "1", name: "Wallet 2", balance: 1000, date: "May 22, 2024" },
+  { id: "2", name: "Wallet 1", balance: 3455, date: "May 16, 2024" },
+];
 
 export default function Wallet() {
-  const handleCreateWallet = () => {
-    console.log("Create wallet pressed");
-  };
-
-  const handleInfoPress = () => {
-    console.log("Info icon pressed");
+  const handleWalletPress = (walletId: string) => {
+    console.log("Wallet pressed:", walletId);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Wallet</Text>
-      </View>
-
-      <View style={styles.container}>
-        <View style={styles.createWalletSection}>
-          <TouchableOpacity 
-            style={styles.createWalletButton} 
-            onPress={handleCreateWallet}
-            accessibilityRole="button"
-            accessibilityLabel="Create new wallet"
-          >
-            <Ionicons name="add" size={14} color="#222629" style={styles.plusIcon} />
-            <Text style={styles.createWalletText}>CREATE WALLET</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.infoIcon} 
-            onPress={handleInfoPress}
-            accessibilityRole="button"
-            accessibilityLabel="More information"
-          >
-            <Ionicons name="information-circle" size={18} color="#222629" />
-          </TouchableOpacity>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Wallet</Text>
+          <Text style={styles.headerSubtitle}>Wallet/Exceeded limit</Text>
         </View>
-      </View>
+
+        <YourWallets wallets={mockWallets} onWalletPress={handleWalletPress} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -46,55 +31,26 @@ export default function Wallet() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: "#f5f5f5",
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: Colors.background,
+    paddingTop: 40,
+    paddingBottom: 32,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    fontSize: 32,
+    fontWeight: "300",
+    color: "#1a1a1a",
+    marginBottom: 4,
   },
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: Colors.background,
-  },
-  createWalletSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 16,
-    justifyContent: "space-between",
-  },
-  createWalletButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "transparent",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    flex: 1,
-  },
-  plusIcon: {
-    marginRight: 8,
-    alignSelf: "center",
-  },
-  createWalletText: {
-    fontFamily: "Roboto",
-    fontWeight: "500",
-    fontSize: 15,
-    lineHeight: 26,
-    letterSpacing: 0.46,
-    textTransform: "uppercase",
-    color: "#999",
-  },
-  infoIcon: {
-    marginLeft: 8,
+  headerSubtitle: {
+    fontSize: 14,
+    color: "rgba(0, 0, 0, 0.6)",
+    fontWeight: "400",
   },
 });
