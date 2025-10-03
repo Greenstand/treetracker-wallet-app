@@ -157,7 +157,7 @@ export const config: Options.Testrunner = {
         videoFormat: "mp4",
       },
     ],
-    // ✅ Concurrency-safe JSON per feature/worker
+    // Concurrency-safe JSON per feature/worker
     [
       "cucumberjs-json",
       {
@@ -215,7 +215,7 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: function (config, capabilities) {
-    // (nice-to-have) clean the JSON dir before runs
+    // Clean the JSON dir before runs
     const jsonDir = path.resolve(__dirname, "reports/cucumber");
     try {
       fs.rmSync(jsonDir, { recursive: true, force: true });
@@ -345,8 +345,7 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    // Small delay to ensure video reporter finishes processing
-    // This prevents race conditions with wdio-video-reporter
+    // Delay to ensure video reporter finishes processing
     await new Promise(resolve => setTimeout(resolve, 100));
   },
   /**
@@ -357,7 +356,6 @@ export const config: Options.Testrunner = {
    */
   afterSession: async function (config, capabilities, specs) {
     // Delay to ensure video reporter finishes before session cleanup
-    // This prevents "invalid session id" errors during WebDriver cleanup
     await new Promise(resolve => setTimeout(resolve, 500));
   },
   /**
