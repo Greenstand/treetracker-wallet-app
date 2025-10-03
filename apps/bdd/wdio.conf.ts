@@ -1,5 +1,6 @@
 import type { Options } from "@wdio/types";
 import path from "node:path";
+import fs from "node:fs";
 // Video reporter for recording test execution - useful for debugging and demos
 import Video from "wdio-video-reporter";
 
@@ -156,6 +157,16 @@ export const config: Options.Testrunner = {
         videoFormat: "mp4",
       },
     ],
+    // ✅ Concurrency-safe JSON per feature/worker
+    [
+      "cucumberjs-json",
+      {
+        jsonFolder: path.resolve(__dirname, "reports/cucumber"), // same folder the HTML generator reads
+        // language: 'en',
+        // disableHooks: false,
+        // reportFilePerRetry: true
+      },
+    ],
   ],
 
   // If you are using Cucumber you need to specify the location of your step definitions.
@@ -185,10 +196,8 @@ export const config: Options.Testrunner = {
     // <boolean> Enable this config to treat undefined definitions as warnings.
     ignoreUndefinedDefinitions: true,
     // <string[]> formatters for output
-    format: [
-      "progress",
-      "json:" + path.resolve(__dirname, "reports/cucumber/cucumber.json"),
-    ],
+    // Remove the direct cucumber JSON formatter to a single file
+    format: ["progress"], // keep a console formatter only
     // debug: true,
   },
 
@@ -205,8 +214,14 @@ export const config: Options.Testrunner = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (config, capabilities) {
-  // },
+  onPrepare: function (config, capabilities) {
+    // (nice-to-have) clean the JSON dir before runs
+    const jsonDir = path.resolve(__dirname, "reports/cucumber");
+    try {
+      fs.rmSync(jsonDir, { recursive: true, force: true });
+    } catch {}
+    fs.mkdirSync(jsonDir, { recursive: true });
+  },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
    * for that worker as well as modify runtime environments in an async fashion.
