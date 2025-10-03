@@ -9,6 +9,7 @@
 
 const report = require("multiple-cucumber-html-reporter");
 const path = require("path");
+const fs = require("fs");
 
 report.generate({
   jsonDir: path.resolve(__dirname, "../reports/cucumber"),
@@ -30,6 +31,42 @@ report.generate({
     ],
   },
 });
+
+// Post-process: Reorder UUIDs to be at the end instead of beginning
+const featuresDir = path.resolve(
+  __dirname,
+  "../reports/cucumber-html/features",
+);
+if (fs.existsSync(featuresDir)) {
+  fs.readdir(featuresDir, (err, files) => {
+    if (err) {
+      console.log("⚠️  Could not read features directory:", err.message);
+      return;
+    }
+
+    files.forEach(file => {
+      // Match pattern: uuid-feature-name.html
+      const match = file.match(/^([a-f0-9-]+)-(.+)\.html$/);
+      if (match) {
+        const uuid = match[1];
+        const featureName = match[2];
+        const newFileName = `${featureName}-${uuid}.html`;
+
+        fs.rename(
+          path.join(featuresDir, file),
+          path.join(featuresDir, newFileName),
+          err => {
+            if (err) {
+              console.log(`⚠️  Could not rename ${file}:`, err.message);
+            } else {
+              console.log(`📝 Renamed: ${file} → ${newFileName}`);
+            }
+          },
+        );
+      }
+    });
+  });
+}
 
 const reportPath = path.resolve(
   __dirname,
