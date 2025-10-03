@@ -30,15 +30,13 @@ jobs:
 
       - name: filter commits in subfolder
         id: filter_commits
-        run: |
-          REAR_TAG=$(git describe --tags --match "user-*" --abbrev=0)
+        run: |          
+          COMMITS_ABSENT=$(git diff --quiet HEAD -- apps/user)
           
-          COMMITS_EXIST=$(git diff --name-only $REAR_TAG..HEAD -- apps/user)
-          
-          if [[ -n "$COMMITS_EXIST" ]]; then
-            echo "::set-output name=run_release::true"
-          else
+          if [[ -z "$COMMITS_ABSENT" ]]; then
             echo "::set-output name=run_release::false"
+          else
+            echo "::set-output name=run_release::true"
           fi
 
 
