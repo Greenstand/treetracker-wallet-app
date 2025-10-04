@@ -1,5 +1,6 @@
 import type { Options } from "@wdio/types";
 import path from "node:path";
+import fs from "node:fs";
 // Video reporter for recording test execution - useful for debugging and demos
 import Video from "wdio-video-reporter";
 
@@ -150,10 +151,20 @@ export const config: Options.Testrunner = {
     [
       Video as any,
       {
-        saveAllVideos: true, // record all test runs including passing tests
-        outputDir: path.resolve(__dirname, "test-videos"), // output directory for video files
+        saveAllVideos: true,
+        outputDir: path.resolve(__dirname, "test-videos"),
         videoSlowdownMultiplier: 1,
-        videoFormat: "mp4", // MP4 format for better compatibility
+        videoFormat: "mp4",
+      },
+    ],
+    // Concurrency-safe JSON per feature/worker
+    [
+      "cucumberjs-json",
+      {
+        jsonFolder: path.resolve(__dirname, "reports/cucumber"), // same folder the HTML generator reads
+        // language: 'en',
+        // disableHooks: false,
+        // reportFilePerRetry: true
       },
     ],
   ],
@@ -184,6 +195,9 @@ export const config: Options.Testrunner = {
     timeout: 60000,
     // <boolean> Enable this config to treat undefined definitions as warnings.
     ignoreUndefinedDefinitions: true,
+    // <string[]> formatters for output
+    // Remove the direct cucumber JSON formatter to a single file
+    format: ["progress"], // keep a console formatter only
     // debug: true,
   },
 
@@ -200,8 +214,14 @@ export const config: Options.Testrunner = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (config, capabilities) {
-  // },
+  onPrepare: function (config, capabilities) {
+    // Clean the JSON dir before runs
+    const jsonDir = path.resolve(__dirname, "reports/cucumber");
+    try {
+      fs.rmSync(jsonDir, { recursive: true, force: true });
+    } catch {}
+    fs.mkdirSync(jsonDir, { recursive: true });
+  },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -324,16 +344,20 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // after: function (result, capabilities, specs) {
-  // },
+  after: async function (result, capabilities, specs) {
+    // Delay to ensure video reporter finishes processing
+    await new Promise(resolve => setTimeout(resolve, 100));
+  },
   /**
    * Gets executed right after terminating the webdriver session.
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // afterSession: function (config, capabilities, specs) {
-  // },
+  afterSession: async function (config, capabilities, specs) {
+    // Delay to ensure video reporter finishes before session cleanup
+    await new Promise(resolve => setTimeout(resolve, 500));
+  },
   /**
    * Gets executed after all workers got shut down and the process is about to exit. An error
    * thrown in the onComplete hook will result in the test run failing.
@@ -342,8 +366,9 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  onComplete: function (exitCode, config, capabilities, results) {
+    console.log("Test run completed. Exit code:", exitCode);
+  },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
