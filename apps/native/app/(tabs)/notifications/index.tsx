@@ -1,9 +1,16 @@
 import React from "react";
+// Import the newly created NotificationHeader component
+import NotificationHeader from "./NotificationHeader";
+
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
+// The following imports are no longer needed here since they are inside the Header component:
+// import { Ionicons } from "@expo/vector-icons";
+// import { TouchableOpacity } from "react-native";
 import WalletSvg from "../../../assets/svg/wallet.svg";
 
 // Mock notification data
 const notifications: Notification[] = [
+  // ... (Notification data remains the same)
   {
     id: 1,
     type: "pending",
@@ -108,13 +115,8 @@ export default function NotificationsLayout() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header - commented out because header should not be implemented but ready to be added back or replaced.
-      <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#666" />
-        <Text style={styles.headerTitle}>Notifications</Text>
-        <Ionicons name="settings-outline" size={24} color="#666" />
-      </View>
-      */}
+      {/* RENDER THE SEPARATE HEADER COMPONENT HERE */}
+      <NotificationHeader />
 
       {/* Conditional rendering: show notifications list or empty state */}
       {hasNotifications ? (
@@ -139,20 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  // Header styles
-  // header: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   backgroundColor: "#f5f5f5",
-  // },
-  // headerTitle: {
-  //   fontSize: 18,
-  //   fontWeight: "600",
-  //   color: "#333",
-  // },
+  // 🚨 REMOVED: Header styles are now defined inside NotificationHeader.tsx
   scrollContainer: {
     flex: 1,
     paddingHorizontal: 16,
