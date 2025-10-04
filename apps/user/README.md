@@ -135,7 +135,7 @@ In the realm role, `wallet-operator-microservice` is attached to the user api
 client, `wallet-app-user-dev-svc`, so the access token can be used to access the
 wallet api.
 
-### Access the wallet api
+### Access wallet api
 
 The wallet api will verify the access token by checking the role
 `wallet-operator-microservice` in the access token.

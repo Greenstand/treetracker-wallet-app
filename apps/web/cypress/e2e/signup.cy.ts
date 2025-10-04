@@ -1,7 +1,6 @@
 import {
   SELECTORS,
   registerWith,
-  expectRegistrationSuccess,
   expectValidationError,
   generateUniqueEmail,
   loadAuthFixture,
@@ -28,9 +27,10 @@ describe("Register Page", () => {
 
   describe("✅ Successful Registration", () => {
     it("should register successfully with valid data", function () {
-      cy.intercept("POST", "**/api/auth/register", {
+      cy.intercept("POST", "**/register", {
         statusCode: 200,
         body: {
+          success: true,
           message: this.authData.errorMessages.registration.registrationSuccess,
         },
       });
@@ -41,27 +41,27 @@ describe("Register Page", () => {
         email: uniqueEmail,
         password: this.authData.registration.validRegistration.password,
       });
-      expectRegistrationSuccess(
-        this.authData.errorMessages.registration.registrationSuccess,
-      );
+      cy.location("pathname").should("eq", this.authData.routes.login);
     });
   });
 
   describe("❌ Failed Registration", () => {
     it("should show an error when trying to register with an existing user name", function () {
-      const existingEmail = this.authData.registration.existingEmail.email;
-      const existingUsername =
-        this.authData.registration.existingEmail.username;
-      const existingPassword =
-        this.authData.registration.existingEmail.password;
-      registerWith({
-        username: existingUsername,
-        email: existingEmail,
-        password: existingPassword,
+      cy.intercept("POST", "**/register", {
+        statusCode: 409,
+        body: {
+          message: this.authData.errorMessages.registration.emailAlreadyExists,
+        },
       });
+
+      const { email, username, password } =
+        this.authData.registration.existingEmail;
+
+      registerWith({ username, email, password });
+
       expectValidationError(
         SELECTORS.signupError,
-        this.authData.errorMessages.registration.existingUsername,
+        this.authData.errorMessages.registration.emailAlreadyExists,
       );
     });
   });
@@ -69,8 +69,6 @@ describe("Register Page", () => {
   describe("📝 Form Validation", () => {
     it("should validate empty fields", function () {
       cy.getByData(SELECTORS.signupSubmitButton).click();
-
-      // Assert all required field errors in a single step for clarity and maintainability
       [
         {
           selector: SELECTORS.errorHelperText,
