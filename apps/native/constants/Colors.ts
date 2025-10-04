@@ -1,4 +1,21 @@
 export const Colors = {
+  light: {
+    text: "#222629DE",
+    background: "#FFFFFF",
+    tint: "#61892F",
+    icon: "#222629DE",
+    tabIconDefault: "#2226298F",
+    tabIconSelected: "#61892F",
+  },
+  dark: {
+    text: "#FFFFFF",
+    background: "#222629DE",
+    tint: "#86C232",
+    icon: "#FFFFFF",
+    tabIconDefault: "#FFFFFF80",
+    tabIconSelected: "#86C232",
+  },
+  // Keep the original colors for backwards compatibility
   green: "#61892F",
   white: "#FFFFFF",
   charcoal: "#222629DE",
