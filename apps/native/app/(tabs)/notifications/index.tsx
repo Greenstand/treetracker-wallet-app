@@ -1,16 +1,9 @@
 import React from "react";
-// Import the newly created NotificationHeader component
-import NotificationHeader from "./NotificationHeader";
-
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
-// The following imports are no longer needed here since they are inside the Header component:
-// import { Ionicons } from "@expo/vector-icons";
-// import { TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import WalletSvg from "../../../assets/svg/wallet.svg";
 
 // Mock notification data
 const notifications: Notification[] = [
-  // ... (Notification data remains the same)
   {
     id: 1,
     type: "pending",
@@ -114,9 +107,9 @@ export default function NotificationsLayout() {
   const hasNotifications = notifications.length > 0;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* RENDER THE SEPARATE HEADER COMPONENT HERE */}
-      <NotificationHeader />
+    // contentWrapper now handles the flexible layout of the main content area
+    <View style={styles.contentWrapper}>
+      {/* Header rendering logic was removed, as it now resides in _layout.tsx */}
 
       {/* Conditional rendering: show notifications list or empty state */}
       {hasNotifications ? (
@@ -132,16 +125,15 @@ export default function NotificationsLayout() {
       ) : (
         <EmptyState />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  contentWrapper: {
+    // Container equivalent for main content
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
-  // 🚨 REMOVED: Header styles are now defined inside NotificationHeader.tsx
   scrollContainer: {
     flex: 1,
     paddingHorizontal: 16,

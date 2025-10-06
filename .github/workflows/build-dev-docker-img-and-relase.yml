@@ -28,11 +28,20 @@ jobs:
         run: yarn add -D semantic-release @semantic-release/git @semantic-release/exec @semantic-release/changelog
         working-directory: apps/user
 
-      - name: Install filter dependencies
-        run: yarn add -D semantic-version-commit-filter
-        working-directory: apps/user
+      - name: filter commits in subfolder
+        id: filter_commits
+        run: |          
+          COMMITS_ABSENT=$(git diff --quiet HEAD -- apps/user)
+          
+          if [[ -z "$COMMITS_ABSENT" ]]; then
+            echo "::set-output name=run_release::false"
+          else
+            echo "::set-output name=run_release::true"
+          fi
+
 
       - name: Semantic Release
+        if: steps.filter_commits.outputs.run_release == 'true'
         run: semantic-release
         working-directory: apps/user
         env:
