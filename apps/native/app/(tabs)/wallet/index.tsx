@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { Link } from "expo-router";
+import { StyleSheet, Text, View, Pressable, SafeAreaView } from "react-native";
 
 export default function Wallet() {
   return (
@@ -21,29 +16,43 @@ export default function Wallet() {
           <Text style={styles.walletsTitle}>Your wallets</Text>
 
           <View style={styles.walletsContainer}>
-            <TouchableOpacity style={styles.walletItem}>
-              <View style={styles.walletInfo}>
-                <Text style={styles.walletName}>Wallet 2</Text>
-                <Text style={styles.walletDate}>May 22, 2024</Text>
-              </View>
-              <View style={styles.walletRight}>
-                <Text style={styles.walletAmount}>1000</Text>
-                <Text style={styles.chevron}>›</Text>
-              </View>
-            </TouchableOpacity>
+            <Link
+              href={{
+                pathname: "/wallet/[walletId]",
+                params: { walletId: "wallet-2" },
+              }}
+              asChild>
+              <Pressable style={styles.walletItem}>
+                <View style={styles.walletInfo}>
+                  <Text style={styles.walletName}>Wallet 2</Text>
+                  <Text style={styles.walletDate}>May 22, 2024</Text>
+                </View>
+                <View style={styles.walletRight}>
+                  <Text style={styles.walletAmount}>1000</Text>
+                  <Text style={styles.chevron}>›</Text>
+                </View>
+              </Pressable>
+            </Link>
 
             <View style={styles.separator} />
 
-            <TouchableOpacity style={styles.walletItem}>
-              <View style={styles.walletInfo}>
-                <Text style={styles.walletName}>Wallet 1</Text>
-                <Text style={styles.walletDate}>May 16, 2024</Text>
-              </View>
-              <View style={styles.walletRight}>
-                <Text style={styles.walletAmount}>3455</Text>
-                <Text style={styles.chevron}>›</Text>
-              </View>
-            </TouchableOpacity>
+            <Link
+              href={{
+                pathname: "/wallet/[walletId]",
+                params: { walletId: "wallet-1" },
+              }}
+              asChild>
+              <Pressable style={styles.walletItem}>
+                <View style={styles.walletInfo}>
+                  <Text style={styles.walletName}>Wallet 1</Text>
+                  <Text style={styles.walletDate}>May 16, 2024</Text>
+                </View>
+                <View style={styles.walletRight}>
+                  <Text style={styles.walletAmount}>3455</Text>
+                  <Text style={styles.chevron}>›</Text>
+                </View>
+              </Pressable>
+            </Link>
           </View>
         </View>
       </View>
