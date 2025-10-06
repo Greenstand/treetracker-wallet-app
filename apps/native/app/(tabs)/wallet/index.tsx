@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "expo-router";
 import { StyleSheet, Text, View, Pressable, SafeAreaView } from "react-native";
+import { walletSummaries } from "./data";
 
 export default function Wallet() {
   return (
@@ -16,43 +17,31 @@ export default function Wallet() {
           <Text style={styles.walletsTitle}>Your wallets</Text>
 
           <View style={styles.walletsContainer}>
-            <Link
-              href={{
-                pathname: "/wallet/[walletId]",
-                params: { walletId: "wallet-2" },
-              }}
-              asChild>
-              <Pressable style={styles.walletItem}>
-                <View style={styles.walletInfo}>
-                  <Text style={styles.walletName}>Wallet 2</Text>
-                  <Text style={styles.walletDate}>May 22, 2024</Text>
-                </View>
-                <View style={styles.walletRight}>
-                  <Text style={styles.walletAmount}>1000</Text>
-                  <Text style={styles.chevron}>›</Text>
-                </View>
-              </Pressable>
-            </Link>
+            {walletSummaries.map((wallet, index) => (
+              <React.Fragment key={wallet.id}>
+                <Link
+                  href={{
+                    pathname: "/wallet/[walletId]",
+                    params: { walletId: wallet.id },
+                  }}
+                  asChild>
+                  <Pressable style={styles.walletItem}>
+                    <View style={styles.walletInfo}>
+                      <Text style={styles.walletName}>{wallet.name}</Text>
+                      <Text style={styles.walletDate}>{wallet.createdOn}</Text>
+                    </View>
+                    <View style={styles.walletRight}>
+                      <Text style={styles.walletAmount}>{wallet.balance}</Text>
+                      <Text style={styles.chevron}>›</Text>
+                    </View>
+                  </Pressable>
+                </Link>
 
-            <View style={styles.separator} />
-
-            <Link
-              href={{
-                pathname: "/wallet/[walletId]",
-                params: { walletId: "wallet-1" },
-              }}
-              asChild>
-              <Pressable style={styles.walletItem}>
-                <View style={styles.walletInfo}>
-                  <Text style={styles.walletName}>Wallet 1</Text>
-                  <Text style={styles.walletDate}>May 16, 2024</Text>
-                </View>
-                <View style={styles.walletRight}>
-                  <Text style={styles.walletAmount}>3455</Text>
-                  <Text style={styles.chevron}>›</Text>
-                </View>
-              </Pressable>
-            </Link>
+                {index < walletSummaries.length - 1 && (
+                  <View style={styles.separator} />
+                )}
+              </React.Fragment>
+            ))}
           </View>
         </View>
       </View>
