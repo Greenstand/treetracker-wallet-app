@@ -25,7 +25,9 @@ export default function Index() {
           </ThemedText>
 
           <View style={styles.iconContainer}>
-            <Feather name="check-circle" size={64} color={Colors.green} />
+            <View style={styles.checkCircle}>
+              <Feather name="check" size={48} color="#fff" />
+            </View>
           </View>
 
           <ThemedText type="default" style={styles.welcomeText}>
@@ -71,6 +73,14 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginBottom: 48,
+  },
+  checkCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: Colors.green,
+    alignItems: "center",
+    justifyContent: "center",
   },
   welcomeText: {
     fontSize: 16,
