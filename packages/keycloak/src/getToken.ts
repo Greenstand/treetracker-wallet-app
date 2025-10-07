@@ -1,6 +1,6 @@
 import { fetchTokenFromKeycloak } from "./fetchTokenFromKeycloak";
 
-export function useGetToken() {
+export function getTokenManager() {
   let bearerToken: string | null = null;
   let tokenExpiresAt: number | null = null;
 
