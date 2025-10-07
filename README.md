@@ -245,11 +245,7 @@ yarn lint:fix
 ## Commit hooks and test behavior
 
 We run `lint-staged` on commit to keep commits fast. Heavy integration/unit/e2e
-tests are expensive and not run by default.
-
-- Fast commit (default): `git commit -m "..."` — runs only `lint-staged`.
-- Opt-in full tests during commit:
-  `SKIP_HUSKY_TESTS=false git commit -m "..."`
+tests are not run during commit — they run in CI on pull requests instead.
 
 Note: this repository uses Yarn v4 via Corepack. If you see a message about
 Yarn versions, run:

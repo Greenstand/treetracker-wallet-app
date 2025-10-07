@@ -2,58 +2,8 @@
 #!/bin/bash
 
 echo "🔍 Running lint-staged..."
-# Only run lint-staged by default on commit. Heavy integration/unit/e2e
-# tests are expensive and should not run on every commit. To re-enable
-# the old behavior locally, set SKIP_HUSKY_TESTS to "false" (default is true).
-if [ -z "$SKIP_HUSKY_TESTS" ]; then
-  SKIP_HUSKY_TESTS=true
-fi
-
 yarn lint-staged || exit 1
 
-if [ "$SKIP_HUSKY_TESTS" = "false" ]; then
-  echo "🔁 SKIP_HUSKY_TESTS=false — running workspace tests as before"
-  # Developers can opt in to run the full suite during commit by setting
-  # SKIP_HUSKY_TESTS=false in their environment. Example:
-  # SKIP_HUSKY_TESTS=false git commit -m "..."
-  # Detect changed workspaces and run only related tests (legacy behavior)
-  TMPFILE=$(mktemp)
-  git diff --cached --name-only -z > "$TMPFILE"
-  WEB_CHANGED=false
-  USER_CHANGED=false
-  while IFS= read -r -d '' file; do
-    case "$file" in
-      apps/web/*)
-        WEB_CHANGED=true
-        ;;
-      apps/user/*)
-        USER_CHANGED=true
-        ;;
-    esac
-  done < "$TMPFILE"
-  rm -f "$TMPFILE"
-
-  FAILED=0
-  if [ "$WEB_CHANGED" = true ]; then
-    echo "🧪 Detected changes in apps/web — running Cypress tests"
-    yarn workspace web cy:component || FAILED=1
-    yarn workspace web cy:e2e-headless  || FAILED=1
-  fi
-
-  if [ "$USER_CHANGED" = true ]; then
-    echo "🧪 Detected changes in apps/user — running e2e tests"
-    yarn workspace user test:unit || FAILED=1
-    yarn workspace user test || FAILED=1
-    yarn workspace user test:e2e || FAILED=1
-    yarn workspace user int-test || FAILED=1
-  fi
-
-  if [ "$FAILED" -ne 0 ]; then
-    echo "❌ One or more tests failed — commit aborted"
-    exit 1
-  fi
-  echo "✅ All tests passed — continuing with commit"
-fi
-
+echo "✅ Lint-staged passed — continuing with commit"
 exit 0
 
