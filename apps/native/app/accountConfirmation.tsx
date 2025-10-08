@@ -1,15 +1,14 @@
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedStatusBar } from "@/components/ThemedStatusBar";
 import { ThemedSafeAreaView } from "@/components/ThemeSafeArea";
 import { ThemedText } from "@/components/ThemedText";
+import { Feather } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
-import GirlManagingTree from "@/assets/svg/GirlManagingTrees.svg";
 import { Button } from "../components/Button";
-
-const { width, height } = Dimensions.get("screen");
 
 export default function Index() {
   const handleGoTo = () => {
@@ -19,22 +18,27 @@ export default function Index() {
   return (
     <ThemedSafeAreaView style={styles.safeArea}>
       <ThemedStatusBar />
-      <ThemedView style={[styles.container]}>
+      <ThemedView style={styles.container}>
         <View style={styles.content}>
-          <ThemedText type="title" style={[styles.commonText]}>
+          <ThemedText type="title" style={styles.title}>
             Account created!
           </ThemedText>
 
-          <GirlManagingTree
-            width={(width * 90) / 100}
-            height={(height * 40) / 100}
-          />
+          <View style={styles.iconContainer}>
+            <View style={styles.checkCircle}>
+              <Feather name="check" size={48} color="#fff" />
+            </View>
+          </View>
 
-          <ThemedText
-            type="default"
-            style={[styles.commonText, styles.description]}>
-            Welcome! Thank you for joining our mission to reforest the planet
-            and contribute to a healthier environment.
+          <ThemedText type="default" style={styles.welcomeText}>
+            Welcome and thank you for joining our reforestation mission and
+            becoming part of our global community dedicated to positive
+            environmental impact.
+          </ThemedText>
+
+          <ThemedText type="default" style={styles.walletText}>
+            Upon creating your account, you will automatically receive your
+            wallet, which you can rename later.
           </ThemedText>
         </View>
 
@@ -56,13 +60,39 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   content: {
-    marginTop: 32,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
   },
-  commonText: {
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
     textAlign: "center",
-    color: "#222629DE",
+    marginBottom: 32,
   },
-  description: {
-    fontSize: 20,
+  iconContainer: {
+    marginBottom: 48,
+  },
+  checkCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: Colors.green,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  welcomeText: {
+    fontSize: 16,
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 24,
+    paddingHorizontal: 8,
+  },
+  walletText: {
+    fontSize: 16,
+    textAlign: "center",
+    lineHeight: 24,
+    paddingHorizontal: 8,
   },
 });
