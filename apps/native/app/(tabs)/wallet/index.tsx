@@ -1,6 +1,15 @@
-import React from "react";
-import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { YourWallets } from "../../../components/wallet/YourWallets";
+import LimitInfoModal from "../../../components/wallet/LimitInfoModal";
 
 const mockWallets = [
   { id: "1", name: "Wallet 2", balance: 1000, date: "May 22, 2024" },
@@ -8,8 +17,14 @@ const mockWallets = [
 ];
 
 export default function Wallet() {
+  const [showLimitInfo, setShowLimitInfo] = useState(false);
+
   const handleWalletPress = (walletId: string) => {
     console.log("Wallet pressed:", walletId);
+  };
+
+  const handleCreateWallet = () => {
+    console.log("Create wallet pressed");
   };
 
   return (
@@ -22,8 +37,32 @@ export default function Wallet() {
           <Text style={styles.headerSubtitle}>Wallet/Exceeded limit</Text>
         </View>
 
+        <View style={styles.createWalletContainer}>
+          <TouchableOpacity
+            style={styles.createWalletButton}
+            onPress={handleCreateWallet}
+            activeOpacity={0.7}>
+            <Ionicons name="add" size={24} color="#999999" />
+            <Text style={styles.createWalletText}>CREATE WALLET</Text>
+
+            <TouchableOpacity
+              onPress={() => setShowLimitInfo(true)}
+              style={styles.infoIcon}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              testID="info-icon">
+              <Ionicons name="information" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+
         <YourWallets wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
+
+      <LimitInfoModal
+        visible={showLimitInfo}
+        onClose={() => setShowLimitInfo(false)}
+        walletLimit={2}
+      />
     </SafeAreaView>
   );
 }
@@ -52,5 +91,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "rgba(0, 0, 0, 0.6)",
     fontWeight: "400",
+  },
+
+  createWalletContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
+  },
+  createWalletButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    paddingVertical: 12,
+    paddingHorizontal: 0,
+  },
+  createWalletText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#999999",
+    marginLeft: 12,
+    letterSpacing: 1.25,
+  },
+  infoIcon: {
+    backgroundColor: "#9E9E9E",
+    borderRadius: 18,
+    width: 36,
+    height: 36,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
