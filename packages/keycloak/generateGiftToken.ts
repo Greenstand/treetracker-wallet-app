@@ -5,4 +5,7 @@ export function generateGiftToken(
     senderWalletId: string;
     recipientEmailAddress: string;
   },
-): string {}
+): string {
+  // TODO: Implement token generation logic
+  return "";
+}
