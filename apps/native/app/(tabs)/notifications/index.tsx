@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import WalletSvg from "../../../assets/svg/wallet.svg";
 
 // Mock notification data
@@ -107,14 +107,9 @@ export default function NotificationsLayout() {
   const hasNotifications = notifications.length > 0;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* Header - commented out because header should not be implemented but ready to be added back or replaced.
-      <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#666" />
-        <Text style={styles.headerTitle}>Notifications</Text>
-        <Ionicons name="settings-outline" size={24} color="#666" />
-      </View>
-      */}
+    // contentWrapper now handles the flexible layout of the main content area
+    <View style={styles.contentWrapper}>
+      {/* Header rendering logic was removed, as it now resides in _layout.tsx */}
 
       {/* Conditional rendering: show notifications list or empty state */}
       {hasNotifications ? (
@@ -130,29 +125,16 @@ export default function NotificationsLayout() {
       ) : (
         <EmptyState />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  contentWrapper: {
+    // Container equivalent for main content
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    // Removed SafeAreaView and background color, as they are now in _layout.tsx
   },
-  // Header styles
-  // header: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   backgroundColor: "#f5f5f5",
-  // },
-  // headerTitle: {
-  //   fontSize: 18,
-  //   fontWeight: "600",
-  //   color: "#333",
-  // },
   scrollContainer: {
     flex: 1,
     paddingHorizontal: 16,
