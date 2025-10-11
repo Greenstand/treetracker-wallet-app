@@ -6,11 +6,6 @@ on:
       - main
     paths:
       - "apps/user/**" # Only trigger for changes in the apps/user directory
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "apps/user/**"
 
 jobs:
   release:
@@ -30,14 +25,27 @@ jobs:
         run: yarn workspace user install
 
       - name: Install Semantic Release
-        run: yarn global add semantic-release @semantic-release/{git,exec,changelog}
+        run: yarn add -D semantic-release @semantic-release/git @semantic-release/exec @semantic-release/changelog
         working-directory: apps/user
 
+      - name: filter commits in subfolder
+        id: filter_commits
+        run: |          
+          COMMITS_ABSENT=$(git diff --quiet HEAD -- apps/user)
+          
+          if [[ -z "$COMMITS_ABSENT" ]]; then
+            echo "::set-output name=run_release::false"
+          else
+            echo "::set-output name=run_release::true"
+          fi
+
+
       - name: Semantic Release
+        if: steps.filter_commits.outputs.run_release == 'true'
         run: semantic-release
         working-directory: apps/user
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
 
       - name: Make Build
         run: yarn workspace user build
