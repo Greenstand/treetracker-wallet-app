@@ -12,11 +12,11 @@ export class KeycloakService {
     const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
 
     try {
-      // ✅ Get access token from useGetToken
+      //Get access token from useGetToken
       const { getToken } = getTokenManager();
       const tokenData = await getToken();
 
-      // ✅ Build URLs
+      //Build URLs
       const getUserUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users?email=${email}`;
 
       const headers = {
@@ -24,7 +24,7 @@ export class KeycloakService {
         "Content-Type": "application/json",
       };
 
-      // ✅ Step 1: Get user ID by email
+      //Step 1: Get user ID by email
       const userResponse = await firstValueFrom(
         this.httpService.get(getUserUrl, { headers }),
       );
@@ -36,7 +36,7 @@ export class KeycloakService {
       const userId = userResponse.data[0].id;
       const deleteUserUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users/${userId}`;
 
-      // ✅ Step 2: Delete user by ID
+      //Step 2: Delete user by ID
       const deleteResponse = await firstValueFrom(
         this.httpService.delete(deleteUserUrl, { headers }),
       );
