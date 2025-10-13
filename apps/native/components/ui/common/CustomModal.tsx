@@ -28,28 +28,32 @@ export default function CustomModal({
     <Modal
       transparent
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}>
-      <Pressable style={styles.overlay} onPress={onClose} />
-      <View style={[styles.sheet, containerStyle]}>{children}</View>
+      <View style={styles.overlayContainer}>
+        <Pressable style={styles.overlay} onPress={onClose} />
+        <View style={[styles.sheet, containerStyle]}>{children}</View>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  overlayContainer: {
     flex: 1,
+    justifyContent: "flex-end",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "#00000055",
   },
   sheet: {
-    position: "absolute",
-    bottom: 0,
     width: "100%",
-    height: height * 0.5,
     backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
     elevation: 10,
+    minHeight: height * 0.25,
   },
 });
