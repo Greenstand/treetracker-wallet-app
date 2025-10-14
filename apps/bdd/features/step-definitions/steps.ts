@@ -3,9 +3,14 @@ import { expect, $ } from "@wdio/globals";
 
 // Shared steps
 Given(/^I am on the (\w+) page$/, async page => {
-  await browser.url(
-    `http://localhost:3000/${page.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase()}`,
-  );
+  const key = page.toLowerCase();
+  // Minimal aliasing to avoid a duplicate Given
+  const route =
+    key === "register"
+      ? "signup"
+      : page.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
+  await browser.url(`http://localhost:3000/${route}`);
 });
 
 // Login steps
@@ -53,15 +58,82 @@ Then(/^I should see my new wallet in the list of wallets$/, async () => {
 // Registration steps
 When(/^I fill in the registration form with valid data$/, async table => {
   const data = table.rowsHash();
-  await $('input[name="email"]').setValue(data.email);
-  await $('input[name="password"]').setValue(data.password);
+  await $('[data-test="signup-username"] input').setValue(data.username);
+  await $('[data-test="signup-email"] input').setValue(data.email);
+  await $('[data-test="signup-password"] input').setValue(data.password);
 });
 
+// Implement the feature's exact step:
+// When I fill in the registration form with [random user name]@greenstand.org password: abc.123
+When(
+  /^I fill in the registration form with \[random user name\]@greenstand\.org password:\s*(.+)$/,
+  async (password: string) => {
+    const ts = Date.now();
+    const username = `user${ts}`;
+    const email = `${username}@greenstand.org`;
+
+    // Wait for form to be ready and target the actual input elements inside the containers
+    await $('[data-test="signup-username"] input').waitForDisplayed({
+      timeout: 10000,
+    });
+    await $('[data-test="signup-email"] input').waitForDisplayed({
+      timeout: 10000,
+    });
+    await $('[data-test="signup-password"] input').waitForDisplayed({
+      timeout: 10000,
+    });
+
+    // Set values on the actual input elements
+    await $('[data-test="signup-username"] input').setValue(username);
+    await $('[data-test="signup-email"] input').setValue(email);
+    await $('[data-test="signup-password"] input').setValue(password);
+  },
+);
+
 When(/^I click on the register button$/, async () => {
-  await $("button*=Register").click();
+  // Prefer existing text, but allow "Sign up" or a bare submit
+  const candidates = [
+    "button*=Register",
+    "button*=Sign up",
+    '[data-test="signup-submit-button"]',
+    'button[type="submit"]',
+  ];
+  for (const sel of candidates) {
+    const el = await $(sel);
+    if (await el.isExisting()) {
+      await el.click();
+      return;
+    }
+  }
+  throw new Error("Register/Sign up submit button not found");
 });
 
 When(/^I click on the social media login button$/, async table => {
   const data = table.rowsHash();
   await $(`button*=Login with ${data.social_media}`).click();
+});
+
+Then(/^I should see a confirmation message$/, async () => {
+  await browser.waitUntil(
+    async () => {
+      // Check for success message element first
+      const successElement = await $('[data-test="signup-success"]');
+      if (
+        (await successElement.isExisting()) &&
+        (await successElement.isDisplayed())
+      ) {
+        return true;
+      }
+
+      // Fallback: check for redirect to login
+      const url = await browser.getUrl();
+      if (url.includes("/login")) return true;
+
+      return false;
+    },
+    {
+      timeout: 10000,
+      timeoutMsg: "Expected success message or redirect to login",
+    },
+  );
 });
