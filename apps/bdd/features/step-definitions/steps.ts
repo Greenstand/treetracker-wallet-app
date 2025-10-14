@@ -93,9 +93,8 @@ When(
 When(/^I click on the register button$/, async () => {
   // Prefer existing text, but allow "Sign up" or a bare submit
   const candidates = [
-    "button*=Register",
-    "button*=Sign up",
     '[data-test="signup-submit-button"]',
+    'form[data-test="signup-form"] button[type="submit"]',
     'button[type="submit"]',
   ];
   for (const sel of candidates) {
