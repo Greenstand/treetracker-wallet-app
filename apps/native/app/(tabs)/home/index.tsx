@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { FlashList } from "@shopify/flash-list";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BalanceCard from "@/components/ui/BalanceCard";
@@ -151,6 +152,7 @@ export default function Home() {
           </TouchableOpacity>
         </View>
       </View>
+      <StatusBar hidden />
     </View>
   );
 
