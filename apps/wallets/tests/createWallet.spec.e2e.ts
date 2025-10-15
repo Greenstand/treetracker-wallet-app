@@ -1,37 +1,16 @@
 // apps/wallets/tests/createWallet.spec.e2e.ts
 import createWallet from "../src/api/createWallet";
 import { Wallet } from "../src/types/wallet";
+import { fetchTokenFromKeycloak } from "@treetracker/keycloak";
 import "dotenv/config";
-
-async function getUserToken() {
-  const apiServer = process.env.USER_API_URL || "http://localhost:8080";
-  const response = await fetch(`${apiServer}/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username: process.env.TEST_USER || "",
-      password: process.env.TEST_PASSWORD || "",
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to login: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const data = await response.json();
-  return data.access_token;
-}
 
 describe("createWallet (e2e)", () => {
   let authToken: string;
 
   beforeAll(async () => {
     try {
-      authToken = await getUserToken();
+      const tokenResponse = await fetchTokenFromKeycloak();
+      authToken = tokenResponse.access_token;
       console.log("Auth token obtained:", authToken ? "Yes" : "No");
     } catch (error) {
       console.error("Failed to get auth token:", error);

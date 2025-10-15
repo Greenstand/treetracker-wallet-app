@@ -7,5 +7,6 @@ module.exports = {
   "apps/web/**/*.{ts,tsx}": () => "yarn workspace web tsc --noEmit",
   "apps/native/**/*.{ts,tsx}": () => "yarn workspace native tsc --noEmit",
   "apps/user/**/*.{ts,tsx}": () => "yarn workspace user tsc --noEmit",
+  "apps/wallets/**/*.{ts,tsx}": () => "yarn workspace wallets tsc --noEmit",
   "packages/core/**/*.{ts,tsx}": () => "yarn workspace core tsc --noEmit",
 };
