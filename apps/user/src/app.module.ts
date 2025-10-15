@@ -1,6 +1,7 @@
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { KeycloakService } from "@packages/keycloak/src";
 import * as dotenv from "dotenv";
 import { AuthModule } from "./auth/auth.module";
 import { AuthService } from "./auth/auth.service";
@@ -21,6 +22,6 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
   ],
   controllers: [UserController],
-  providers: [UserService, AuthService],
+  providers: [UserService, AuthService, KeycloakService],
 })
 export class AppModule {}
