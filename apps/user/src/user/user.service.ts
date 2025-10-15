@@ -40,7 +40,7 @@ export class UserService {
     };
 
     try {
-      Logger.error("xxx........");
+      //Logger.error("xxx........");
       const response = await firstValueFrom(
         this.httpService.post(tokenUrl, body.toString(), { headers }),
       );

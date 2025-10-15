@@ -1,5 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
+import { pgClient } from "@packages/queue/pgClient";
 import supertest from "supertest";
 import { AppModule } from "../src/app.module";
 
@@ -12,10 +13,6 @@ describe("UserController (e2e)", () => {
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
-  });
-
-  afterAll(async () => {
-    await app.close();
   });
 
   it("should return 201 when a new user is succesfully created", () => {
@@ -35,6 +32,27 @@ describe("UserController (e2e)", () => {
       .send(newUser)
       .expect(201)
       .expect({ success: true, message: "User created successfully!" });
+  });
+
+  it("should return 204 when a user is successfully deleted", async () => {
+    const timestamp = Date.now();
+    const newUser = {
+      username: `testuser_${timestamp}`,
+      email: `testuser_${timestamp}@wallet-app-test.com`,
+      password: "SecurePassword123!",
+      firstName: "firstname",
+      lastName: "lastname",
+    };
+    await supertest(app.getHttpServer())
+      .post("/register")
+      .send(newUser)
+      .expect(201)
+      .expect({ success: true, message: "User created successfully!" });
+
+    await supertest(app.getHttpServer())
+      .delete("/delete")
+      .send({ email: newUser.email }) // or include userId, depending on your API
+      .expect(204);
   });
 
   it("should return 409 when a user exists with same username", () => {
@@ -89,5 +107,10 @@ describe("UserController (e2e)", () => {
     expect(response.body).toHaveProperty("access_token");
     expect(typeof response.body.access_token).toBe("string");
     expect(response.body.access_token.length).toBeGreaterThan(100);
+  });
+
+  afterAll(async () => {
+    await pgClient.end();
+    await app.close();
   });
 });
