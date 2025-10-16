@@ -1,9 +1,11 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { RegisterUserDto } from "@dtos/register-user.dto";
 import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { HttpStatusCode } from "axios";
+import * as dotenv from "dotenv";
+import { firstValueFrom } from "rxjs";
 import { AuthService } from "../auth/auth.service";
+dotenv.config();
 
 @Injectable()
 export class UserService {
@@ -38,6 +40,7 @@ export class UserService {
     };
 
     try {
+      //Logger.error("xxx........");
       const response = await firstValueFrom(
         this.httpService.post(tokenUrl, body.toString(), { headers }),
       );

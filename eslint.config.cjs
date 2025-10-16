@@ -57,7 +57,7 @@ module.exports = defineConfig([
       "import/resolver": {
         typescript: {
           project: [
-            "./packages/core/tsconfig.json",
+            "./packages/core/bajtsconfig.json",
             "./apps/web/tsconfig.json",
             "./apps/native/tsconfig.json",
             "./apps/user/tsconfig.json",

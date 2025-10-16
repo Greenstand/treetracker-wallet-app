@@ -8,7 +8,7 @@ async function subscribe({ pgClient, clientID, channel }) {
   // subscribes a client to a channel
   pgClient.query(`LISTEN "${channel}"`, (err, res) => {
     if (err) throw Error(`subscription error: ${err}`);
-    console.log(`subscription success: ${res}`);
+    //console.log(`subscription success: ${res}`);
   });
 
   // define what to do when a message is received
