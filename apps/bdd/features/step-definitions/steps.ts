@@ -1,19 +1,43 @@
+/**
+ * steps.ts
+ * Sections:
+ *  - [COMMON] Shared navigation & generic assertions
+ *  - [LOGIN] Login flows
+ *  - [REGISTER] Registration flows
+ *  - [WALLET] Wallet creation & listing flows
+ *  - Add more sections as needed
+ */
+
+// ============================================================================
+// [COMMON] Shared Steps
+// ============================================================================
+//#region COMMON
+
 import { Given, When, Then } from "@wdio/cucumber-framework";
 import { expect, $ } from "@wdio/globals";
 
-// Shared steps
-Given(/^I am on the (\w+) page$/, async page => {
-  const key = page.toLowerCase();
-  // Minimal aliasing to avoid a duplicate Given
-  const route =
-    key === "register"
-      ? "signup"
-      : page.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+// Map page names to routes
+const routes: Record<string, string> = {
+  login: "login",
+  register: "signup",
+  // add more as needed
+};
 
-  await browser.url(`http://localhost:3000/${route}`);
+// Navigate to a named page (aliased → route)
+Given(/^I am on the (\w+) page$/, async (page: string) => {
+  const route = routes[page.toLowerCase()];
+  if (!route) throw new Error(`Unknown page alias: ${page}`);
+  const base = process.env.E2E_BASE_URL ?? "http://localhost:3000";
+  await browser.url(`${base}/${route}`);
 });
 
-// Login steps
+//#endregion COMMON
+
+// ============================================================================
+// [LOGIN] Login flows
+// ============================================================================
+//#region LOGIN
+
 When(/^I login with (\w+) and (.+)$/, async (username, password) => {
   await $('input[name="username"]').setValue(username);
   await $('input[name="password"]').setValue(password);
@@ -32,7 +56,13 @@ Then(/^I should see text (.*)$/, async message => {
   );
 });
 
-// Wallet creation steps
+//#endregion LOGIN
+
+// ============================================================================
+// [WALLET] Wallet creation & listing flows
+// ============================================================================
+//#region WALLET
+
 When(/^I fill in the wallet creation form with valid data$/, async table => {
   const data = table.rowsHash();
   await $('input[name="wallet_name"]').setValue(data.wallet_name);
@@ -55,7 +85,11 @@ Then(/^I should see my new wallet in the list of wallets$/, async () => {
   await expect($(".wallet-list")).toBeDisplayed();
 });
 
-// Registration steps
+// ============================================================================
+// [REGISTER] Registration flows
+// ============================================================================
+//#region REGISTER
+
 When(/^I fill in the registration form with valid data$/, async table => {
   const data = table.rowsHash();
   await $('[data-test="signup-username"] input').setValue(data.username);
@@ -63,8 +97,6 @@ When(/^I fill in the registration form with valid data$/, async table => {
   await $('[data-test="signup-password"] input').setValue(data.password);
 });
 
-// Implement the feature's exact step:
-// When I fill in the registration form with [random user name]@greenstand.org password: abc.123
 When(
   /^I fill in the registration form with \[random user name\]@greenstand\.org password:\s*(.+)$/,
   async (password: string) => {
@@ -91,7 +123,6 @@ When(
 );
 
 When(/^I click on the register button$/, async () => {
-  // Prefer existing text, but allow "Sign up" or a bare submit
   const candidates = [
     '[data-test="signup-submit-button"]',
     'form[data-test="signup-form"] button[type="submit"]',
@@ -136,3 +167,5 @@ Then(/^I should see a confirmation message$/, async () => {
     },
   );
 });
+
+//#endregion REGISTER
