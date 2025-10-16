@@ -26,8 +26,12 @@ export const useGetWallets = () => {
         setWallets(
           result.wallets.map((w: any) => ({
             name: w.name,
-            createdAt: w.created_at,
-            amount: w.tokens_in_wallet,
+            created_at: new Date(w.created_at).toLocaleString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            }),
+            tokens_in_wallet: w.tokens_in_wallet,
           })),
         );
       } catch (err) {

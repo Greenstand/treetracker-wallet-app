@@ -10,7 +10,7 @@ export default function WalletItem({
   tokens_in_wallet,
 }: {
   name: string;
-  created_at?: Date | undefined;
+  created_at?: string | undefined;
   tokens_in_wallet?: number | undefined;
 }) {
   return (
@@ -24,11 +24,7 @@ export default function WalletItem({
       <Box>
         <Typography variant="body2">{name}</Typography>
         <Typography variant="body2" color="text.secondary">
-          {created_at?.toLocaleString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })}
+          {created_at}
         </Typography>
       </Box>
 

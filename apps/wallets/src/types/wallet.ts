@@ -3,6 +3,6 @@ export type Wallet = {
   name: string;
   about?: string;
   logo_url?: string;
-  created_at?: Date;
+  created_at?: string;
   tokens_in_wallet?: number;
 };
