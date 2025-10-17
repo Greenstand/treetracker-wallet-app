@@ -3,6 +3,13 @@ import path from "node:path";
 import fs from "node:fs";
 // Video reporter for recording test execution - useful for debugging and demos
 import Video from "wdio-video-reporter";
+import {
+  REPORTS_ROOT,
+  VIDEOS_TMP,
+  scenarioDirs,
+  findVideoForCid,
+  slugify,
+} from "./utils/artifacts";
 
 export const config: Options.Testrunner = {
   //
@@ -152,19 +159,15 @@ export const config: Options.Testrunner = {
       Video as any,
       {
         saveAllVideos: true,
-        outputDir: path.resolve(__dirname, "test-videos"),
-        videoSlowdownMultiplier: 1,
+        outputDir: VIDEOS_TMP, // ← temp bucket
         videoFormat: "mp4",
+        videoSlowdownMultiplier: 1,
       },
     ],
-    // Concurrency-safe JSON per feature/worker
     [
       "cucumberjs-json",
       {
-        jsonFolder: path.resolve(__dirname, "reports/cucumber"), // same folder the HTML generator reads
-        // language: 'en',
-        // disableHooks: false,
-        // reportFilePerRetry: true
+        jsonFolder: path.join(REPORTS_ROOT, "cucumber"),
       },
     ],
   ],
@@ -215,13 +218,28 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: function (config, capabilities) {
-    // Clean the JSON dir before runs
-    const jsonDir = path.resolve(__dirname, "reports/cucumber");
+    // legacy path (kept during transition so older scripts don't break)
+    const legacyJsonDir = path.resolve(__dirname, "reports/cucumber");
+
+    // new paths (used by current reporters)
+    const newJsonDir = path.join(REPORTS_ROOT, "cucumber");
+    const videosTmp = VIDEOS_TMP;
+
+    // Clean & recreate JSON dirs (both)
+    [legacyJsonDir, newJsonDir].forEach(dir => {
+      try {
+        fs.rmSync(dir, { recursive: true, force: true });
+      } catch {}
+      fs.mkdirSync(dir, { recursive: true });
+    });
+
+    // Ensure temp video bucket is clean
     try {
-      fs.rmSync(jsonDir, { recursive: true, force: true });
+      fs.rmSync(videosTmp, { recursive: true, force: true });
     } catch {}
-    fs.mkdirSync(jsonDir, { recursive: true });
+    fs.mkdirSync(videosTmp, { recursive: true });
   },
+
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -344,6 +362,47 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
+  afterScenario: async function (world, result, context) {
+    const featureName = world.gherkinDocument?.feature?.name ?? "feature";
+    const scenarioName = world.pickle?.name ?? "scenario";
+
+    const { base, screenshots, logs } = scenarioDirs(featureName, scenarioName);
+
+    // Optional: end-of-scenario screenshot saved to disk
+    try {
+      const png = await browser.takeScreenshot();
+      fs.writeFileSync(
+        path.join(screenshots, `${Date.now()}-${slugify(scenarioName)}.png`),
+        Buffer.from(png, "base64"),
+      );
+    } catch {}
+
+    // Find & move the recorded video — derive cid safely
+    const cid =
+      process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
+    const src = cid ? findVideoForCid(cid) : null;
+
+    let rel = "";
+    if (src) {
+      const dest = path.join(base, "run.mp4");
+      fs.renameSync(src, dest);
+      // Path relative to the HTML report output so it works in CI artifacts
+      rel = path
+        .relative(path.join(REPORTS_ROOT, "cucumber-html"), dest)
+        .split(path.sep)
+        .join("/");
+    }
+
+    // Attach HTML so Multiple Cucumber HTML Reporter shows the player/link
+    try {
+      const html = rel
+        ? `<details><summary>Scenario video</summary><video controls width="880" src="${rel}"></video></details>`
+        : `<em>No video found</em>`;
+      // @ts-ignore: WDIO Cucumber world provides `attach`
+      await context.attach(html, "text/html");
+    } catch {}
+  },
+
   after: async function (result, capabilities, specs) {
     // Delay to ensure video reporter finishes processing
     await new Promise(resolve => setTimeout(resolve, 100));
