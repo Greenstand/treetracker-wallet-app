@@ -10,9 +10,17 @@ import {
   findVideoForCid,
 } from "./utils/artifacts";
 
-// Track the current feature "bucket" per worker (cid).
-// We derive it from the feature file name (e.g. "register.feature" -> "register")
-const FEATURE_KEY_BY_CID: Record<string, string> = {};
+/**
+ * Maps WebdriverIO worker IDs (cid) to their current feature bucket.
+ * A "feature bucket" is derived from the feature file name, e.g.:
+ *   "register.feature" -> "register"
+ *
+ * Lifecycle:
+ * - Set in `beforeFeature`
+ * - Read in `afterStep` / `afterScenario`
+ * - Cleared in `afterFeature`
+ */
+const FEATURE_BUCKET_BY_CID: Record<string, string> = {};
 
 export const config: Options.Testrunner = {
   //
@@ -156,21 +164,22 @@ export const config: Options.Testrunner = {
   // see also: https://webdriver.io/docs/dot-reporter
   reporters: [
     "spec",
-    // Video reporter: Records test execution for debugging and analysis
-    // Videos are saved to apps/bdd/test-videos/ directory
+    // Capture execution videos via wdio-video-reporter
     [
       Video as any,
       {
-        saveAllVideos: true, // keep videos for passed + failed
-        outputDir: VIDEOS_TMP, // MP4 output
-        rawPath: path.join(VIDEOS_TMP, ".video-reporter-screenshots"), // frame stash
+        saveAllVideos: true, // keep videos for passed and failed scenarios
+        outputDir: VIDEOS_TMP, // temp output root for MP4s this run
+        rawPath: path.join(VIDEOS_TMP, ".video-reporter-screenshots"), // reporter’s cached frame screenshots
         videoFormat: "mp4",
         videoSlowdownMultiplier: 1,
-        // Optional knobs if you want fewer frames generated up front:
-        // excludedActions: ['execute', 'keys'],     // reduce spammy frames
-        // screenshotIntervalSecs: 0.75,             // throttle frames (>= 0.5)
+        // Optional tuning (uncomment as needed):
+        // excludedActions: ['execute', 'keys'],           // reduce noisy frames
+        // screenshotIntervalSecs: 0.75,                   // throttle frame capture (>= 0.5)
       },
     ],
+
+    // Write Cucumber JSON for the HTML report generator
     [
       "cucumberjs-json",
       {
@@ -224,25 +233,25 @@ export const config: Options.Testrunner = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: function (config, capabilities) {
-    const newJsonDir = path.join(REPORTS_ROOT, "cucumber");
-    const videosTmp = VIDEOS_TMP;
-    const videosRoot = path.dirname(videosTmp);
+  onPrepare: function (_config, _capabilities) {
+    const cucumberJsonDir = path.join(REPORTS_ROOT, "cucumber");
+    const videosTmpDir = VIDEOS_TMP; // per-run temp output for MP4 + frame cache
+    const videosDir = path.dirname(videosTmpDir); // apps/bdd/test-artifacts/test-videos
 
-    // Clean & recreate JSON dir (new only)
+    // Ensure a clean Cucumber JSON output directory for this run
     try {
-      fs.rmSync(newJsonDir, { recursive: true, force: true });
+      fs.rmSync(cucumberJsonDir, { recursive: true, force: true });
     } catch {}
-    fs.mkdirSync(newJsonDir, { recursive: true });
+    fs.mkdirSync(cucumberJsonDir, { recursive: true });
 
-    // Blow away the entire test-videos tree before each run
+    // Always start with a fresh test-videos tree (prevents stale videos blocking new recordings)
     try {
-      fs.rmSync(videosRoot, { recursive: true, force: true });
+      fs.rmSync(videosDir, { recursive: true, force: true });
     } catch {}
-    fs.mkdirSync(videosRoot, { recursive: true });
+    fs.mkdirSync(videosDir, { recursive: true });
 
-    // Recreate .tmp (frame stash + temp outputs)
-    fs.mkdirSync(videosTmp, { recursive: true });
+    // Recreate the temp area used by wdio-video-reporter (frame stash + intermediate outputs)
+    fs.mkdirSync(videosTmpDir, { recursive: true });
   },
 
   /**
@@ -256,6 +265,7 @@ export const config: Options.Testrunner = {
    */
   // onWorkerStart: function (cid, caps, specs, args, execArgv) {
   // },
+
   /**
    * Gets executed just after a worker process has exited.
    * @param  {string} cid      capability id (e.g 0-0)
@@ -265,6 +275,7 @@ export const config: Options.Testrunner = {
    */
   // onWorkerEnd: function (cid, exitCode, specs, retries) {
   // },
+
   /**
    * Gets executed just before initialising the webdriver session and test framework. It allows you
    * to manipulate configurations depending on the capability or spec.
@@ -275,6 +286,7 @@ export const config: Options.Testrunner = {
    */
   // beforeSession: function (config, capabilities, specs, cid) {
   // },
+
   /**
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.
@@ -284,6 +296,7 @@ export const config: Options.Testrunner = {
    */
   // before: function (capabilities, specs) {
   // },
+
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name
@@ -291,6 +304,7 @@ export const config: Options.Testrunner = {
    */
   // beforeCommand: function (commandName, args) {
   // },
+
   /**
    * Cucumber Hooks
    *
@@ -298,16 +312,18 @@ export const config: Options.Testrunner = {
    * @param {string}                   uri      path to feature file
    * @param {GherkinDocument.IFeature} feature  Cucumber feature object
    */
-  // Capture the feature bucket (e.g. "register") for this worker/cid
+  // Remember the current feature "bucket" (e.g. "register") for this worker (cid).
   beforeFeature: function (uri: string) {
     const cid =
       process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
+
+    // Derive a stable bucket name from the feature file name: "register.feature" -> "register"
     try {
-      const file = path.basename(uri); // e.g. register.feature
-      const base = file.replace(/\.feature$/i, ""); // -> register
-      FEATURE_KEY_BY_CID[cid] = base || "feature";
+      const filename = path.basename(uri); // e.g. "register.feature"
+      const bucket = filename.replace(/\.feature$/i, ""); // -> "register"
+      FEATURE_BUCKET_BY_CID[cid] = bucket || "feature";
     } catch {
-      FEATURE_KEY_BY_CID[cid] = "feature";
+      FEATURE_BUCKET_BY_CID[cid] = "feature";
     }
   },
 
@@ -319,6 +335,7 @@ export const config: Options.Testrunner = {
    */
   // beforeScenario: function (world, context) {
   // },
+
   /**
    *
    * Runs before a Cucumber Step.
@@ -328,6 +345,7 @@ export const config: Options.Testrunner = {
    */
   // beforeStep: function (step, scenario, context) {
   // },
+
   /**
    *
    * Runs after a Cucumber Step.
@@ -339,40 +357,49 @@ export const config: Options.Testrunner = {
    * @param {number}             result.duration  duration of scenario in milliseconds
    * @param {object}             context          Cucumber World object
    */
+  /**
+   * After each Cucumber step, capture and attach a screenshot if the step failed.
+   * Also persist a single "failed-step" image under the scenario's screenshots folder.
+   */
   afterStep: async function (_step, _scenario, result, context) {
-    if (!result.passed) {
-      const png = await browser.takeScreenshot();
-      // @ts-ignore - WDIO Cucumber World has attach
-      await context.attach(Buffer.from(png, "base64"), "image/png");
+    if (result.passed) return;
 
-      // Types: expose gherkinDocument/pickle that exist at runtime
-      const world = context as unknown as {
-        gherkinDocument?: { feature?: { name?: string } };
-        pickle?: { name?: string };
-      };
+    // Grab a PNG screenshot and attach it to the Cucumber JSON (shows up in HTML)
+    const screenshotB64 = await browser.takeScreenshot();
+    // WDIO Cucumber world exposes `attach` at runtime
+    // @ts-ignore
+    await context.attach(Buffer.from(screenshotB64, "base64"), "image/png");
 
-      // Prefer the per-worker feature bucket captured in beforeFeature
-      const cid =
-        process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
-      const featureBucket =
-        FEATURE_KEY_BY_CID[cid] ||
-        world.gherkinDocument?.feature?.name ||
-        "feature";
+    // The Cucumber world carries names for feature/scenario; keep typing minimal and robust
+    const world = context as unknown as {
+      gherkinDocument?: { feature?: { name?: string } };
+      pickle?: { name?: string };
+    };
 
-      const scenarioName = world.pickle?.name ?? _scenario?.name ?? "scenario";
-      const { base, screenshots } = scenarioDirs(featureBucket, scenarioName);
+    // Derive the feature "bucket" recorded for this worker (cid), with safe fallbacks
+    const cid =
+      process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
 
-      fs.writeFileSync(
-        path.join(screenshots, `${Date.now()}-failed-step.png`),
-        Buffer.from(png, "base64"),
-      );
+    const featureBucket =
+      FEATURE_BUCKET_BY_CID[cid] ||
+      world.gherkinDocument?.feature?.name ||
+      "feature";
 
-      // We don't keep per-scenario logs in this tree anymore
-      try {
-        fs.rmSync(path.join(base, "logs"), { recursive: true, force: true });
-      } catch {}
-    }
+    const scenarioName = world.pickle?.name ?? _scenario?.name ?? "scenario";
+    const { base, screenshots } = scenarioDirs(featureBucket, scenarioName);
+
+    // Persist a single failure image in the scenario folder
+    fs.writeFileSync(
+      path.join(screenshots, `${Date.now()}-failed-step.png`),
+      Buffer.from(screenshotB64, "base64"),
+    );
+
+    // Per-scenario logs are not used anymore; ensure any legacy folder is removed
+    try {
+      fs.rmSync(path.join(base, "logs"), { recursive: true, force: true });
+    } catch {}
   },
+
   /**
    *
    * Runs after a Cucumber Scenario.
@@ -383,36 +410,45 @@ export const config: Options.Testrunner = {
    * @param {number}                 result.duration  duration of scenario in milliseconds
    * @param {object}                 context          Cucumber World object
    */
+  /**
+   * After each Cucumber scenario:
+   * - Move the recorded MP4 for this worker (cid) into the scenario's folder.
+   * - Remove the temporary frame screenshots used by the video reporter.
+   * - Attach an HTML <video> player to the Cucumber JSON so it shows in the HTML report.
+   */
   afterScenario: async function (world, result, context) {
+    // Identify this worker and resolve the feature bucket + scenario folder
     const cid =
       process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
 
-    // Prefer bucket from beforeFeature; fall back to gherkinDocument
     const featureBucket =
-      FEATURE_KEY_BY_CID[cid] ||
+      FEATURE_BUCKET_BY_CID[cid] ||
       world.gherkinDocument?.feature?.name ||
       "feature";
 
     const scenarioName = world.pickle?.name ?? "scenario";
     const { base } = scenarioDirs(featureBucket, scenarioName);
 
-    // move the video produced for this worker
-    const src = cid ? findVideoForCid(cid) : null;
+    // Move the MP4 produced by wdio-video-reporter for this cid into the scenario folder
+    const srcVideo = cid ? findVideoForCid(cid) : null;
 
-    let rel = "";
-    if (src) {
-      const dest = path.join(base, "run.mp4");
-      // Ensure we overwrite any stale file from a previous run
+    let videoRelPath = "";
+    if (srcVideo) {
+      const destVideo = path.join(base, "run.mp4");
+      // Overwrite any stale file from a previous run
       try {
-        if (fs.existsSync(dest)) fs.rmSync(dest, { force: true });
+        if (fs.existsSync(destVideo)) fs.rmSync(destVideo, { force: true });
       } catch {}
-      fs.renameSync(src, dest);
-      rel = path
-        .relative(path.join(REPORTS_ROOT, "cucumber-html"), dest)
+
+      fs.renameSync(srcVideo, destVideo);
+
+      // Path relative to report output so the player works in CI artifacts
+      videoRelPath = path
+        .relative(path.join(REPORTS_ROOT, "cucumber-html"), destVideo)
         .split(path.sep)
         .join("/");
 
-      // --- CLEAN UP FRAME SCREENSHOTS FOR THIS CID ---
+      // Clean up frame screenshots generated by the video reporter for this cid
       try {
         const framesRoot = path.join(VIDEOS_TMP, ".video-reporter-screenshots");
         if (fs.existsSync(framesRoot)) {
@@ -428,31 +464,37 @@ export const config: Options.Testrunner = {
       } catch {}
     }
 
-    // We don't keep per-scenario logs in this tree anymore
+    // We don't keep per-scenario logs in the scenario tree anymore (remove any legacy folder)
     try {
       fs.rmSync(path.join(base, "logs"), { recursive: true, force: true });
     } catch {}
 
-    // attach a video player to the cucumber json -> visible in HTML
+    // Attach a <video> player or a fallback note to the Cucumber JSON (visible in HTML report)
     try {
-      const html = rel
-        ? `<details><summary>Scenario video</summary><video controls width="880" src="${rel}"></video></details>`
+      const html = videoRelPath
+        ? `<details><summary>Scenario video</summary><video controls width="880" src="${videoRelPath}"></video></details>`
         : `<em>No video found</em>`;
-      // @ts-ignore
+      // @ts-ignore - WDIO Cucumber world exposes `attach` at runtime
       await context.attach(html, "text/html");
     } catch {}
   },
+
   /**
-   *
    * Runs after a Cucumber Feature.
    * @param {string}                   uri      path to feature file
    * @param {GherkinDocument.IFeature} feature  Cucumber feature object
    */
-  // Clear the feature bucket for this worker so it doesn't leak to the next feature
-  afterFeature: function (_uri: string, _feature) {
+  /**
+   * Cucumber hook: runs after each Feature file finishes.
+   * Clears the worker's cached feature bucket so it doesn't bleed into the next Feature.
+   */
+  afterFeature: function (_uri: string, _feature): void {
     const cid =
       process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
-    delete FEATURE_KEY_BY_CID[cid];
+
+    if (cid) {
+      delete FEATURE_BUCKET_BY_CID[cid];
+    }
   },
 
   /**
@@ -464,6 +506,7 @@ export const config: Options.Testrunner = {
    */
   // afterCommand: function (commandName, args, result, error) {
   // },
+
   /**
    * Gets executed after all tests are done. You still have access to all global variables from
    * the test.
@@ -471,49 +514,82 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  after: async function (result, capabilities, specs) {
-    // Delay to ensure video reporter finishes processing
-    await new Promise(resolve => setTimeout(resolve, 100));
+  /**
+   * WebdriverIO hook: runs after all tests complete.
+   * Small buffer so async reporters (e.g., video encoder) finish writing files before process exit.
+   * You can tune the delay with WDIO_ARTIFACTS_FLUSH_MS (defaults to 150ms).
+   */
+  after: async function (_result, _capabilities, _specs): Promise<void> {
+    const ms = Number(process.env.WDIO_ARTIFACTS_FLUSH_MS ?? 150);
+    if (ms > 0) {
+      await new Promise(resolve => setTimeout(resolve, ms));
+    }
   },
+
   /**
    * Gets executed right after terminating the webdriver session.
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  afterSession: async function (_config, _caps, _specs) {
-    // small wait to ensure video reporter is done touching files
-    await new Promise(r => setTimeout(r, 500));
+  /**
+   * WebdriverIO hook: called after each WebDriver session ends (per worker).
+   * Ensures the video reporter has flushed files, optionally archives its JSON,
+   * and tidies up frame cache directories.
+   */
+  afterSession: async function (_config, _caps, _specs): Promise<void> {
+    // Give the video encoder a brief window to finish file I/O.
+    const settleMs = Number(process.env.WDIO_VIDEO_SETTLE_MS ?? 500);
+    if (settleMs > 0) {
+      await new Promise(r => setTimeout(r, settleMs));
+    }
 
     const cid =
       process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
     if (!cid) return;
 
-    // move or delete the VideoReporter json for this cid
-    const name = `wdio-${cid}-VideoReporter-report.json`;
-    const src = path.join(VIDEOS_TMP, name);
+    // Video reporter drops a per-worker JSON summary; keep or discard it.
+    const reporterJsonName = `wdio-${cid}-VideoReporter-report.json`;
+    const reporterJsonPath = path.join(VIDEOS_TMP, reporterJsonName);
 
-    if (fs.existsSync(src)) {
-      // OPTION A: keep one copy per session
-      const sessionLogsDir = path.join(REPORTS_ROOT, "session-logs");
-      fs.mkdirSync(sessionLogsDir, { recursive: true });
-      fs.renameSync(src, path.join(sessionLogsDir, name));
+    if (fs.existsSync(reporterJsonPath)) {
+      const keepJson =
+        (process.env.WDIO_KEEP_VIDEO_JSON ?? "true").toLowerCase() === "true";
 
-      // OPTION B (instead): if you don't want it, just remove it:
-      // fs.rmSync(src, { force: true });
+      if (keepJson) {
+        const archiveDir = path.join(REPORTS_ROOT, "session-logs");
+        fs.mkdirSync(archiveDir, { recursive: true });
+
+        // If a stale file exists, replace it.
+        try {
+          fs.rmSync(path.join(archiveDir, reporterJsonName), { force: true });
+        } catch {}
+        fs.renameSync(
+          reporterJsonPath,
+          path.join(archiveDir, reporterJsonName),
+        );
+      } else {
+        try {
+          fs.rmSync(reporterJsonPath, { force: true });
+        } catch {}
+      }
     }
 
-    // Also remove any leftover empty frame root
-    const framesRoot = path.join(VIDEOS_TMP, ".video-reporter-screenshots");
+    // If the video reporter created a frame cache root, remove it when empty.
+    // (We already prune per-CID subfolders earlier; this is the final sweep.)
+    const frameCacheRoot = path.join(VIDEOS_TMP, ".video-reporter-screenshots");
     try {
       if (
-        fs.existsSync(framesRoot) &&
-        fs.readdirSync(framesRoot).length === 0
+        fs.existsSync(frameCacheRoot) &&
+        fs.readdirSync(frameCacheRoot).length === 0
       ) {
-        fs.rmSync(framesRoot, { recursive: true, force: true });
+        fs.rmSync(frameCacheRoot, { recursive: true, force: true });
       }
-    } catch {}
+    } catch {
+      // best-effort cleanup; ignore
+    }
   },
+
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
