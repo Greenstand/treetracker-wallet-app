@@ -1,25 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Typography, Stack, IconButton } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import AddIcon from "@mui/icons-material/Add";
 import WalletItem from "@/components/WalletItem";
 import GenericDrawer from "@/components/GenericDrawer";
 import WalletCreateDrawer from "@/components/WalletCreateDrawer";
+import { useCreateWallet, useGetWallets, Wallet } from "wallets";
 
 export default function WalletPage() {
-  const [wallets, setWallets] = useState([
-    { name: "Wallet 2", createdAt: "May 22, 2024", amount: 0 },
-    { name: "Wallet 1", createdAt: "May 16, 2024", amount: 3455 },
-  ]);
+  const [wallets, setWallets] = useState<Wallet[]>([]);
 
+  const { wallets: serverWallets, isWalletLoading, error } = useGetWallets();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const normalize = (s: string) => s.trim().toLowerCase();
 
-  const handleCreate = ({
+  const { createWallet } = useCreateWallet();
+
+  useEffect(() => {
+    if (serverWallets.length > 0) {
+      setWallets(serverWallets);
+    }
+  }, [serverWallets]);
+
+  const handleCreate = async ({
     name,
     description,
   }: {
@@ -29,14 +36,29 @@ export default function WalletPage() {
     const isDup = wallets.some(w => normalize(w.name) === normalize(name));
     if (isDup) return;
 
-    const createdAt = new Date().toLocaleString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    const result = await createWallet({
+      name,
+      about: description, // ✅ Send to API
     });
 
-    setWallets(prev => [{ name, createdAt, amount: 0 }, ...prev]);
+    console.log(result);
+
+    setWallets(prev => [
+      {
+        name,
+        createdAt: new Date().toLocaleString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        }),
+        amount: 0,
+      },
+      ...prev,
+    ]);
   };
+
+  // if (isWalletLoading) return <div>Loading wallets...</div>;
+  // if (error) return <div>Error: {error}</div>;
 
   return (
     <Box sx={{ p: 2 }}>
@@ -66,7 +88,7 @@ export default function WalletPage() {
       <Stack spacing={0.5} data-test="wallet-list">
         {wallets.map((wallet, idx) => (
           <div key={idx} data-test={`wallet-list-item-${idx}`}>
-            <WalletItem {...wallet} />
+            <WalletItem {...(wallet as Wallet)} />
           </div>
         ))}
       </Stack>
