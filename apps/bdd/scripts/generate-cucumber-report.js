@@ -6,7 +6,6 @@
  *
  * Usage: yarn report:cucumber
  */
-
 const report = require("multiple-cucumber-html-reporter");
 const path = require("path");
 
@@ -33,10 +32,7 @@ report.generate({
   },
 });
 
-const reportPath = path.resolve(
-  __dirname,
-  "../reports/cucumber-html/index.html",
-);
+const reportPath = path.resolve(REPORTS_ROOT, "cucumber-html/index.html");
 
 console.log("✅ HTML report generated successfully!");
 console.log("📊 Report location:", reportPath);
@@ -46,7 +42,9 @@ console.log(
 );
 console.log("");
 console.log("💡 Quick commands:");
-console.log("   • Open report: open apps/bdd/reports/cucumber-html/index.html");
 console.log(
-  "   • View in terminal: cat apps/bdd/reports/cucumber-html/index.html | head -20",
+  "   • Open report: open apps/bdd/test-artifacts/reports/cucumber-html/index.html",
+);
+console.log(
+  "   • View in terminal: cat apps/bdd/test-artifacts/reports/cucumber-html/index.html | head -20",
 );

@@ -225,19 +225,15 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: function (config, capabilities) {
-    // legacy path (kept during transition so older scripts don't break)
-    const legacyJsonDir = path.resolve(__dirname, "reports/cucumber");
     const newJsonDir = path.join(REPORTS_ROOT, "cucumber");
     const videosTmp = VIDEOS_TMP;
     const videosRoot = path.dirname(videosTmp);
 
-    // Clean & recreate JSON dirs (both)
-    [legacyJsonDir, newJsonDir].forEach(dir => {
-      try {
-        fs.rmSync(dir, { recursive: true, force: true });
-      } catch {}
-      fs.mkdirSync(dir, { recursive: true });
-    });
+    // Clean & recreate JSON dir (new only)
+    try {
+      fs.rmSync(newJsonDir, { recursive: true, force: true });
+    } catch {}
+    fs.mkdirSync(newJsonDir, { recursive: true });
 
     // Blow away the entire test-videos tree before each run
     try {
