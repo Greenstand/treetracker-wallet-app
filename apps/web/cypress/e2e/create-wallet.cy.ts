@@ -14,7 +14,7 @@ describe("Wallet - Create flow (integration, all requests mocked)", () => {
   });
 
   beforeEach(() => {
-    cy.intercept("GET", "/api/wallets*", {
+    cy.intercept("GET", "/wallets*", {
       statusCode: 200,
       body: walletData?.mocks?.initialList ?? [],
     }).as("getWallets");
@@ -36,8 +36,8 @@ describe("Wallet - Create flow (integration, all requests mocked)", () => {
 
     cy.getByData(SELECTORS.walletNameInput).clear().type(name);
 
-    cy.intercept("POST", "/api/wallets", req => {
-      expect(req.body).to.have.property("name", name);
+    cy.intercept("POST", "/wallets", req => {
+      expect(req.body).to.have.property("wallet", name);
       req.reply({ statusCode: 201, body: walletData.mocks.createdWallet });
     }).as("createWallet");
 
@@ -51,6 +51,12 @@ describe("Wallet - Create flow (integration, all requests mocked)", () => {
 
     cy.getByData(SELECTORS.walletCreateOpen).click();
     cy.getByData(SELECTORS.walletNameInput).type(dupName);
+
+    cy.intercept("POST", "/wallets", req => {
+      expect(req.body).to.have.property("wallet", dupName);
+      req.reply({ statusCode: 201, body: walletData.mocks.createdWallet });
+    }).as("createWallet");
+
     cy.getByData(SELECTORS.walletCreateSubmitButton).click();
     cy.contains(dupName).should("exist");
 
