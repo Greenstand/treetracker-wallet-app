@@ -227,10 +227,9 @@ export const config: Options.Testrunner = {
   onPrepare: function (config, capabilities) {
     // legacy path (kept during transition so older scripts don't break)
     const legacyJsonDir = path.resolve(__dirname, "reports/cucumber");
-
-    // new paths (used by current reporters)
     const newJsonDir = path.join(REPORTS_ROOT, "cucumber");
     const videosTmp = VIDEOS_TMP;
+    const videosRoot = path.dirname(videosTmp);
 
     // Clean & recreate JSON dirs (both)
     [legacyJsonDir, newJsonDir].forEach(dir => {
@@ -240,10 +239,13 @@ export const config: Options.Testrunner = {
       fs.mkdirSync(dir, { recursive: true });
     });
 
-    // Ensure temp video bucket is clean
+    // Blow away the entire test-videos tree before each run
     try {
-      fs.rmSync(videosTmp, { recursive: true, force: true });
+      fs.rmSync(videosRoot, { recursive: true, force: true });
     } catch {}
+    fs.mkdirSync(videosRoot, { recursive: true });
+
+    // Recreate .tmp (frame stash + temp outputs)
     fs.mkdirSync(videosTmp, { recursive: true });
   },
 
@@ -404,6 +406,10 @@ export const config: Options.Testrunner = {
     let rel = "";
     if (src) {
       const dest = path.join(base, "run.mp4");
+      // Ensure we overwrite any stale file from a previous run
+      try {
+        if (fs.existsSync(dest)) fs.rmSync(dest, { force: true });
+      } catch {}
       fs.renameSync(src, dest);
       rel = path
         .relative(path.join(REPORTS_ROOT, "cucumber-html"), dest)
