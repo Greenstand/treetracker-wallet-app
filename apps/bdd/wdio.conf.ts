@@ -237,6 +237,10 @@ export const config: Options.Testrunner = {
     const cucumberJsonDir = path.join(REPORTS_ROOT, "cucumber");
     const videosTmpDir = VIDEOS_TMP; // per-run temp output for MP4 + frame cache
     const videosDir = path.dirname(videosTmpDir); // apps/bdd/test-artifacts/test-videos
+    const framesRootDir = path.join(
+      videosTmpDir,
+      ".video-reporter-screenshots",
+    );
 
     // Ensure a clean Cucumber JSON output directory for this run
     try {
@@ -252,6 +256,7 @@ export const config: Options.Testrunner = {
 
     // Recreate the temp area used by wdio-video-reporter (frame stash + intermediate outputs)
     fs.mkdirSync(videosTmpDir, { recursive: true });
+    fs.mkdirSync(framesRootDir, { recursive: true }); // ensure frame stash exists
   },
 
   /**
