@@ -6,14 +6,14 @@
  *
  * Usage: yarn report:cucumber
  */
-
 const report = require("multiple-cucumber-html-reporter");
 const path = require("path");
-const fs = require("fs");
+
+const REPORTS_ROOT = path.resolve(__dirname, "../test-artifacts/reports");
 
 report.generate({
-  jsonDir: path.resolve(__dirname, "../reports/cucumber"),
-  reportPath: path.resolve(__dirname, "../reports/cucumber-html"),
+  jsonDir: path.join(REPORTS_ROOT, "cucumber"),
+  reportPath: path.join(REPORTS_ROOT, "cucumber-html"),
   pageTitle: "Treetracker Wallet E2E Test Report",
   reportName: "Cucumber Test Results",
   disableLog: true,
@@ -32,10 +32,7 @@ report.generate({
   },
 });
 
-const reportPath = path.resolve(
-  __dirname,
-  "../reports/cucumber-html/index.html",
-);
+const reportPath = path.resolve(REPORTS_ROOT, "cucumber-html/index.html");
 
 console.log("✅ HTML report generated successfully!");
 console.log("📊 Report location:", reportPath);
@@ -45,7 +42,9 @@ console.log(
 );
 console.log("");
 console.log("💡 Quick commands:");
-console.log("   • Open report: open apps/bdd/reports/cucumber-html/index.html");
 console.log(
-  "   • View in terminal: cat apps/bdd/reports/cucumber-html/index.html | head -20",
+  "   • Open report: open apps/bdd/test-artifacts/reports/cucumber-html/index.html",
+);
+console.log(
+  "   • View in terminal: cat apps/bdd/test-artifacts/reports/cucumber-html/index.html | head -20",
 );
