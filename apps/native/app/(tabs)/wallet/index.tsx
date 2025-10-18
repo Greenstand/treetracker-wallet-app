@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
-import { YourWallets } from "../../../components/wallet/YourWallets";
+import { WalletList } from "../../../components/wallet/WalletList";
 
 const mockWallets = [
   { id: "1", name: "Wallet 2", balance: 1000, date: "May 22, 2024" },
@@ -17,12 +17,7 @@ export default function Wallet() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Wallet</Text>
-          <Text style={styles.headerSubtitle}>Wallet/Exceeded limit</Text>
-        </View>
-
-        <YourWallets wallets={mockWallets} onWalletPress={handleWalletPress} />
+        <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -36,21 +31,5 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 32,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: "300",
-    color: "#1a1a1a",
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "rgba(0, 0, 0, 0.6)",
-    fontWeight: "400",
   },
 });
