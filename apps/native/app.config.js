@@ -1,6 +1,6 @@
 export default ({ config }) => ({
   ...config,
-  plugins: ["expo-web-browser"],
+  plugins: ["expo-web-browser", "expo-router"],
   extra: {
     router: {
       origin: false,
