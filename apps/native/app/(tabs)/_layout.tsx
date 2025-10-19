@@ -1,5 +1,7 @@
 import { Tabs } from "expo-router";
+import React from "react";
 import CustomTabBar from "@/components/CustomTabBar";
+import NotificationHeaderComponent from "./notifications/NotificationHeader";
 
 export default function TabLayout() {
   return (
@@ -10,7 +12,18 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen name="home" />
       <Tabs.Screen name="wallet" />
-      <Tabs.Screen name="notifications" />
+
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          headerShown: true,
+          header: ({}) => <NotificationHeaderComponent />,
+          headerTransparent: true,
+          headerTitle: "",
+          headerStyle: { height: 0 },
+        }}
+      />
+
       <Tabs.Screen name="settings" />
     </Tabs>
   );
