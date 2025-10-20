@@ -1,13 +1,7 @@
 import React from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import CustomModal from "../ui/common/CustomModal";
 
 interface LimitInfoModalProps {
   visible: boolean;
@@ -21,52 +15,35 @@ const LimitInfoModal: React.FC<LimitInfoModalProps> = ({
   walletLimit = 2,
 }) => {
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
+    <CustomModal
       visible={visible}
-      onRequestClose={onClose}
-      testID="modal-container">
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay} testID="modal-overlay">
-          <TouchableWithoutFeedback>
-            <View style={styles.modalContainer} testID="modal-content">
-              <View style={styles.header}>
-                <Text style={styles.title}>Good-to-know</Text>
-                <TouchableOpacity
-                  onPress={onClose}
-                  style={styles.closeButton}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  testID="close-button">
-                  <MaterialCommunityIcons
-                    name="close"
-                    size={24}
-                    color="#757575"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.divider} />
-
-              <View style={styles.content}>
-                <Text style={styles.message}>
-                  You can have up to {walletLimit} wallets.
-                </Text>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
+      onClose={onClose}
+      containerStyle={styles.modalContainer}>
+      <View testID="modal-content">
+        <View style={styles.header}>
+          <Text style={styles.title}>Good-to-know</Text>
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.closeButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            testID="close-button">
+            <MaterialCommunityIcons name="close" size={24} color="#757575" />
+          </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
-    </Modal>
+
+        <View style={styles.divider} />
+
+        <View style={styles.content}>
+          <Text style={styles.message}>
+            You can have up to {walletLimit} wallets.
+          </Text>
+        </View>
+      </View>
+    </CustomModal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    justifyContent: "flex-end",
-  },
   modalContainer: {
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 16,
@@ -74,10 +51,7 @@ const styles = StyleSheet.create({
     minHeight: 164,
     paddingBottom: 34,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 10,

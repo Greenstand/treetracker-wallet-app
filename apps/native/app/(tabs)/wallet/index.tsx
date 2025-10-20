@@ -23,10 +23,6 @@ export default function Wallet() {
     console.log("Wallet pressed:", walletId);
   };
 
-  const handleCreateWallet = () => {
-    console.log("Create wallet pressed");
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
@@ -37,21 +33,13 @@ export default function Wallet() {
           <Text style={styles.headerSubtitle}>Wallet/Exceeded limit</Text>
         </View>
 
-        <View style={styles.createWalletContainer}>
+        <View style={styles.infoIconRow}>
           <TouchableOpacity
-            style={styles.createWalletButton}
-            onPress={handleCreateWallet}
-            activeOpacity={0.7}>
-            <Ionicons name="add" size={24} color="#999999" />
-            <Text style={styles.createWalletText}>CREATE WALLET</Text>
-
-            <TouchableOpacity
-              onPress={() => setShowLimitInfo(true)}
-              style={styles.infoIcon}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              testID="info-icon">
-              <Ionicons name="information" size={20} color="#FFFFFF" />
-            </TouchableOpacity>
+            onPress={() => setShowLimitInfo(true)}
+            style={styles.infoIcon}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            testID="info-icon">
+            <Ionicons name="information" size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
 
@@ -79,7 +67,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingTop: 40,
-    paddingBottom: 32,
+    paddingBottom: 8,
   },
   headerTitle: {
     fontSize: 32,
@@ -92,25 +80,11 @@ const styles = StyleSheet.create({
     color: "rgba(0, 0, 0, 0.6)",
     fontWeight: "400",
   },
-
-  createWalletContainer: {
+  infoIconRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
     paddingHorizontal: 16,
     marginBottom: 24,
-  },
-  createWalletButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "transparent",
-    paddingVertical: 12,
-    paddingHorizontal: 0,
-  },
-  createWalletText: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#999999",
-    marginLeft: 12,
-    letterSpacing: 1.25,
   },
   infoIcon: {
     backgroundColor: "#9E9E9E",
