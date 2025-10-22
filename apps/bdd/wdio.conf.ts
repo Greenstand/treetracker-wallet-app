@@ -9,6 +9,7 @@ import {
   scenarioDirs,
   findVideoForCid,
 } from "./utils/artifacts";
+import cucumberJson from "wdio-cucumberjs-json-reporter";
 
 /**
  * Maps WebdriverIO worker IDs (cid) to their current feature bucket.
@@ -380,7 +381,7 @@ export const config: Options.Testrunner = {
     const screenshotB64 = await browser.takeScreenshot();
     // WDIO Cucumber world exposes `attach` at runtime
     // @ts-ignore
-    await context.attach(Buffer.from(screenshotB64, "base64"), "image/png");
+    cucumberJson.attach(screenshotB64, "image/png");
 
     // The Cucumber world carries names for feature/scenario; keep typing minimal and robust
     const world = context as unknown as {
