@@ -9,6 +9,7 @@ import {
   scenarioDirs,
   findVideoForCid,
 } from "./utils/artifacts";
+import cucumberJson from "wdio-cucumberjs-json-reporter";
 
 /**
  * Maps WebdriverIO worker IDs (cid) to their current feature bucket.
@@ -234,7 +235,8 @@ export const config: Options.Testrunner = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: function (_config, _capabilities) {
-    const cucumberJsonDir = path.join(REPORTS_ROOT, "cucumber");
+    const cucumberJsonDir = path.join(REPORTS_ROOT, "cucumber"); // apps/bdd/test-artifacts/reports/cucumber
+    const cucumberHtmlDir = path.join(REPORTS_ROOT, "cucumber-html"); // apps/bdd/test-artifacts/cucumber-html
     const videosTmpDir = VIDEOS_TMP; // per-run temp output for MP4 + frame cache
     const videosDir = path.dirname(videosTmpDir); // apps/bdd/test-artifacts/test-videos
     const framesRootDir = path.join(
@@ -247,6 +249,12 @@ export const config: Options.Testrunner = {
       fs.rmSync(cucumberJsonDir, { recursive: true, force: true });
     } catch {}
     fs.mkdirSync(cucumberJsonDir, { recursive: true });
+
+    // Clean Cucumber HTML directory (features/*.html, assets/, index.html)
+    try {
+      fs.rmSync(cucumberHtmlDir, { recursive: true, force: true });
+    } catch {}
+    fs.mkdirSync(cucumberHtmlDir, { recursive: true });
 
     // Always start with a fresh test-videos tree (prevents stale videos blocking new recordings)
     try {
@@ -373,7 +381,7 @@ export const config: Options.Testrunner = {
     const screenshotB64 = await browser.takeScreenshot();
     // WDIO Cucumber world exposes `attach` at runtime
     // @ts-ignore
-    await context.attach(Buffer.from(screenshotB64, "base64"), "image/png");
+    cucumberJson.attach(screenshotB64, "image/png");
 
     // The Cucumber world carries names for feature/scenario; keep typing minimal and robust
     const world = context as unknown as {
