@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import WalletItem from "@/components/WalletItem";
 import GenericDrawer from "@/components/GenericDrawer";
 import WalletCreateDrawer from "@/components/WalletCreateDrawer";
-import { useCreateWallet, useGetWallets, Wallet } from "wallets";
+import { useCreateWallet, useGetWallets, Wallet } from "@treetracker/wallet";
 
 export default function WalletPage() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -46,7 +46,7 @@ export default function WalletPage() {
     setWallets(prev => [
       {
         name,
-        createdAt: new Date().toLocaleString("en-US", {
+        created_at: new Date().toLocaleString("en-US", {
           month: "long",
           day: "numeric",
           year: "numeric",
