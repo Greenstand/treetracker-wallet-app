@@ -1,8 +1,5 @@
 import "dotenv/config";
 
-// console.log(process.env.PRIVATE_WALLET_API_KEY);
-// console.log(process.env.NEXT_PUBLIC_TREETRACKER_API);
-
 let TREETRACKER_API: string = "";
 let WALLET_API_KEY: string = "";
 

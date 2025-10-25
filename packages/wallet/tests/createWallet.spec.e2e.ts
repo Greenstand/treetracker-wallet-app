@@ -25,7 +25,7 @@ describe("createWallet (e2e)", () => {
 
   it("should create wallet successfully", async () => {
     const walletData: Wallet = {
-      name: `TestWallet${Date.now()}`,
+      name: `Test Wallet${Date.now()}`,
       about: "Test wallet for e2e testing",
     };
 
