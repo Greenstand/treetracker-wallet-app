@@ -1,57 +1,68 @@
-import { HttpService } from "@nestjs/axios";
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { firstValueFrom } from "rxjs";
+import axios, { AxiosError } from "axios";
+import * as dotenv from "dotenv";
 import { getTokenManager } from "./getToken";
 
-@Injectable()
-export class KeycloakService {
-  constructor(private readonly httpService: HttpService) {}
+dotenv.config();
 
-  public async deleteAccountFromKeycloak(email: string) {
-    const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
-    const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
+type KeycloakUser = {
+  id: string;
+  username: string;
+  email?: string;
+};
 
-    try {
-      //Get access token from useGetToken
-      const { getToken } = getTokenManager();
-      const tokenData = await getToken();
+type DeleteAccountResult = {
+  success: true;
+  message: string;
+};
 
-      //Build URLs
-      const getUserUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users?email=${email}`;
+export async function deleteAccountFromKeycloak(
+  email: string,
+): Promise<DeleteAccountResult> {
+  const baseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL!;
+  const realm = process.env.PRIVATE_KEYCLOAK_REALM!;
 
-      const headers = {
-        Authorization: `Bearer ${tokenData}`,
-        "Content-Type": "application/json",
-      };
+  try {
+    const { getToken } = getTokenManager();
+    const accessToken = await getToken();
 
-      //Step 1: Get user ID by email
-      const userResponse = await firstValueFrom(
-        this.httpService.get(getUserUrl, { headers }),
-      );
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
 
-      if (!userResponse.data.length) {
-        throw new HttpException("User not found", HttpStatus.NOT_FOUND);
-      }
+    const { data: users } = await axios.get<KeycloakUser[]>(
+      `${baseUrl}/admin/realms/${realm}/users`,
+      {
+        headers,
+        params: { email },
+      },
+    );
 
-      const userId = userResponse.data[0].id;
-      const deleteUserUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users/${userId}`;
-
-      //Step 2: Delete user by ID
-      const deleteResponse = await firstValueFrom(
-        this.httpService.delete(deleteUserUrl, { headers }),
-      );
-
-      if (deleteResponse.status === 204) {
-        return { success: true, message: "User deleted successfully" };
-      } else {
-        throw new HttpException(
-          "Failed to delete user",
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.errorMessage || error.message;
-      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    if (!users.length) {
+      throw new Error("User not found");
     }
+
+    const userId = users[0].id;
+    await axios.delete(`${baseUrl}/admin/realms/${realm}/users/${userId}`, {
+      headers,
+    });
+
+    return { success: true, message: "User deleted successfully" };
+  } catch (error) {
+    if (isAxiosErrorWithResponse(error)) {
+      const message =
+        (error.response?.data as { errorMessage?: string })?.errorMessage ??
+        error.response?.statusText ??
+        "Failed to delete user";
+      throw new Error(message);
+    }
+
+    throw error instanceof Error ? error : new Error("Failed to delete user");
   }
+}
+
+function isAxiosErrorWithResponse(
+  error: unknown,
+): error is AxiosError<{ errorMessage?: string }> {
+  return axios.isAxiosError(error);
 }
