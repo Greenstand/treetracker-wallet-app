@@ -10,8 +10,11 @@ import { router, Link } from "expo-router";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { Feather } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
 
 const CheckEmailScreen = () => {
+  const { email } = useLocalSearchParams();
+
   const handleBackToLogin = () => {
     router.push("/(auth)/login");
   };
@@ -39,8 +42,8 @@ const CheckEmailScreen = () => {
           style={[styles.commonText]}
           lightColor="black"
           darkColor="white">
-          Use the link we sent to samsmith@gmail.com to sent a new password.
-          Can’t see it? Try your spam folder or ask us to resend the link.
+          Use the link we sent to {email} to sent a new password. Can’t see it?
+          Try your spam folder or ask us to resend the link.
         </ThemedText>
 
         <View style={styles.buttonContainer}>
