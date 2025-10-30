@@ -241,6 +241,21 @@ yarn test
 
 # Lint and format
 yarn lint:fix
+
+## Commit hooks and test behavior
+
+We run `lint-staged` on commit to keep commits fast. Heavy integration/unit/e2e
+tests are not run during commit — they run in CI on pull requests instead.
+
+Note: this repository uses Yarn v4 via Corepack. If you see a message about
+Yarn versions, run:
+
+```bash
+corepack enable
+corepack prepare yarn@4.9.4 --activate
+yarn -v  # should show a Yarn 4.x version
+```
+
 ```
 
 ## How to set up: lint, code format, Typescript for a new package/app

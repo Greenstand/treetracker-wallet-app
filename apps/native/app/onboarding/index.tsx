@@ -11,12 +11,13 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import Leafs from "@/assets/svg/leafs.svg";
-import Wallet from "@/assets/svg/wallet.svg";
-import Cloud from "@/assets/svg/cloud.svg";
-import { SvgProps } from "react-native-svg";
+import Leafs from "@/components/svg/Leaf";
+
 import CustomButton from "@/components/ui/common/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SvgProps } from "react-native-svg";
+import Wallet from "@/components/svg/wallet";
+import Cloud from "@/components/svg/Cloud";
 
 const { width, height } = Dimensions.get("window");
 
@@ -48,7 +49,7 @@ const DATA: OnboardingItem[] = [
   },
 ];
 
-const OnboardingScreen = () => {
+function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const router = useRouter();
@@ -129,7 +130,7 @@ const OnboardingScreen = () => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   safeArea: {
