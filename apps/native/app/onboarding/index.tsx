@@ -5,13 +5,14 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  SafeAreaView,
   TouchableOpacity,
+  SafeAreaView,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import Leafs from "@/components/svg/Leaf";
+// import { SafeAreaView } from "react-native-safe-area-context";
 
 import CustomButton from "@/components/ui/common/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -85,50 +86,61 @@ function OnboardingScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <FlashList
-        ref={flashListRef}
-        data={DATA}
-        renderItem={renderItem}
-        horizontal
-        pagingEnabled
-        onMomentumScrollEnd={handleScroll}
-        showsHorizontalScrollIndicator={false}
-        estimatedItemSize={height}
-        keyExtractor={item => item.id}
-      />
-
-      <View style={styles.pagination}>
-        {DATA.map((_, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() =>
-              flashListRef.current?.scrollToIndex({ index, animated: true })
-            }
-            style={[
-              styles.circleWrapper,
-              currentIndex === index ? styles.activeCircle : null,
-            ]}>
-            <View
-              style={[
-                styles.dot,
-                currentIndex === index ? styles.activeDot : styles.inactiveDot,
-              ]}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <CustomButton title="SIGN UP" onPress={handleSignUp} />
-
-        <CustomButton
-          title="LOG IN"
-          variant="secondary"
-          onPress={handleLogIn}
+    <React.Fragment>
+      <SafeAreaView
+        style={styles.safeArea}
+        testID="onboardingScreen"
+        accessibilityLabel="onboardingScreen"
+        accessible={true}>
+        <FlashList
+          ref={flashListRef}
+          data={DATA}
+          renderItem={renderItem}
+          horizontal
+          pagingEnabled
+          onMomentumScrollEnd={handleScroll}
+          showsHorizontalScrollIndicator={false}
+          estimatedItemSize={height * 0.6}
+          keyExtractor={item => item.id}
         />
-      </View>
-    </SafeAreaView>
+
+        <View style={styles.pagination}>
+          {DATA.map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              accessibilityLabel="onboardingNextButton"
+              testID="onboardingNextButton"
+              onPress={() =>
+                flashListRef.current?.scrollToIndex({ index, animated: true })
+              }
+              style={[
+                styles.circleWrapper,
+                currentIndex === index ? styles.activeCircle : null,
+              ]}>
+              <View
+                style={[
+                  styles.dot,
+                  currentIndex === index
+                    ? styles.activeDot
+                    : styles.inactiveDot,
+                ]}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <CustomButton title="SIGN UP" onPress={handleSignUp} />
+
+          <CustomButton
+            title="LOG IN"
+            variant="secondary"
+            testID="loginButton"
+            onPress={handleLogIn}
+          />
+        </View>
+      </SafeAreaView>
+    </React.Fragment>
   );
 }
 
