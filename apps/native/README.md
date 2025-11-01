@@ -46,7 +46,7 @@ yarn native:ios
 ## 🧪 4. Run WebdriverIO E2E Tests
 
 ```bash
-yarn wdio:native:test  # From root level
+yarn native:bdd:test  # From root level
 ```
 
 ## 🔧 5. Appium Inspector Setup
