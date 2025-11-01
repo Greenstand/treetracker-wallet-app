@@ -13,31 +13,56 @@ Appium, WebdriverIO, and Cucumber (Gherkin) in a monorepo project.
 | Start Expo                  | `yarn native:start`     |
 | Build & install Android app | `yarn native:android`   |
 | Build & install iOS app     | `yarn native:ios`       |
-| Run WebdriverIO tests       | `yarn wdio:native:test` |
+| Run WebdriverIO tests       | `yarn native:bdd:test ` |
 
-## 🧱 1. Install Dependencies (once)
+## 🧱 1. Install Dependencies
 
 ```bash
-yarn install       # Root level (monorepo)
-npm install -g appium  # Install Appium globally (v3.1.0)
+yarn install       # Run at root level of the project
+
+npm install -g appium
+
+appium -v # Confirm Appium is running version 3
+
+```
+
+```bash
+# Run `appium driver list` to verify if the drivers uiautomator2 (Android) and
+# xcuitest (iOS) are installed. If they’re not installed, install them using:
+
+ appium driver install uiautomator2
+ appium driver install xcuitest
 ```
 
 ## 🤖 2. Start Appium Server
 
 ```bash
-
-appium  # Run at root level
+appium   # Run at root level of the project
 ```
 
 ## 📱 3. Build & Install Native App
 
-Android:
+To build both the Android and iOS apps:
 
 ```bash
-yarn native:android
+yarn prebuild  # Run at root level of the project
 ```
 
-iOS:
+**Android:** To create the apk file:
+
+```bash
+yarn build-apk-android   # Run at root level of the project
+```
+
+and run:
+
+```bash
+yarn native:start  #  Run at root level of the project
+```
+
+![image](./assets/images/ternimal.png)
+
+**iOS:** 🚧 In progress
 
 ```bash
 yarn native:ios
@@ -63,10 +88,9 @@ Download from: https://github.com/appium/appium-inspector/releases
 
 ## ⚙️ 6. Capabilities
 
-iOS (in progress):
+**iOS:** 🚧 In progress
 
 ```json
-Copy code
 {
   // platformName: "iOS",
   // appium:deviceName: "iPhone 16",
@@ -78,12 +102,12 @@ Copy code
 }
 ```
 
-Android:
+**Android:**
 
 ```json
 {
   "platformName": "Android",
-  "appium:deviceName": "Pixel_9a",
+  "appium:deviceName": "Pixel_9a", // Make sure this matches the name of your Android emulator
   "appium:app": "${process.env.PROJECT_ROOT}/android/app/build/outputs/apk/debug/app-debug.apk",
   "appium:automationName": "UiAutomator2",
   "appium:appPackage": "com.gtw.app",
@@ -110,11 +134,23 @@ C:\\Users\\user\\dev\\treetracker-wallet-app
 
 ## 8. ⚠️ Troubleshooting
 
-- Make sure to start the Expo app using `yarn native:start`
-- Ensure that the Appium Dev Server is running before starting the Appium tests.
-- Ensure you build the project after making changes.
-- Verify that the correct device/emulator is selected and running.
-- Check Appium server logs for any connection issues.
-- Make sure the app is installed on the device/emulator before running tests.
-- If tests fail to locate elements, verify the selectors used in the test
+- Start the Expo app using:
+
+  ```bash
+  yarn native:start
+  ```
+
+- Make sure the Appium Dev Server is running before starting the tests.
+
+- Rebuild the project after making any code changes.
+
+- Verify that the correct device or emulator is selected and running.
+
+- Check the Appium server logs for connection issues or errors.
+
+- Ensure the app is installed on the device or emulator before running tests.
+
+- If tests fail to locate elements, double-check the selectors used in your test
   scripts.
+- Verify that PROJECT_ROOT is set correctly.
+- Make sure appium:deviceName matches the name of your Android or iOS emulator
