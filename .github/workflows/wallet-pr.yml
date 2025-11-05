@@ -12,23 +12,34 @@ on:
       - "packages/wallet/**"
 
 jobs:
-  e2e-create-wallet:
+  install:
+    name: Install dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
+      # https://github.com/actions/checkout
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
 
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Install deps
-        run: yarn install --immutable
+        # only install dependencies
+        # https://github.com/cypress-io/github-action
+      - name: Install 📦
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+
+  e2e-create-wallet:
+    name: E2E (create-wallet only)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: E2E (create-wallet only)
         uses: cypress-io/github-action@v6
