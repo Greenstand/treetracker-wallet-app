@@ -1,0 +1,39 @@
+# This workflow will run the cypress e2e tests for the wallet package
+
+name: CI for Add wallet e2e
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/wallet-pr.yml"
+      - "packages/wallet/**"
+
+jobs:
+  e2e-create-wallet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install deps
+        run: yarn install --immutable
+
+      - name: E2E (create-wallet only)
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: apps/web
+          start: yarn dev
+          wait-on: "http://localhost:3000"
+          spec: cypress/e2e/create-wallet.cy.ts
