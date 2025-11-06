@@ -1,7 +1,7 @@
 import { deleteAccountFromKeycloak } from "@packages/keycloak";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 describe("deleteAccountFromKeycloak", () => {
   it("deletes a user account from Keycloak", async () => {

@@ -1,4 +1,6 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+
+dotenv.config({ quiet: true });
 
 let TREETRACKER_API: string = "";
 let WALLET_API_KEY: string = "";

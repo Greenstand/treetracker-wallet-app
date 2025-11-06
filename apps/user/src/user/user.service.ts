@@ -5,7 +5,7 @@ import { HttpStatusCode } from "axios";
 import * as dotenv from "dotenv";
 import { firstValueFrom } from "rxjs";
 import { AuthService } from "../auth/auth.service";
-dotenv.config();
+dotenv.config({ quiet: true });
 
 @Injectable()
 export class UserService {

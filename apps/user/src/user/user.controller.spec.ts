@@ -1,14 +1,12 @@
 import { RegisterUserDto } from "@dtos/register-user.dto";
 import { Test, TestingModule } from "@nestjs/testing";
-import { KeycloakService } from "@packages/keycloak/src";
+import * as keycloak from "@packages/keycloak";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 
 describe("UserController", () => {
   let userController: UserController;
   let userService: UserService;
-  let KeycloakService: KeycloakService;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
@@ -70,10 +68,10 @@ describe("UserController", () => {
   });
 
   describe("delete", () => {
-    it("should call KeycloakService.deleteAccountFromKeycloak with the correct email", async () => {
+    it("should call deleteAccountFromKeycloak with the correct email", async () => {
       const userDto = { email: "testuser_1752112907878@wallet-app-test.com" };
-      jest
-        .spyOn(KeycloakService, "deleteAccountFromKeycloak")
+      const deleteAccountSpy = jest
+        .spyOn(keycloak, "deleteAccountFromKeycloak")
         .mockResolvedValue({
           success: true,
           message: "User deleted successfully",
@@ -81,9 +79,7 @@ describe("UserController", () => {
 
       await userController.deleteUser(userDto as any);
 
-      expect(KeycloakService.deleteAccountFromKeycloak).toHaveBeenCalledWith(
-        userDto.email,
-      );
+      expect(deleteAccountSpy).toHaveBeenCalledWith(userDto.email);
     });
   });
 });

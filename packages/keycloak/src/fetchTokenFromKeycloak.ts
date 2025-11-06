@@ -1,7 +1,7 @@
 // fetchTokenFromKeycloak.ts
 import axios from "axios";
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
 type KeycloakTokenResponse = {
   access_token: string;

@@ -2,15 +2,12 @@ import { LoginUserDto } from "@dtos/login-user.dto";
 import { RegisterUserDto } from "@dtos/register-user.dto";
 import { UserDto } from "@dtos/user.dto";
 import { Body, Controller, Delete, Get, HttpCode, Post } from "@nestjs/common";
-import { KeycloakService } from "@packages/keycloak/src";
+import { deleteAccountFromKeycloak } from "@packages/keycloak";
 import { UserService } from "./user.service";
 
 @Controller()
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly keycloakService: KeycloakService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post("login")
   @HttpCode(200)
@@ -27,7 +24,7 @@ export class UserController {
   @Delete("delete")
   @HttpCode(204)
   async deleteUser(@Body() userDto: UserDto) {
-    await this.keycloakService.deleteAccountFromKeycloak(userDto.email);
+    await deleteAccountFromKeycloak(userDto.email);
   }
 
   @Get("healthz")

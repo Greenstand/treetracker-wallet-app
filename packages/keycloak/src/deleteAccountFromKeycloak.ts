@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import * as dotenv from "dotenv";
 import { getTokenManager } from "./getToken";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 type KeycloakUser = {
   id: string;
