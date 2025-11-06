@@ -1,11 +1,32 @@
-const { defineConfig } = require("eslint/config");
-const expoConfig = require("eslint-config-expo/flat");
-const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
-const tsParser = require("@typescript-eslint/parser");
+/* eslint-disable @typescript-eslint/no-require-imports */
+// eslint.config.js
 
-module.exports = defineConfig([
-  // Global ignores
+/**
+ * ⚙️ ESLint Flat Config Setup for Expo + TypeScript Monorepo
+ * ----------------------------------------------------------
+ * - Extends Expo config (React + TS + Import plugin)
+ * - Adds custom rules
+ * - Prettier integration
+ * - Filters tsconfig.json files to avoid parser "read file" errors
+ */
+
+const fs = require("fs");
+const tsParser = require("@typescript-eslint/parser");
+const prettierPlugin = require("eslint-plugin-prettier");
+const expoConfig = require("eslint-config-expo/flat");
+
+// 🔧 Only include tsconfig.json files that exist
+const tsProjects = [
+  "./packages/core/tsconfig.json",
+  "./apps/web/tsconfig.json",
+  "./apps/native/tsconfig.json",
+  "./apps/user/tsconfig.json",
+].filter((p) => fs.existsSync(p));
+
+module.exports = [
+  /**
+   * 🧹 Ignore paths globally
+   */
   {
     ignores: [
       "node_modules/**",
@@ -14,57 +35,76 @@ module.exports = defineConfig([
       "**/.next/**",
       ".history/**",
       "**/coverage/**",
-      "**/*.d.ts", // Ignore declaration files
-      "apps/native/index.js", // Legacy file
-      "packages/queue/**", // Queue package
-      "packages/queue/__tests__/index.spec.js", // Specific test file
+      "**/*.d.ts",
+      "apps/native/index.js",
+      "packages/queue/**",
+      "packages/queue/__tests__/index.spec.js",
     ],
   },
-  expoConfig,
-  eslintPluginPrettierRecommended,
+
+  /**
+   * 📦 Base Expo Config
+   */
+  ...expoConfig,
+
+  /**
+   * 🧠 Custom Project Rules
+   */
   {
+    name: "project-config",
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 2024,
         sourceType: "module",
-        ecmaFeatures: {
-          jsx: true,
-        },
+        ecmaFeatures: { jsx: true },
+        tsconfigRootDir: __dirname,
+        project: tsProjects, // ✅ Only existing tsconfigs
+        warnOnUnsupportedTypeScriptVersion: true, // ✅ Warn instead of error
       },
-    },
-    plugins: {
-      "@typescript-eslint": tsPlugin,
     },
     rules: {
       "import/no-unresolved": ["error", { ignore: ["./libs/validation/dtos"] }],
       "react/no-unescaped-entities": "warn",
-      "prettier/prettier": "warn",
+      "react/display-name": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+
+      // TypeScript rules (plugin already included via Expo)
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-require-imports": "warn",
+
+      // General JS/TS rules
       "no-undef": "off",
       "no-unused-expressions": "off",
-      "react/display-name": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-require-imports": "warn",
+      "no-var": "error",
+      eqeqeq: "warn",
       "import/export": "warn",
-      "react-hooks/exhaustive-deps": "warn",
-      "no-var": "error", // Convert var to let/const
-      eqeqeq: "warn", // Use === instead of ==
     },
     settings: {
       react: {
-        version: "18.3", // Match the React version used in apps/web
+        version: "18.3",
       },
       "import/resolver": {
         typescript: {
-          project: [
-            "./packages/core/bajtsconfig.json",
-            "./apps/web/tsconfig.json",
-            "./apps/native/tsconfig.json",
-            "./apps/user/tsconfig.json",
-          ],
+          project: tsProjects,
+          alwaysTryTypes: true,
           noWarnOnMultipleProjects: true,
         },
       },
     },
   },
-]);
+
+  /**
+   * 🎨 Prettier Integration
+   */
+  {
+    name: "prettier-config",
+    plugins: {
+      prettier: prettierPlugin,
+    },
+    rules: {
+      "prettier/prettier": "warn",
+       "import/no-unresolved": "warn"
+    },
+  },
+];

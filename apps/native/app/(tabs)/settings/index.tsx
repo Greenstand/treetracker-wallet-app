@@ -76,13 +76,12 @@ const SettingsItem = ({
     <Pressable
       style={({ pressed }) => [
         styles.settingsItem,
-        pressed && styles.pressedItem
+        pressed && styles.pressedItem,
       ]}
       onPress={onPress}
-      android_ripple={{ color: '#e0e0e0' }}
+      android_ripple={{ color: "#e0e0e0" }}
       accessibilityRole="button"
-      accessibilityLabel={`${item.title}${item.subtitle ? `, ${item.subtitle}` : ''}`}
-    >
+      accessibilityLabel={`${item.title}${item.subtitle ? `, ${item.subtitle}` : ""}`}>
       <View style={styles.itemLeftSection}>
         <View style={styles.iconContainer}>
           <MaterialIcons name={item.icon} size={24} color="#666" />
@@ -141,11 +140,10 @@ export default function Settings() {
 
         {/* Logout Button */}
         <View style={styles.logoutContainer}>
-          <Pressable 
+          <Pressable
             onPress={handleLogout}
             accessibilityRole="button"
-            accessibilityLabel="Log out"
-          >
+            accessibilityLabel="Log out">
             <Text style={styles.logoutText}>LOG OUT</Text>
           </Pressable>
         </View>
