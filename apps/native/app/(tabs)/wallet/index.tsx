@@ -13,8 +13,10 @@ export default function Wallet() {
     console.log("Wallet pressed:", walletId);
   };
 
+  // Handle create wallet button press
   const handleCreateWallet = () => {
     console.log("Create Wallet pressed");
+    // later this can call an API to actually create a wallet
   };
 
   return (
@@ -22,13 +24,16 @@ export default function Wallet() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
+        {/* Create Wallet Button Component */}
         <CreateWallet onPress={handleCreateWallet} />
+
         <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// Styling for the Wallet screen
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,

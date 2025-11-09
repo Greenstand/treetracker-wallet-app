@@ -2,17 +2,20 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+// Component for rendering the "Create Wallet" button with info icon
 interface CreateWalletProps {
-  onPress: () => void;
+  onPress: () => void; // callback when button is pressed
 }
 
 export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
+  // Placeholder for info icon functionality (can show tooltip or modal later)
   const handleInfoPress = () => {
     console.log("Info icon pressed"); // placeholder for now
   };
 
   return (
     <View style={styles.container}>
+      {/* Main Create Wallet button */}
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <Ionicons
           name="add"
@@ -22,6 +25,8 @@ export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
         />
         <Text style={styles.text}>CREATE WALLET</Text>
       </TouchableOpacity>
+
+      {/* Small info circle beside the button */}
       <TouchableOpacity style={styles.infoCircle} onPress={handleInfoPress}>
         <Text style={styles.infoText}>i</Text>
       </TouchableOpacity>
@@ -29,6 +34,7 @@ export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
   );
 };
 
+// Styling for button layout and design
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
