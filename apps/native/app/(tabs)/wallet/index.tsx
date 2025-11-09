@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
 import { WalletList } from "../../../components/wallet/WalletList";
+import { CreateWallet } from "../../../components/wallet/CreateWalletButton";
 
 const mockWallets = [
   { id: "1", name: "Wallet 2", balance: 1000, date: "May 22, 2024" },
@@ -12,11 +13,16 @@ export default function Wallet() {
     console.log("Wallet pressed:", walletId);
   };
 
+  const handleCreateWallet = () => {
+    console.log("Create Wallet pressed");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
+        <CreateWallet onPress={handleCreateWallet} />
         <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
