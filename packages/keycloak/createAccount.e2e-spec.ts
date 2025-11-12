@@ -2,9 +2,7 @@
 
 import * as path from "path";
 import * as dotenv from "dotenv";
-import { Test, TestingModule } from "@nestjs/testing";
-import { HttpModule, HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
+import axios from "axios"; // Changed: Import axios directly
 import { createAccount, CreateAccountDto } from "./createAccount";
 
 // Load .env from repo root
@@ -37,8 +35,9 @@ function assertKeycloakEnv() {
   }
 }
 
-/** Fetch admin token using client_credentials */
-async function fetchAdminToken(httpService: HttpService): Promise<string> {
+/** Fetch admin token using client_credentials (using axios) */
+// Changed: Function now uses plain axios
+async function fetchAdminToken(): Promise<string> {
   assertKeycloakEnv();
   const url = `${process.env.PRIVATE_KEYCLOAK_BASE_URL}/realms/${process.env.PRIVATE_KEYCLOAK_REALM}/protocol/openid-connect/token`;
   const body = new URLSearchParams({
@@ -47,16 +46,18 @@ async function fetchAdminToken(httpService: HttpService): Promise<string> {
     client_secret: process.env.PRIVATE_KEYCLOAK_CLIENT_SECRET!,
   });
   const headers = { "Content-Type": "application/x-www-form-urlencoded" };
-  const response = await firstValueFrom(
-    httpService.post(url, body.toString(), { headers }),
-  );
+
+  // Changed: Replaced HttpService post/firstValueFrom with axios.post
+  const response = await axios.post(url, body.toString(), { headers });
+
   if (!response?.data?.access_token)
     throw new Error("Failed to get admin token from Keycloak");
   return response.data.access_token;
 }
 
-/** Fetch restricted token (no manage-users roles) for 403 test */
-async function fetchRestrictedToken(httpService: HttpService): Promise<string> {
+/** Fetch restricted token (no manage-users roles) for 403 test (using axios) */
+// Changed: Function now uses plain axios
+async function fetchRestrictedToken(): Promise<string> {
   assertKeycloakEnv();
   const url = `${process.env.PRIVATE_KEYCLOAK_BASE_URL}/realms/${process.env.PRIVATE_KEYCLOAK_REALM}/protocol/openid-connect/token`;
   const body = new URLSearchParams({
@@ -65,51 +66,46 @@ async function fetchRestrictedToken(httpService: HttpService): Promise<string> {
     client_secret: process.env.PRIVATE_KEYCLOAK_RESTRICTED_CLIENT_SECRET!,
   });
   const headers = { "Content-Type": "application/x-www-form-urlencoded" };
-  const response = await firstValueFrom(
-    httpService.post(url, body.toString(), { headers }),
-  );
+
+  // Changed: Replaced HttpService post/firstValueFrom with axios.post
+  const response = await axios.post(url, body.toString(), { headers });
+
   if (!response?.data?.access_token)
     throw new Error("Failed to get restricted token from Keycloak");
   return response.data.access_token;
 }
 
-/** Delete user by username if exists */
-async function deleteUser(
-  httpService: HttpService,
-  token: string,
-  username: string,
-) {
+/** Delete user by username if exists (using axios) */
+// Changed: Function now uses plain axios. Removed the httpService argument.
+async function deleteUser(token: string, username: string) {
   const baseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL!;
   const realm = process.env.PRIVATE_KEYCLOAK_REALM!;
   const searchUrl = `${baseUrl}/admin/realms/${realm}/users?username=${encodeURIComponent(username)}`;
-  const usersRes = await firstValueFrom(
-    httpService.get(searchUrl, {
-      headers: { Authorization: `Bearer ${token}` },
-    }),
-  );
+
+  // Changed: Using axios.get
+  const usersRes = await axios.get(searchUrl, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
   const users = usersRes.data || [];
+
   if (users.length) {
     const deleteUrl = `${baseUrl}/admin/realms/${realm}/users/${users[0].id}`;
-    await firstValueFrom(
-      httpService.delete(deleteUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-    );
+    // Changed: Using axios.delete
+    await axios.delete(deleteUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   }
 }
 
-describe("createAccount E2E Test", () => {
-  let httpService: HttpService;
-  let adminToken: string;
+describe("createAccount E2E Test (Restructured with Axios)", () => {
+  let adminToken: string; // Changed: Removed httpService variable
 
   beforeAll(async () => {
     assertKeycloakEnv();
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
-    }).compile();
-    httpService = module.get<HttpService>(HttpService);
+    // Changed: Removed NestJS Test.createTestingModule logic
 
-    adminToken = await fetchAdminToken(httpService);
+    adminToken = await fetchAdminToken(); // Fetch admin token directly
     console.log("✅ Admin token fetched for tests");
   });
 
@@ -123,16 +119,13 @@ describe("createAccount E2E Test", () => {
       password: "testPassword123",
     };
 
-    await deleteUser(httpService, adminToken, userData.username);
-    const result = await createAccount(
-      userData,
-      httpService,
-      async () => adminToken,
-    );
+    // Changed: Removed httpService argument from deleteUser and createAccount
+    await deleteUser(adminToken, userData.username);
+    const result = await createAccount(userData, async () => adminToken);
 
     expect(result.success).toBe(true);
     expect(result.message).toBe("User created successfully!");
-    await deleteUser(httpService, adminToken, userData.username);
+    await deleteUser(adminToken, userData.username);
   });
 
   it("should throw error when user already exists (409)", async () => {
@@ -145,14 +138,14 @@ describe("createAccount E2E Test", () => {
       password: "testPassword123",
     };
 
-    await deleteUser(httpService, adminToken, userData.username);
-    await createAccount(userData, httpService, async () => adminToken);
+    await deleteUser(adminToken, userData.username);
+    await createAccount(userData, async () => adminToken);
 
     await expect(
-      createAccount(userData, httpService, async () => adminToken),
+      createAccount(userData, async () => adminToken),
     ).rejects.toThrow(/exists|already/i);
 
-    await deleteUser(httpService, adminToken, userData.username);
+    await deleteUser(adminToken, userData.username);
   });
 
   it("should throw error when missing required environment variables", async () => {
@@ -171,7 +164,7 @@ describe("createAccount E2E Test", () => {
     };
 
     await expect(
-      createAccount(userData, httpService, async () => adminToken),
+      createAccount(userData, async () => adminToken),
     ).rejects.toThrow("Keycloak configuration is missing");
 
     if (savedBase) process.env.PRIVATE_KEYCLOAK_BASE_URL = savedBase;
@@ -187,10 +180,10 @@ describe("createAccount E2E Test", () => {
       password: "testPassword123",
     };
 
-    const restrictedToken = await fetchRestrictedToken(httpService);
+    const restrictedToken = await fetchRestrictedToken();
 
     await expect(
-      createAccount(userData, httpService, async () => restrictedToken),
+      createAccount(userData, async () => restrictedToken),
     ).rejects.toThrow(/Forbidden|Insufficient permissions/i);
   });
 });

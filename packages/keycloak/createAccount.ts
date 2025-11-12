@@ -1,6 +1,4 @@
-import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
-import { HttpStatusCode } from "axios";
+import axios, { HttpStatusCode } from "axios";
 
 export interface CreateAccountDto {
   username: string;
@@ -17,7 +15,7 @@ export interface CreateAccountResponse {
 
 export async function createAccount(
   userData: CreateAccountDto,
-  httpService: HttpService,
+  // Changed: Removed HttpService dependency. Axios is used directly.
   getToken: () => Promise<string>,
 ): Promise<CreateAccountResponse> {
   const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
@@ -39,7 +37,7 @@ export async function createAccount(
       "Content-Type": "application/json",
     };
 
-    const body = JSON.stringify({
+    const body = {
       username: userData.username,
       email: userData.email,
       firstName: userData.firstName,
@@ -53,25 +51,26 @@ export async function createAccount(
           temporary: false,
         },
       ],
-    });
+    };
 
-    const response = await firstValueFrom(
-      httpService.post(createUserApiUrl, body, { headers }),
-    );
+    // Changed: Using axios.post directly. No need for firstValueFrom.
+    const response = await axios.post(createUserApiUrl, body, { headers });
 
-    // Check if response is valid
+    // Check if response is valid (Keycloak returns 201 on success)
     if (response?.status === 201) {
       return { success: true, message: "User created successfully!" };
     }
 
     throw new Error(`Unexpected response status: ${response?.status}`);
   } catch (error: any) {
+    // Check if the error is an Axios error with a response status
+    const status = error.response?.status;
     const errorMessage = error.response?.data?.errorMessage || error.message;
 
-    if (error.response?.status === 409) {
+    if (status === 409) {
       // user already exists
       throw new Error(errorMessage);
-    } else if (error.response?.status === HttpStatusCode.Forbidden) {
+    } else if (status === HttpStatusCode.Forbidden) {
       throw new Error("Forbidden: Insufficient permissions");
     } else {
       throw new Error(`Error creating user: ${errorMessage}`);
