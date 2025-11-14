@@ -1,7 +1,9 @@
-import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
-import { UserService } from "./user.service";
-import { RegisterUserDto } from "@dtos/register-user.dto";
 import { LoginUserDto } from "@dtos/login-user.dto";
+import { RegisterUserDto } from "@dtos/register-user.dto";
+import { UserDto } from "@dtos/user.dto";
+import { Body, Controller, Delete, Get, HttpCode, Post } from "@nestjs/common";
+import { deleteAccountFromKeycloak } from "@packages/keycloak";
+import { UserService } from "./user.service";
 
 @Controller()
 export class UserController {
@@ -16,6 +18,13 @@ export class UserController {
   @Post("register")
   registerUser(@Body() registerUserDto: RegisterUserDto) {
     return this.userService.createUser(registerUserDto);
+  }
+
+  //Route to delete a user from keycloak
+  @Delete("delete")
+  @HttpCode(204)
+  async deleteUser(@Body() userDto: UserDto) {
+    await deleteAccountFromKeycloak(userDto.email);
   }
 
   @Get("healthz")

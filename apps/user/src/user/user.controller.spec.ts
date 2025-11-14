@@ -1,12 +1,12 @@
+import { RegisterUserDto } from "@dtos/register-user.dto";
 import { Test, TestingModule } from "@nestjs/testing";
+import * as keycloak from "@packages/keycloak";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
-import { RegisterUserDto } from "@dtos/register-user.dto";
 
 describe("UserController", () => {
   let userController: UserController;
   let userService: UserService;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
@@ -64,6 +64,22 @@ describe("UserController", () => {
         password: credentials.password,
       });
       expect(result).toEqual({ access_token: accessToken });
+    });
+  });
+
+  describe("delete", () => {
+    it("should call deleteAccountFromKeycloak with the correct email", async () => {
+      const userDto = { email: "testuser_1752112907878@wallet-app-test.com" };
+      const deleteAccountSpy = jest
+        .spyOn(keycloak, "deleteAccountFromKeycloak")
+        .mockResolvedValue({
+          success: true,
+          message: "User deleted successfully",
+        });
+
+      await userController.deleteUser(userDto as any);
+
+      expect(deleteAccountSpy).toHaveBeenCalledWith(userDto.email);
     });
   });
 });
