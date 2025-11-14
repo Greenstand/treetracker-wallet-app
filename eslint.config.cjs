@@ -20,6 +20,7 @@ const tsProjects = [
   "./packages/core/tsconfig.json",
   "./apps/web/tsconfig.json",
   "./apps/native/tsconfig.json",
+  "./apps/bdd/tsconfig.json",
   "./apps/user/tsconfig.json",
 ].filter((p) => fs.existsSync(p));
 
