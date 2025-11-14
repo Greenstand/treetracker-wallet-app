@@ -119,7 +119,7 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setName(e.target.value)
             }
-            testId="wallet-name-input"
+            testId="wallet-create-name"
             error={Boolean(name.trim() && isDuplicate)}
             helperText={
               isDuplicate ? "Wallet name should be unique." : undefined
@@ -134,7 +134,7 @@ const WalletCreateDrawer: React.FC<WalletCreateDrawerProps> = ({
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setDescription(e.target.value)
             }
-            testId="wallet-description-input"
+            testId="wallet-create-description"
           />
 
           <Button

@@ -20,6 +20,7 @@ import { expect, $ } from "@wdio/globals";
 const routes: Record<string, string> = {
   login: "login",
   register: "signup",
+  wallet: "wallet",
   // add more as needed
 };
 
@@ -167,5 +168,20 @@ Then(/^I should see a confirmation message$/, async () => {
     },
   );
 });
-
 //#endregion REGISTER
+
+When("I login with an account", async () => {
+  // clean session so the login state is reset
+  await browser.execute(() => sessionStorage.clear());
+  await $('input[name="username"]').setValue("testuser1");
+  await $('input[name="password"]').setValue("kebWaf-beqto0-nymbyb");
+  await $('button[type="submit"]').click();
+  await expect($("[data-test=navigation-home]")).toExist();
+});
+
+When("I create a new wallet", async () => {
+  await $("[data-test=wallet-create-open]").click();
+  await $('[data-test="wallet-create-name"] input').setValue("wallet1");
+  await $('[data-test="wallet-create-description"] input').setValue("desc");
+  await $('[data-test="wallet-create-submit"]').click();
+});

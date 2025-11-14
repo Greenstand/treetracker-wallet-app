@@ -626,4 +626,5 @@ export const config: Options.Testrunner = {
    */
   // afterAssertion: function(params) {
   // }
+  filesToWatch: ["./features/**/*.feature", "./features/**/*.ts"],
 };
