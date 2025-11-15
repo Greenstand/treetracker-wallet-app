@@ -1,7 +1,10 @@
 // fetchTokenFromKeycloak.ts
 import axios from "axios";
-import * as dotenv from "dotenv";
-dotenv.config();
+import {
+  KEYCLOAK_CLIENT_ID,
+  KEYCLOAK_CLIENT_SECRET,
+  KEYCLOAK_TOKEN_URL,
+} from "../utils/config";
 
 type KeycloakTokenResponse = {
   access_token: string;
@@ -14,20 +17,14 @@ export async function fetchTokenFromKeycloak(): Promise<{
   access_token: string;
   tokenExpiresAt: number;
 }> {
-  const base = process.env.PRIVATE_KEYCLOAK_BASE_URL!;
-  const realm = process.env.PRIVATE_KEYCLOAK_REALM!;
-  const clientId = process.env.PRIVATE_KEYCLOAK_CLIENT_ID!;
-  const clientSecret = process.env.PRIVATE_KEYCLOAK_CLIENT_SECRET!;
-  const url = `${base}/realms/${realm}/protocol/openid-connect/token`;
-
   const body = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
+    client_id: KEYCLOAK_CLIENT_ID,
+    client_secret: KEYCLOAK_CLIENT_SECRET,
     grant_type: "client_credentials",
   });
 
   const { data } = await axios.post<KeycloakTokenResponse>(
-    url,
+    KEYCLOAK_TOKEN_URL,
     body.toString(),
     { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
   );
