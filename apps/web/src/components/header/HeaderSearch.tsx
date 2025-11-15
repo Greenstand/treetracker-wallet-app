@@ -26,16 +26,20 @@ export default function HeaderSearch({
         justifyContent: isExpanded ? "flex-start" : "center",
         position: "relative",
         width: "100%",
-      }}>
+      }}
+    >
       {isExpanded ? (
         <>
           <IconButton
             onClick={onCollapse}
             sx={{
               mr: 1,
-              backgroundColor: theme => theme.palette.grey[200],
-              "&:hover": { backgroundColor: theme => theme.palette.grey[300] },
-            }}>
+              backgroundColor: (theme) => theme.palette.grey[200],
+              "&:hover": {
+                backgroundColor: (theme) => theme.palette.grey[300],
+              },
+            }}
+          >
             <ArrowBackIcon />
           </IconButton>
           <TextField
@@ -43,7 +47,7 @@ export default function HeaderSearch({
             variant="outlined"
             size="small"
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -53,8 +57,8 @@ export default function HeaderSearch({
             }}
             sx={{
               width: "100%",
-              backgroundColor: theme => theme.palette.common.white,
-              borderRadius: theme => theme.shape.borderRadius,
+              backgroundColor: (theme) => theme.palette.common.white,
+              borderRadius: (theme) => theme.shape.borderRadius,
             }}
           />
         </>
@@ -62,10 +66,13 @@ export default function HeaderSearch({
         <IconButton
           onClick={onExpand}
           sx={{
-            backgroundColor: theme => theme.palette.header.main,
-            "&:hover": { backgroundColor: theme => theme.palette.primary.dark },
-          }}>
-          <SearchIcon sx={{ color: theme => theme.palette.common.white }} />
+            backgroundColor: (theme) => theme.palette.header.main,
+            "&:hover": {
+              backgroundColor: (theme) => theme.palette.primary.dark,
+            },
+          }}
+        >
+          <SearchIcon sx={{ color: (theme) => theme.palette.common.white }} />
         </IconButton>
       )}
     </Box>

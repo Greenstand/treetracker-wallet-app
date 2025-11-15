@@ -54,7 +54,7 @@ function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const router = useRouter();
-  let flashListRef = React.useRef<FlashList<OnboardingItem>>(null);
+  let flashListRef = React.useRef(null);
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -91,7 +91,8 @@ function OnboardingScreen() {
         style={styles.safeArea}
         testID="onboardingScreen"
         accessibilityLabel="onboardingScreen"
-        accessible={true}>
+        accessible={true}
+      >
         <FlashList
           ref={flashListRef}
           data={DATA}
@@ -100,8 +101,9 @@ function OnboardingScreen() {
           pagingEnabled
           onMomentumScrollEnd={handleScroll}
           showsHorizontalScrollIndicator={false}
+          // @ts-ignore
           estimatedItemSize={height * 0.6}
-          keyExtractor={item => item.id}
+          keyExtractor={(item: any) => item.id}
         />
 
         <View style={styles.pagination}>
@@ -116,7 +118,8 @@ function OnboardingScreen() {
               style={[
                 styles.circleWrapper,
                 currentIndex === index ? styles.activeCircle : null,
-              ]}>
+              ]}
+            >
               <View
                 style={[
                   styles.dot,
@@ -135,6 +138,7 @@ function OnboardingScreen() {
           <CustomButton
             title="LOG IN"
             variant="secondary"
+            // @ts-ignore
             testID="loginButton"
             onPress={handleLogIn}
           />

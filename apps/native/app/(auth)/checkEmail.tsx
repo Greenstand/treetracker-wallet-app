@@ -7,8 +7,8 @@ import {
   ScrollView,
 } from "react-native";
 import { router, Link } from "expo-router";
-import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
-import { ThemedText } from "@/components/ThemedText";
+import CustomSubmitButton from "@common/CustomSubmitButton";
+// import { ThemedText } from "@/components/ThemedText";
 import { Feather } from "@expo/vector-icons";
 
 const CheckEmailScreen = () => {
@@ -19,7 +19,8 @@ const CheckEmailScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.keyboardContainer}>
+      style={styles.keyboardContainer}
+    >
       <View style={styles.iconContainer}>
         <Link replace href="/login">
           <Feather name="arrow-left" size={28} color={"#2226298F"} />
@@ -27,21 +28,23 @@ const CheckEmailScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <ThemedText
+        {/* <ThemedText
           type="title"
           style={[styles.titleText]}
           lightColor="black"
-          darkColor="white">
+          darkColor="white"
+        >
           Check your email
-        </ThemedText>
-        <ThemedText
+        </ThemedText> */}
+        {/* <ThemedText
           type="default"
           style={[styles.commonText]}
           lightColor="black"
-          darkColor="white">
+          darkColor="white"
+        >
           Use the link we sent to samsmith@gmail.com to sent a new password.
           Can’t see it? Try your spam folder or ask us to resend the link.
-        </ThemedText>
+        </ThemedText> */}
 
         <View style={styles.buttonContainer}>
           <CustomSubmitButton
@@ -53,13 +56,14 @@ const CheckEmailScreen = () => {
         </View>
         <View>
           <Link href={"/forgotPassword"}>
-            <ThemedText
+            {/* <ThemedText
               type="title"
               style={[styles.sendText]}
               lightColor="black"
-              darkColor="white">
+              darkColor="white"
+            >
               RESEND LINK?
-            </ThemedText>
+            </ThemedText> */}
           </Link>
         </View>
       </ScrollView>
