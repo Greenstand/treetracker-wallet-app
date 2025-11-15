@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import { WalletList } from "../../../components/wallet/WalletList";
 
 const mockWallets = [
@@ -8,8 +9,20 @@ const mockWallets = [
 ];
 
 export default function Wallet() {
+  const router = useRouter();
+
   const handleWalletPress = (walletId: string) => {
-    console.log("Wallet pressed:", walletId);
+    const selectedWallet = mockWallets.find(wallet => wallet.id === walletId);
+
+    router.push({
+      pathname: "/(tabs)/wallet/[walletId]",
+      params: {
+        walletId,
+        name: selectedWallet?.name ?? "",
+        balance: selectedWallet?.balance?.toString() ?? "0",
+        date: selectedWallet?.date ?? "",
+      },
+    });
   };
 
   return (
