@@ -17,6 +17,8 @@ const tsProjects = [
   path.resolve(__dirname, "../apps/web/tsconfig.json"),
   path.resolve(__dirname, "../apps/bdd/tsconfig.json"),
   path.resolve(__dirname, "../apps/native/tsconfig.json"),
+  path.resolve(__dirname, "../packages/wallet/tsconfig.json"),
+  path.resolve(__dirname, "../packages/keycloak/tsconfig.json"),
 ].filter(p => fs.existsSync(p));
 
 export default [
