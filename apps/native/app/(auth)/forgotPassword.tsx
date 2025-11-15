@@ -9,7 +9,7 @@ import {
 import { router, Link } from "expo-router";
 import CustomTextInput from "@/components/ui/common/CustomTextInput";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
-import { ThemedText } from "@/components/ThemedText";
+// import { ThemedText } from "@/components/ThemedText";
 import { Feather } from "@expo/vector-icons";
 
 const ForgotPasswordScreen = () => {
@@ -35,7 +35,8 @@ const ForgotPasswordScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.keyboardContainer}>
+      style={styles.keyboardContainer}
+    >
       <View style={styles.iconContainer}>
         <Link replace href="/login">
           <Feather name="arrow-left" size={28} color={"#2226298F"} />
@@ -43,21 +44,23 @@ const ForgotPasswordScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <ThemedText
+        {/* <ThemedText
           type="title"
           style={[styles.titleText]}
           lightColor="black"
-          darkColor="white">
+          darkColor="white"
+        >
           Forgot your password?
         </ThemedText>
         <ThemedText
           type="default"
           style={[styles.commonText]}
           lightColor="black"
-          darkColor="white">
+          darkColor="white"
+        >
           Confirm your email and we'll send you a link to create a brand new
           password.
-        </ThemedText>
+        </ThemedText> */}
         <CustomTextInput
           label="Email"
           placeholder="Enter your email"

@@ -6,18 +6,18 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  RefreshControl,
+  // RefreshControl,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { FlashList } from "@shopify/flash-list";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import BalanceCard from "@/components/ui/BalanceCard";
-import { Colors } from "@/constants/Colors";
+// import BalanceCard from "@/components/ui/BalanceCard";
+// import { Colors } from "@/constants/Colors";
 // import Title from "@/components/ui/common/Title";
-import useWalletList from "core/src/hooks/wallet";
+// import useWalletList from "core/src/hooks/wallet";
 import { useTheme } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import CustomTitle from "@/components/ui/common/CustomTitle";
+import CustomTitle from "@common/CustomTitle";
 
 const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get("window");
 
@@ -41,7 +41,7 @@ type WalletActivity = {
 
 const BalanceCardList = () => (
   <View style={[styles.balanceContainer, { marginTop: WINDOW_HEIGHT * 0.03 }]}>
-    {balanceData.map(item => (
+    {/* {balanceData.map((item) => (
       <BalanceCard
         key={item.label}
         value={item.value}
@@ -54,6 +54,7 @@ const BalanceCardList = () => (
             />
           ) : (
             <MaterialCommunityIcons
+              // ts-ignore
               name={item.icon}
               size={scaleSize(24)}
               color={item.color}
@@ -63,13 +64,21 @@ const BalanceCardList = () => (
         label={item.label}
         style={styles.balanceCard}
       />
-    ))}
+    ))} */}
   </View>
 );
 
 const WalletActivityItem = ({ item }: { item: WalletActivity }) => {
   return (
-    <View style={[styles.itemContainer, { backgroundColor: Colors.white }]}>
+    <View
+      style={[
+        styles.itemContainer,
+
+        //   {
+        //   backgroundColor: Colors.white
+        // }
+      ]}
+    >
       <View style={styles.leftColumn}>
         <Image
           source={{ uri: item.logo }}
@@ -77,10 +86,24 @@ const WalletActivityItem = ({ item }: { item: WalletActivity }) => {
           resizeMode="cover"
         />
         <View>
-          <Text style={[styles.title, { color: Colors.darkGray }]}>
+          <Text
+            style={[
+              styles.title,
+              {
+                // color: Colors.darkGray
+              },
+            ]}
+          >
             {item.name}
           </Text>
-          <Text style={[styles.status, { color: Colors.darkGray }]}>
+          <Text
+            style={[
+              styles.status,
+              {
+                // color: Colors.darkGray
+              },
+            ]}
+          >
             {item.status}
           </Text>
         </View>
@@ -89,31 +112,41 @@ const WalletActivityItem = ({ item }: { item: WalletActivity }) => {
         style={[
           styles.value,
           {
-            color: item.status === "Received" ? Colors.green : Colors.darkGray,
+            // color: item.status === "Received" ? Colors.green : Colors.darkGray,
           },
-        ]}>
+        ]}
+      >
         {item.balance}
       </Text>
     </View>
   );
 };
 
-const WalletActivityList = ({ walletList }) => {
+const WalletActivityList = ({ walletList }: any) => {
   const { colors } = useTheme();
 
   return (
     <View style={styles.footerContainer}>
       {walletList?.length > 0 ? (
-        walletList.map(item => <WalletActivityItem key={item.id} item={item} />)
+        walletList.map((item: any) => (
+          <WalletActivityItem key={item.id} item={item} />
+        ))
       ) : (
         <View style={styles.emptyContainer}>
           <MaterialCommunityIcons
             name="clock-outline"
             size={30}
-            color={Colors.darkGray}
+            // color={Colors.darkGray}
           />
 
-          <Text style={[styles.emptyText, { color: Colors.darkGray }]}>
+          <Text
+            style={[
+              styles.emptyText,
+              {
+                // color: Colors.darkGray
+              },
+            ]}
+          >
             No recent activities yet
           </Text>
         </View>
@@ -123,30 +156,38 @@ const WalletActivityList = ({ walletList }) => {
 };
 
 export default function Home() {
-  const [user, setUser] = useState<{ userId: string }>({
-    userId: "default-user",
-  });
-  const { colors } = useTheme();
-  const walletList = useWalletList(user?.userId);
-  const [refreshing, setRefreshing] = useState(false);
+  // const [user, setUser] = useState<{ userId: string }>({
+  //   userId: "default-user",
+  // });
+  // const { colors } = useTheme();
+  // const walletList = useWalletList(user?.userId);
+  // const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    setRefreshing(false);
-  };
+  // const onRefresh = async () => {
+  //   setRefreshing(true);
+  //   setRefreshing(false);
+  // };
 
   const renderHeader = () => (
     <View>
       <BalanceCardList />
       <View
-        style={[styles.activityContainer, { marginTop: WINDOW_HEIGHT * 0.03 }]}>
+        style={[styles.activityContainer, { marginTop: WINDOW_HEIGHT * 0.03 }]}
+      >
         <View style={styles.activityHeader}>
           <CustomTitle
             title="Recent activity"
-            style={{ color: Colors.charcoal }}
+            // style={{ color: Colors.charcoal }}
           />
           <TouchableOpacity>
-            <Text style={[styles.activityLink, { color: Colors.green }]}>
+            <Text
+              style={[
+                styles.activityLink,
+                {
+                  // color: Colors.green
+                },
+              ]}
+            >
               View all
             </Text>
           </TouchableOpacity>
@@ -157,22 +198,27 @@ export default function Home() {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.container,
+        //  { backgroundColor: colors.background }
+      ]}
+    >
       <FlashList
         data={[]}
         renderItem={() => null}
         ListHeaderComponent={renderHeader}
-        ListFooterComponent={() => (
-          <WalletActivityList walletList={walletList?.list} />
-        )}
-        estimatedItemSize={scaleSize(70)}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
-          />
-        }
+        // ListFooterComponent={() => (
+        //   <WalletActivityList walletList={walletList?.list} />
+        // )}
+        // estimatedItemSize={scaleSize(70)}
+        // refreshControl={
+        //   // <RefreshControl
+        //   //   refreshing={refreshing}
+        //   //   onRefresh={onRefresh}
+        //   //   tintColor={colors.primary}
+        //   // />
+        // }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />
