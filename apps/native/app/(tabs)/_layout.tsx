@@ -4,10 +4,12 @@ import CustomTabBar from "@/components/CustomTabBar";
 export default function TabLayout() {
   return (
     <Tabs
-      tabBar={props => <CustomTabBar {...props} />}
+      // @ts-ignore
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-      }}>
+      }}
+    >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="wallet" />
       <Tabs.Screen name="notifications" />
