@@ -1,6 +1,6 @@
 // .releaserc.js (at repo root)
 
-module.exports = {
+export default {
   branches: ["main"],
   plugins: [
     [
