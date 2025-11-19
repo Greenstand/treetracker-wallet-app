@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import { WalletList } from "../../../components/wallet/WalletList";
 
 const mockWallets = [
@@ -8,15 +9,18 @@ const mockWallets = [
 ];
 
 export default function Wallet() {
+  const router = useRouter();
+
   const handleWalletPress = (walletId: string) => {
-    console.log("Wallet pressed:", walletId);
+    router.push(`/(tabs)/wallet/${walletId}`);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
