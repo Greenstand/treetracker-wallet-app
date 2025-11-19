@@ -11,6 +11,7 @@ import eslintPluginImport from "eslint-plugin-import";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const tsconfigRootDir = path.resolve(__dirname, "..");
 const tsProjects = [
   path.resolve(__dirname, "../tsconfig.json"),
   path.resolve(__dirname, "../packages/core/tsconfig.json"),
@@ -49,7 +50,7 @@ export default [
         ecmaVersion: 2024,
         sourceType: "module",
         ecmaFeatures: { jsx: true },
-        tsconfigRootDir: new URL(".", import.meta.url).pathname,
+        tsconfigRootDir: tsconfigRootDir,
         project: tsProjects.length > 0 ? tsProjects : undefined,
       },
     },
