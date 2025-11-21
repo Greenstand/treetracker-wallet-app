@@ -2,14 +2,20 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 
 import { WIDTH } from "../../utils/dimensions";
+import { COLORS, LAYOUT, TYPOGRAPHY, TypographyWeight } from "@/theme";
 
-interface BalanceCardProps {
+interface WalletSummaryProps {
   icon: any;
   label: string;
   value: string;
+  style: any;
 }
 
-export default function BalanceCard({ icon, label, value }: BalanceCardProps) {
+export default function WalletSummary({
+  icon,
+  label,
+  value,
+}: WalletSummaryProps) {
   return (
     <View style={styles.card}>
       <View style={styles.row}>
@@ -31,7 +37,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingVertical: WIDTH * 0.02,
     paddingHorizontal: WIDTH * 0.04,
-    borderRadius: 4,
+    borderRadius: LAYOUT.cardBorderRadius,
     alignSelf: "center",
     justifyContent: "center",
     overflow: "hidden",
@@ -47,7 +53,9 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   label: {
-    fontSize: WIDTH * 0.04,
+    fontSize: TYPOGRAPHY.size.sm,
+    color: COLORS.darkGray,
+    fontWeight: TYPOGRAPHY.weight.regular as TypographyWeight,
   },
   valueContainer: {
     alignItems: "flex-end",
@@ -56,7 +64,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   value: {
-    fontSize: 34,
+    fontSize: TYPOGRAPHY.size.xxxl,
+    fontWeight: TYPOGRAPHY.weight.regular as TypographyWeight,
     textAlign: "right",
     flex: 1,
   },

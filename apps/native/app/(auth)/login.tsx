@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { router, Link } from "expo-router";
 import CustomTextInput from "@components/ui/common/CustomTextInput";
-import CustomTitle from "@components/ui/common/CustomTitle";
+import CustomTitle from "@components/ui/common/Heading";
 import CustomSubmitButton from "@components/ui/common/CustomSubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SocialLoginButton from "@common/SocialLoginButton";
