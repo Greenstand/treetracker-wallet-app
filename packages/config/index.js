@@ -8,6 +8,7 @@ import eslintPluginPrettier from "eslint-plugin-prettier";
 import eslintPluginReact from "eslint-plugin-react";
 import eslintPluginReactHooks from "eslint-plugin-react-hooks";
 import eslintPluginImport from "eslint-plugin-import";
+import prettierConfig from "eslint-config-prettier";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,6 +62,7 @@ export default [
       import: eslintPluginImport,
     },
     rules: {
+      ...prettierConfig.rules,
       "@typescript-eslint/no-unused-vars": "warn",
       "react/no-unescaped-entities": "warn",
       "react/display-name": "warn",
