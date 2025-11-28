@@ -1,3 +1,6 @@
+# This workflow triggers on pull requests that modify non-Markdown files in the User module (apps/user/**).
+# It runs component and end-to-end (E2E) tests to validate those changes.
+
 name: PR for USER module
 
 on:
@@ -7,6 +10,7 @@ on:
     paths:
       - apps/user/** # Only run when there are changes in user modules.
       - .github/workflows/ci-cd-pr-user-wallet.yml
+      - "!apps/user/**/*.md"
   workflow_dispatch:
 
 jobs:
@@ -14,19 +18,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
+      PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
+      PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
+      PRIVATE_WALLET_API_KEY: ${{ secrets.PRIVATE_WALLET_API_KEY }}
+      CORS_ORIGINS_DEV: ${{ secrets.CORS_ORIGINS_DEV }}
+      CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
+
     steps:
       - uses: actions/checkout@v4
-
-      - name: prepare .env for user module
-        run: |
-          echo "PRIVATE_KEYCLOAK_REALM=${{ secrets.PRIVATE_KEYCLOAK_REALM }}" > ./apps/user/.env
-          echo "PRIVATE_KEYCLOAK_BASE_URL=${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}" >> ./apps/user/.env
-          echo "PRIVATE_KEYCLOAK_CLIENT_SECRET=${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}" >> ./apps/user/.env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> ./apps/user/.env
-          echo "PRIVATE_KEYCLOAK_CLIENT_ID=${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}" >> ./apps/user/.env
-          echo "PRIVATE_WALLET_API_KEY=${{ secrets.PRIVATE_WALLET_API_KEY }}" >> ./apps/user/.env
-          echo "CORS_ORIGINS_DEV=${{ secrets.CORS_ORIGINS_DEV }}" >> ./apps/user/.env
-          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> ./apps/user/.env
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
