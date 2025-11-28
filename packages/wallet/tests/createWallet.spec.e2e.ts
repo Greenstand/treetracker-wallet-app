@@ -2,7 +2,6 @@
 import createWallet from "../src/api/createWallet";
 import { Wallet } from "../src/types/wallet";
 import { fetchTokenFromKeycloak } from "@treetracker/keycloak";
-import "dotenv/config";
 
 describe("createWallet (e2e)", () => {
   let authToken: string;

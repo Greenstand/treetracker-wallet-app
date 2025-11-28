@@ -229,7 +229,7 @@ yarn native:start # Terminal 3
 
 ### Quick Testing
 
-```bash
+````bash
 # E2E tests (best way to understand the project)
 yarn cypress-e2e-test
 
@@ -254,7 +254,7 @@ Yarn versions, run:
 corepack enable
 corepack prepare yarn@4.9.4 --activate
 yarn -v  # should show a Yarn 4.x version
-```
+````
 
 ```
 
@@ -287,3 +287,4 @@ standards, testing, and review processes.
 - **Discussions:** Ask questions in Slack
 
 <!-- trigger -->
+```
