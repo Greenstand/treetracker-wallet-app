@@ -1,4 +1,4 @@
-@skip @web @mobile_native
+@skip @web @native
 Feature: buy a token from Greenstand
 
   Scenario: As a user, I can buy a token from Greenstand
