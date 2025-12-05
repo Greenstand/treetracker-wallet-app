@@ -54,9 +54,14 @@ export default function BottomNavigationBar() {
           value={value}
           onChange={(event, newValue) => handleNavigation(newValue)}
           showLabels>
-          <BottomNavigationAction label="Home" icon={<HomeIcon />} />
+          <BottomNavigationAction
+            data-test="navigation-home"
+            label="Home"
+            icon={<HomeIcon />}
+          />
           <BottomNavigationAction
             label="Wallet"
+            data-test="navigation-wallet"
             icon={<AccountBalanceWalletIcon />}
           />
           <BottomNavigationAction

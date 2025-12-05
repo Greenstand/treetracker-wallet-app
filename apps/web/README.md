@@ -38,7 +38,7 @@ yarn dev
 We use Cypress for comprehensive testing of our web app, including:
 
 - **Component Testing**: Testing individual components in isolation to ensure they function correctly. We use Cypress to test the behavior of single components, without rendering the entire application.
-- **End-to-End Testing (E2E)**: Testing the entire application flow to ensure it works as expected, from start to finish. We use Cypress to test the entire application, simulating real-world user interactions and workflows.
+- **End-to-End Testing (E2E)**: ~~Testing the entire application flow to ensure it works as expected, from start to finish. We use Cypress to test the entire application, simulating real-world user interactions and workflows.~~ now we change to use BDD (apps/bdd) to do the e2e test. 
 - **Integration Testing**: Testing how different components or modules interact with each other to ensure they function correctly together. We use Cypress to test how multiple components work together to achieve a specific goal or workflow.
 
 `yarn cy:open` component test or e2e test
