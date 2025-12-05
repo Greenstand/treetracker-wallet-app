@@ -1,6 +1,8 @@
 import React from "react";
-import { StyleSheet, SafeAreaView, View, Text, ScrollView } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import { WalletList } from "../../../components/wallet/WalletList";
+import { CreateWallet } from "../../../components/wallet/CreateWalletButton";
 
 const mockWallets = [
   { id: "1", name: "Wallet 2", balance: 1000, date: "May 22, 2024" },
@@ -8,8 +10,26 @@ const mockWallets = [
 ];
 
 export default function Wallet() {
+  const router = useRouter();
+
   const handleWalletPress = (walletId: string) => {
-    console.log("Wallet pressed:", walletId);
+    const selectedWallet = mockWallets.find(wallet => wallet.id === walletId);
+
+    router.push({
+      pathname: "/(tabs)/wallet/[walletId]",
+      params: {
+        walletId,
+        name: selectedWallet?.name ?? "",
+        balance: selectedWallet?.balance?.toString() ?? "0",
+        date: selectedWallet?.date ?? "",
+      },
+    });
+  };
+
+  // Handle create wallet button press
+  const handleCreateWallet = () => {
+    console.log("Create Wallet pressed");
+    // later this can call an API to actually create a wallet
   };
 
   return (
@@ -17,12 +37,16 @@ export default function Wallet() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
+        {/* Create Wallet Button Component */}
+        <CreateWallet onPress={handleCreateWallet} />
+
         <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// Styling for the Wallet screen
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,

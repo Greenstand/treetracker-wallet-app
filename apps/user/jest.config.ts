@@ -1,5 +1,7 @@
 import { pathsToModuleNameMapper } from "ts-jest";
-import { compilerOptions } from "./tsconfig.json";
+
+const { compilerOptions } = require("./tsconfig.json");
+
 export default {
   displayName: "api",
   globals: {
@@ -14,6 +16,6 @@ export default {
   transform: {
     "^.+\\.[tj]s$": "ts-jest",
   },
-  moduleFileExtensions: ["ts", "js", "html"],
+  moduleFileExtensions: ["ts", "js"],
   coverageDirectory: "../../coverage/apps/api",
 };

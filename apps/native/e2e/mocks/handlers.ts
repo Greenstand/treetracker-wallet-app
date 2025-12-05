@@ -10,6 +10,7 @@ interface LoginResponse {
   user: { name: string };
 }
 
+// @ts-ignore
 export const handlers = [
   //   http.post<never, LoginRequest, LoginResponse>('https://api.example.com/auth/login', async ({ request }) => {
   //     const body = await request.json();

@@ -8,12 +8,11 @@ import {
   Text,
 } from "react-native";
 import { router, Link } from "expo-router";
-import CustomTextInput from "@/components/ui/common/CustomTextInput";
-import CustomTitle from "@/components/ui/common/CustomTitle";
-import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
+import CustomTextInput from "@components/ui/common/CustomTextInput";
+import CustomTitle from "@components/ui/common/Heading";
+import CustomSubmitButton from "@components/ui/common/CustomSubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ThemedText } from "@/components/ThemedText";
-import SocialLoginButton from "@/components/ui/common/SocialLoginButton";
+import SocialLoginButton from "@common/SocialLoginButton";
 import { Colors } from "@/constants/Colors";
 
 const LoginScreen = () => {
@@ -41,7 +40,8 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.keyboardContainer}>
+      style={styles.keyboardContainer}
+    >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <CustomTitle title="Log In" />
         <CustomTextInput
@@ -75,22 +75,24 @@ const LoginScreen = () => {
         </View>
 
         <View>
-          <ThemedText
+          {/* <ThemedText
             type="title"
             lightColor="black"
             darkColor="white"
-            style={[styles.commonText]}>
+            style={[styles.commonText]}
+          >
             Forgot password?{" "}
             <Link href="/forgotPassword">
               <ThemedText
                 type="link"
                 lightColor="black"
                 darkColor="white"
-                style={[styles.commonText, styles.linkText]}>
+                style={[styles.commonText, styles.linkText]}
+              >
                 Reset
               </ThemedText>
             </Link>
-          </ThemedText>
+          </ThemedText> */}
         </View>
         <Text style={styles.commonText}>or</Text>
         <SocialLoginButton

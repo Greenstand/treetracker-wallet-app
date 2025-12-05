@@ -1,0 +1,35 @@
+name: PR CI/CD for all
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run Prettier Check
+        run: yarn format --check .
+
+      - name: Run Lint-Staged (Prettier & ESLint)
+        run: yarn lint-staged
+
+      - name: Run Commitlint on Last Commit
+        run: git log -1 --pretty=format:%s | npx --no -- commitlint
