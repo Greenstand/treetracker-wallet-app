@@ -1,0 +1,64 @@
+# This workflow is triggered on every pull request,
+# excluding changes to those files with the extensions .md, .yaml, and .yml
+
+name: PR CI BDD e2e tests
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.yml"
+      - "**/*.yaml"
+  workflow_dispatch:
+
+jobs:
+  full-bdd-e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      NEXT_PUBLIC_WALLET_APP_API: ${{ vars.NEXT_PUBLIC_WALLET_APP_API }}
+      NEXT_PUBLIC_ENV: ${{ vars.NEXT_PUBLIC_ENV }}
+      NEXT_PUBLIC_API_TIMEOUT: ${{ vars.NEXT_PUBLIC_API_TIMEOUT }}
+      NEXT_PUBLIC_API_RETRIES: ${{ vars.NEXT_PUBLIC_API_RETRIES }}
+      NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+      CORS_ORIGINS_DEV: ${{ vars.CORS_ORIGINS_DEV }}
+      PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
+      PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
+      PRIVATE_WALLET_API_KEY: ${{ secrets.PRIVATE_WALLET_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Install latest Chrome binary
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt update
+          sudo apt install google-chrome-stable
+
+      - name: Add a Chrome driver
+        run: CHROMEDRIVER_VERSION=LATEST yarn add chromedriver
+
+      - name: Start user service in the background
+        run: |
+          yarn user:dev &>/dev/null & npx wait-on tcp:8080 --timeout 30000
+          yarn web:dev &>/dev/null & npx wait-on tcp:3000 --timeout 30000
+
+      - name: Run full bdd test
+        uses: cypress-io/github-action@v6
+        with:
+          command: yarn bdd:e2e
