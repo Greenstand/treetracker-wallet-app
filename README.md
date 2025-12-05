@@ -153,6 +153,45 @@ yarn workspace web dev
 
 Also, ensure you have Chrome v136+ installed.
 
+### How to develop BDD E2E test
+
+A recommended way to develop e2e test by practicing TDD method, basically it use
+watch mode to auto-rerun the test once you changed the file, and use the
+browser.debug() to set stop point, so you can enter the REPL mode to try and
+verify things.
+
+About [REPL](https://webdriver.io/docs/repl).
+
+Now assume that we will deploy a scenario of create wallet, run command:
+
+```bash
+cd apps/bdd
+npx wdio run ./wdio.debug.conf.ts --watch  --spec ./features/create-wallet.feature:26
+```
+
+The `wdio.debug.conf.ts` has some settings that are convenient for debug, longer
+timeout, no headless mode, etc.
+
+Use `--spec` to specify the file of feature, and the line of the scenario, so
+only this scenario will be run.
+
+Now it will run the scenario and finish it, but still keep the window open, you
+can modify the scenario then save it, the test will be re-run automatically.
+
+When the test run to the `browser.debug()` line, it will pause and enter the
+REPL mode, you can try commands in the terminal, now you can run any webdriverIO
+command to verify things, see doc here: https://webdriver.io/docs/api
+
+NOTE, there are still some problem with this approach:
+
+1. The WebdriverIO watch mode can not JUST monitor the feature files, that
+   means, if you want to rerun the test, you have to save or `touch` the feature
+   file to trigger rerun.
+   [Reason](https://github.com/mauriciolauffer/wdio-qunit-service/issues/42)
+
+2. If stop at `browser.debug()`, then you can not re-run directly, you need to
+   quit (by ctrl+c) the REPL mode, then save the feature file to trigger rerun.
+
 ## 🏗️ Project Structure
 
 ```
