@@ -8,6 +8,9 @@ import path from "node:path";
 export const ARTIFACTS_ROOT = path.resolve(__dirname, "../test-artifacts");
 export const REPORTS_ROOT = path.join(ARTIFACTS_ROOT, "reports");
 export const VIDEOS_ROOT = path.join(ARTIFACTS_ROOT, "test-videos");
+// Feature bucket tracking
+export const FEATURE_BUCKET_BY_CID: Record<string, string> = {};
+
 /**
  * Temporary area used by the video reporter for MP4 output and frame cache.
  * The test runner clears this on each run.
