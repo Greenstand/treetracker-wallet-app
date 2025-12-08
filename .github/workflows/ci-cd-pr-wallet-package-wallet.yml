@@ -1,7 +1,7 @@
 # This workflow triggers on pull requests that modify files (other than *.md) in the wallet package (i.e., package/wallet/**)
 # It runs e2e tests to validate changes.
 
-name: PR CI Wallet Package
+name: PR CI for Wallet Package
 
 on:
   pull_request:
@@ -14,19 +14,10 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     env:
-      NODE_TLS_REJECT_UNAUTHORIZED: "0"
-      NEXT_PUBLIC_WALLET_APP_API: ${{ vars.NEXT_PUBLIC_WALLET_APP_API }}
-      NEXT_PUBLIC_ENV: ${{ vars.NEXT_PUBLIC_ENV }}
-      NEXT_PUBLIC_API_TIMEOUT: ${{ vars.NEXT_PUBLIC_API_TIMEOUT }}
-      NEXT_PUBLIC_API_RETRIES: ${{ vars.NEXT_PUBLIC_API_RETRIES }}
-      NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
-      CORS_ORIGINS_DEV: ${{ vars.CORS_ORIGINS_DEV }}
       PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
       PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
       PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
       PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
-      PRIVATE_WALLET_API_KEY: ${{ secrets.PRIVATE_WALLET_API_KEY }}
       NEXT_PUBLIC_TREETRACKER_API: ${{ secrets.NEXT_PUBLIC_TREETRACKER_API }}
 
     steps:
@@ -43,13 +34,6 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Start user and web services in background
-        run: |
-          yarn user:dev &
-          yarn web:dev &
-          npx wait-on tcp:8080 tcp:3000 --timeout 30000
-
       - name: Run e2e test for wallet package
         run: |
-          cd packages/wallet
-          yarn test
+          yarn workspace @treetracker/wallet test
