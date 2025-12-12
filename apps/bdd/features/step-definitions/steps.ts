@@ -89,9 +89,12 @@ Then(
 
 Then(/^I should see my new wallet in the list of wallets$/, async () => {
   await expect($("[data-test=wallet-list]")).toBeDisplayed();
-  await expect(
-    $(`[data-test=wallet-item-name-${stepState.walletName}]`),
-  ).toBeDisplayed();
+  const walletItemSelector = `[data-test=wallet-item-name-${stepState.walletName}]`;
+  // Wait for the wallet item to be displayed assuming API latency
+  await $(walletItemSelector).waitForDisplayed({
+    timeout: 5000,
+    timeoutMsg: `Wallet item with name "${stepState.walletName}" did not appear in the list`,
+  });
 });
 
 // ============================================================================
