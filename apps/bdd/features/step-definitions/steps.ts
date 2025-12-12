@@ -16,6 +16,11 @@
 import { Given, When, Then } from "@wdio/cucumber-framework";
 import { expect, $ } from "@wdio/globals";
 
+// State object to share data between steps
+const stepState: Record<string, string> = {
+  walletName: "", // We need unique walletName for each test, so we use a global state object to share the walletName between steps
+};
+
 // Map page names to routes
 const routes: Record<string, string> = {
   login: "login",
@@ -83,7 +88,10 @@ Then(
 );
 
 Then(/^I should see my new wallet in the list of wallets$/, async () => {
-  await expect($(".wallet-list")).toBeDisplayed();
+  await expect($("[data-test=wallet-list]")).toBeDisplayed();
+  await expect(
+    $(`[data-test=wallet-item-name-${stepState.walletName}]`),
+  ).toBeDisplayed();
 });
 
 // ============================================================================
@@ -180,8 +188,12 @@ When("I login with an account", async () => {
 });
 
 When("I create a new wallet", async () => {
+  const ts = Date.now();
+  stepState.walletName = `wallet${ts}`;
   await $("[data-test=wallet-create-open]").click();
-  await $('[data-test="wallet-create-name"] input').setValue("wallet1");
+  await $('[data-test="wallet-create-name"] input').setValue(
+    stepState.walletName,
+  );
   await $('[data-test="wallet-create-description"] input').setValue("desc");
   await $('[data-test="wallet-create-submit"]').click();
 });
