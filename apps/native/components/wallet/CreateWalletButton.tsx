@@ -8,9 +8,8 @@ interface CreateWalletProps {
 }
 
 export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
-  // Placeholder for info icon functionality (can show tooltip or modal later)
   const handleInfoPress = () => {
-    console.log("Info icon pressed"); // placeholder for now
+    console.log("Info icon pressed");
   };
 
   return (
@@ -27,7 +26,12 @@ export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
       </TouchableOpacity>
 
       {/* Small info circle beside the button */}
-      <TouchableOpacity style={styles.infoCircle} onPress={handleInfoPress}>
+      <TouchableOpacity
+        style={styles.infoCircle}
+        onPress={handleInfoPress}
+        accessibilityRole="button"
+        accessibilityLabel="Wallet info"
+      >
         <Text style={styles.infoText}>i</Text>
       </TouchableOpacity>
     </View>
