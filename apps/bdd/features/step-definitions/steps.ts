@@ -194,6 +194,7 @@ When("I create a new wallet", async () => {
   const ts = Date.now();
   stepState.walletName = `wallet${ts}`;
   await $("[data-test=wallet-create-open]").click();
+  // Wallet creation drawer takes some time to open, so we wait for the input to be displayed
   await $('[data-test="wallet-create-name"] input').waitForDisplayed({
     timeout: 3000,
   });
