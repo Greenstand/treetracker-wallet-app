@@ -1,156 +1,178 @@
-# 🚀 E2E Testing with Appium, WebdriverIO & Cucumber
+# BDD Tests in React Native
 
-This guide explains how to set up and run E2E tests for the native app using
-Appium, WebdriverIO, and Cucumber (Gherkin) in a monorepo project.
+This guide walks you through setting up and running BDD tests in a React Native project using Appium for both Android and iOS.
 
-## ⚡ Quick Commands
+---
 
-| Step                        | Command                 |
-| --------------------------- | ----------------------- |
-| Install dependencies        | `yarn install`          |
-| Install Appium globally     | `npm install -g appium` |
-| Start Appium server         | `appium`                |
-| Start Expo                  | `yarn native:start`     |
-| Build & install Android app | `yarn native:android`   |
-| Build & install iOS app     | `yarn native:ios`       |
-| Run WebdriverIO tests       | `yarn native:bdd:test ` |
-
-## 🧱 1. Install Dependencies
+### Install Appium globally
 
 ```bash
-yarn install       # Run at root level of the project
-
-npm install -g appium
-
-appium -v # Confirm Appium is running version 3
-
+npm install -g appium (v3) # Ensure appium is version 3x
 ```
+
+Run `appium driver list` to verify if the drivers uiautomator2 (Android) and
+xcuitest (iOS) are installed.
+See: https://appium.io/docs/en/latest/
+
+### Match your device names
+
+located(`bdd/utils/capabilities`)
+
+- **Android:** The `deviceName` in your capabilities must match your Android Emulator name.
+- **iOS:** The `deviceName` must match your iOS Simulator name exactly.
+
+If these names don’t match, Appium will fail to launch the app.
+
+---
+
+## 1. Generate Native Folders
+
+From the project root:
 
 ```bash
-# Run `appium driver list` to verify if the drivers uiautomator2 (Android) and
-# xcuitest (iOS) are installed. If they’re not installed, install them using:
-
- appium driver install uiautomator2
- appium driver install xcuitest
+yarn prebuild
 ```
 
-## 🤖 2. Start Appium Server
+These folders are required before you can build or install your native apps.
+
+---
+
+# 2. Android: Build, Install, and Run Tests
+
+### Build the Android app
+
+From the project root:
 
 ```bash
-appium   # Run at root level of the project
+yarn build-apk-android
 ```
 
-## 📱 3. Build & Install Native App
+### Install the app on the Android emulator
 
-To build both the Android and iOS apps:
+From the project root:
 
 ```bash
-yarn prebuild  # Run at root level of the project
+yarn install-android-debug
 ```
 
-**Android:** To create the apk file:
+## Configure App Paths
 
 ```bash
-yarn build-apk-android   # Run at root level of the project
+cd apps/native
 ```
 
-and run:
+Get the absolute path:
 
 ```bash
-yarn native:start  #  Run at root level of the project
+pwd
 ```
 
-![image](./assets/images/ternimal.png)
+Copy this path and place it in your `.env` under the key `PROJECT_ROOT_ANDROID` (located in `bdd/.env`).
 
-**iOS:** 🚧 In progress
+### Start the Appium server
+
+From the project root:
+
+```bash
+appium
+```
+
+### Start Metro and launch the Android app
+
+From the project root:
+
+```bash
+yarn native:start
+```
+
+Press `a` to open the Android app in the emulator.
+
+### Run Android BDD tests
+
+From the project root:
+
+```bash
+yarn bdd:test:android
+```
+
+<img width="628" height="247" alt="android-bdd" src="https://github.com/user-attachments/assets/318459e6-a85a-46c3-a3f6-7c1abdcd4714" />
+
+---
+
+## 3. iOS: Build, Install, and Run Tests
+
+### Install CocoaPods
+
+Inside the `ios` directory:
+
+```bash
+pod install
+```
+
+### Build the iOS app
+
+From the project root:
+
+```bash
+yarn build-app-ios
+```
+
+**Alternative:** Build manually with Xcode:
+
+```bash
+xcodebuild -workspace native/ios/native.xcworkspace \
+  -scheme native \
+  -sdk iphonesimulator \
+  -configuration Debug \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest'
+```
+
+> Make sure the simulator name and OS version match exactly what you're using.
+>
+> See:https://developer.apple.com/documentation/xcode/building-and-running-an-app
+
+---
+
+### Install the app on the Ios emulator
+
+From the project root:
 
 ```bash
 yarn native:ios
 ```
 
-## 🧪 4. Run WebdriverIO E2E Tests
+iOS – Set `PROJECT_ROOT_IOS`
+
+Once Xcode installs the app, it prints the installation path in the terminal.
+
+Copy that path and add it as `PROJECT_ROOT_IOS` (located in `bdd/.env`).
+
+Wait for installation to complete, then stop the process.
+
+---
+
+#### Start Metro:
+
+From the project root:
 
 ```bash
-yarn native:bdd:test  # From root level
+yarn native:start
 ```
 
-## 🔧 5. Appium Inspector Setup
+Press `i` to launch the app in the iOS simulator.
 
-##### Method 1: Web-based Inspector
+### Ensure Appium is running
 
-Go to https://inspector.appiumpro.com/ Start Appium server: npx appium
---base-path / --port 4724 Configure connection: Remote Path: / Host: 127.0.0.1
-Port: 4724
-
-##### Method 2: Desktop App
-
-Download from: https://github.com/appium/appium-inspector/releases
-
-## ⚙️ 6. Capabilities
-
-**iOS:** 🚧 In progress
-
-```json
-{
-  // platformName: "iOS",
-  // appium:deviceName: "iPhone 16",
-  // appium:platformVersion: "18.5",
-  // appium:automationName: "XCUITest",
-  // appium:app: "com.gsw.app",
-  // appium:autoGrantPermissions: true,
-  // appium:noReset: true
-}
+```bash
+appium
 ```
 
-**Android:**
+### Run iOS BDD tests
 
-```json
-{
-  "platformName": "Android",
-  "appium:deviceName": "Pixel_9a", // Make sure this matches the name of your Android emulator
-  "appium:app": "${process.env.PROJECT_ROOT}/android/app/build/outputs/apk/debug/app-debug.apk",
-  "appium:automationName": "UiAutomator2",
-  "appium:appPackage": "com.gtw.app",
-  "appium:appActivity": "com.gtw.app.MainActivity",
-  "appium:noReset": false,
-  "appium:newCommandTimeout": 240,
-  "appium:appWaitPackage": "*",
-  "appium:debugLogLevel": "debug",
-  "appium:appWaitForLaunch": false
-}
+From the project root:
+
+```bash
+yarn bdd:test:ios
 ```
 
-💡 PROJECT_ROOT = absolute path to your project root. Examples: macOS/Linux:
-/Users/user/dev/treetracker-wallet-app, Windows:
-C:\\Users\\user\\dev\\treetracker-wallet-app
-
-## 7. 📚 Additional Resource
-
-- [Appium Documentation](https://appium.io/docs/en/latest/)
-- [WebdriverIO Appium Service](https://webdriver.io/docs/appium-service/)
-- [Cucumber with WebdriverIO](https://webdriver.io/docs/cucumber-framework/)
-- [Appium Inspector](https://github.com/appium/appium-inspector)
-- [Expo Dev Client](https://docs.expo.dev/clients/introduction/)
-
-## 8. ⚠️ Troubleshooting
-
-- Start the Expo app using:
-
-  ```bash
-  yarn native:start
-  ```
-
-- Make sure the Appium Dev Server is running before starting the tests.
-
-- Rebuild the project after making any code changes.
-
-- Verify that the correct device or emulator is selected and running.
-
-- Check the Appium server logs for connection issues or errors.
-
-- Ensure the app is installed on the device or emulator before running tests.
-
-- If tests fail to locate elements, double-check the selectors used in your test
-  scripts.
-- Verify that PROJECT_ROOT is set correctly.
-- Make sure appium:deviceName matches the name of your Android or iOS emulator
+<img width="767" height="282" alt="ios-bdd" src="https://github.com/user-attachments/assets/b4289f04-44bd-448a-a4e4-53417dd2d8f2" />
