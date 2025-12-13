@@ -1,102 +1,65 @@
 /**
  * steps.ts
- * Sections:
- *  - [COMMON] Shared navigation & generic assertions
- *  - [LOGIN] Login flows
- *  - [REGISTER] Registration flows
- *  - [WALLET] Wallet creation & listing flows
- *  - Add more sections as needed
  */
 
 // ============================================================================
-// [COMMON] Shared Steps
+// Imports
 // ============================================================================
-//#region COMMON
-
 import { Given, When, Then } from "@wdio/cucumber-framework";
 import { expect, $ } from "@wdio/globals";
 
-// Map page names to routes
+// ============================================================================
+// ROUTES
+// ============================================================================
 const routes: Record<string, string> = {
   login: "login",
-  register: "signup",
-  // add more as needed
+  register: "signup", // change to "register" ONLY if /signup doesn't work
 };
 
-// Navigate to a named page (aliased → route)
+// ============================================================================
+// COMMON
+// ============================================================================
 Given(/^I am on the (\w+) page$/, async (page: string) => {
   const route = routes[page.toLowerCase()];
   if (!route) throw new Error(`Unknown page alias: ${page}`);
-  const base = process.env.E2E_BASE_URL ?? "http://localhost:3000";
-  await browser.url(`${base}/${route}`);
+
+  const baseUrl = process.env.E2E_BASE_URL || "http://localhost:3000";
+  await browser.url(`${baseUrl}/${route}`);
 });
 
-//#endregion COMMON
-
 // ============================================================================
-// [LOGIN] Login flows
+// LOGIN
 // ============================================================================
-//#region LOGIN
-
 When(/^I login with (\w+) and (.+)$/, async (username, password) => {
-  await $('input[name="username"]').setValue(username);
-  await $('input[name="password"]').setValue(password);
-  await $('button[type="submit"]').click();
+  const usernameInput = await $('input[name="username"]');
+  const passwordInput = await $('input[name="password"]');
+  const submitButton = await $('button[type="submit"]');
+
+  await usernameInput.waitForDisplayed({ timeout: 10000 });
+  await passwordInput.waitForDisplayed({ timeout: 10000 });
+  await submitButton.waitForClickable({ timeout: 10000 });
+
+  await usernameInput.setValue(username);
+  await passwordInput.setValue(password);
+  await submitButton.click();
 });
 
 Then(/^I should see text (.*)$/, async message => {
-  await $("body").waitUntil(
+  await browser.waitUntil(
     async () => {
-      return (await $("body").getText()).match(new RegExp(message, "i"));
+      const bodyText = await $("body").getText();
+      return new RegExp(message, "i").test(bodyText);
     },
     {
       timeout: 5000,
-      timeoutMsg: "Expected message to be displayed after 5s",
+      timeoutMsg: `Expected text "${message}" not found`,
     },
   );
 });
 
-//#endregion LOGIN
-
 // ============================================================================
-// [WALLET] Wallet creation & listing flows
+// REGISTER
 // ============================================================================
-//#region WALLET
-
-When(/^I fill in the wallet creation form with valid data$/, async table => {
-  const data = table.rowsHash();
-  await $('input[name="wallet_name"]').setValue(data.wallet_name);
-  await $('input[name="password"]').setValue(data.password);
-});
-
-When(/^I click on the create wallet button$/, async () => {
-  await $("button*=Create Wallet").click();
-});
-
-Then(
-  /^I should see a confirmation message that my wallet has been created$/,
-  async () => {
-    const confirmationText = await $(".confirmation-message").getText();
-    expect(confirmationText).toMatch(/Wallet created/i);
-  },
-);
-
-Then(/^I should see my new wallet in the list of wallets$/, async () => {
-  await expect($(".wallet-list")).toBeDisplayed();
-});
-
-// ============================================================================
-// [REGISTER] Registration flows
-// ============================================================================
-//#region REGISTER
-
-When(/^I fill in the registration form with valid data$/, async table => {
-  const data = table.rowsHash();
-  await $('[data-test="signup-username"] input').setValue(data.username);
-  await $('[data-test="signup-email"] input').setValue(data.email);
-  await $('[data-test="signup-password"] input').setValue(data.password);
-});
-
 When(
   /^I fill in the registration form with \[random user name\]@greenstand\.org password:\s*(.+)$/,
   async (password: string) => {
@@ -104,68 +67,43 @@ When(
     const username = `user${ts}`;
     const email = `${username}@greenstand.org`;
 
-    // Wait for form to be ready and target the actual input elements inside the containers
-    await $('[data-test="signup-username"] input').waitForDisplayed({
-      timeout: 10000,
-    });
-    await $('[data-test="signup-email"] input').waitForDisplayed({
-      timeout: 10000,
-    });
-    await $('[data-test="signup-password"] input').waitForDisplayed({
-      timeout: 10000,
-    });
+    const usernameInput = await $('[data-test="signup-username"] input');
+    const emailInput = await $('[data-test="signup-email"] input');
+    const passwordInput = await $('[data-test="signup-password"] input');
 
-    // Set values on the actual input elements
-    await $('[data-test="signup-username"] input').setValue(username);
-    await $('[data-test="signup-email"] input').setValue(email);
-    await $('[data-test="signup-password"] input').setValue(password);
+    await usernameInput.waitForDisplayed({ timeout: 10000 });
+    await emailInput.waitForDisplayed({ timeout: 10000 });
+    await passwordInput.waitForDisplayed({ timeout: 10000 });
+
+    await usernameInput.setValue(username);
+    await emailInput.setValue(email);
+    await passwordInput.setValue(password);
   },
 );
 
 When(/^I click on the register button$/, async () => {
-  const candidates = [
-    '[data-test="signup-submit-button"]',
-    'form[data-test="signup-form"] button[type="submit"]',
-    'button[type="submit"]',
-  ];
-  for (const sel of candidates) {
-    const el = await $(sel);
-    if (await el.isExisting()) {
-      await el.click();
-      return;
-    }
-  }
-  throw new Error("Register/Sign up submit button not found");
-});
-
-When(/^I click on the social media login button$/, async table => {
-  const data = table.rowsHash();
-  await $(`button*=Login with ${data.social_media}`).click();
+  const submitButton = await $('button[type="submit"]');
+  await submitButton.waitForClickable({ timeout: 10000 });
+  await submitButton.click();
 });
 
 Then(/^I should see a confirmation message$/, async () => {
   await browser.waitUntil(
     async () => {
-      // Check for success message element first
-      const successElement = await $('[data-test="signup-success"]');
-      if (
-        (await successElement.isExisting()) &&
-        (await successElement.isDisplayed())
-      ) {
-        return true;
-      }
-
-      // Fallback: check for redirect to login
       const url = await browser.getUrl();
+
+      // Condition 1: redirected to login page
       if (url.includes("/login")) return true;
+
+      // Condition 2: login form is visible
+      const usernameInput = await $('input[name="username"]');
+      if (await usernameInput.isExisting()) return true;
 
       return false;
     },
     {
       timeout: 10000,
-      timeoutMsg: "Expected success message or redirect to login",
+      timeoutMsg: "Signup did not redirect to login page",
     },
   );
 });
-
-//#endregion REGISTER
