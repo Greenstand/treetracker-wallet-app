@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Container, Box } from "@mui/material";
+import { Container, Box, Button } from "@mui/material";
+import Link from "next/link";
 import { TokenBalance } from "@/components/TokenBalance";
 import { WalletBalance } from "@/components/WalletBalance";
 import { RecentActivity } from "@/components/RecentActivity";
@@ -50,6 +51,21 @@ export default function Page() {
         <TokenBalance tokenCount={1000} />
         <WalletBalance walletAmount={2} />
       </Box>
+
+      <Box display="flex" justifyContent="center" sx={{ mt: 3, mb: 2 }}>
+        <Button
+          component={Link}
+          href="/buy"
+          variant="contained"
+          color="primary"
+          size="large"
+          data-test="buy-tokens-button"
+          sx={{ px: 4, py: 1.5 }}
+        >
+          Buy Tokens
+        </Button>
+      </Box>
+
       <RecentActivity activityData={activityData} />
       <TransactionSnackbar
         open={snackbarOpen}

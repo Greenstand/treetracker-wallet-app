@@ -65,6 +65,15 @@ const ChooseAction: React.FC<ChooseActionProps> = ({ open, onClose }) => {
               <NavigateNextIcon htmlColor="grey" />
             </ListItemButton>
           </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              component="a"
+              href="/buy"
+              data-test="choose-action-buy">
+              <ListItemText primary="Buy Tokens" />
+              <NavigateNextIcon htmlColor="grey" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Box>
     </Drawer>
