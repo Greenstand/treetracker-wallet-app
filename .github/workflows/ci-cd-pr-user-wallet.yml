@@ -4,10 +4,12 @@
 name: PR CI for User module
 
 on:
-  pull_request:
-    paths:
-      - apps/user/**
-      - "!apps/user/**/*.md"
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
   workflow_dispatch:
 
 jobs:
@@ -24,7 +26,11 @@ jobs:
       CORS_ORIGINS_DEV: ${{ vars.CORS_ORIGINS_DEV }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
