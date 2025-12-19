@@ -3,12 +3,11 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import { Box, Typography, IconButton } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
 import { useHeader } from "@/context/HeaderContext";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 import WalletFiltersModal, { WalletFiltersValue } from "../WalletFiltersModal";
 
@@ -58,13 +57,15 @@ function DefaultHeaderView({
         />
 
         <IconButton
-          aria-label="filter"
-          onClick={onFilterOpen}
           sx={{
+            ml: 1,
             backgroundColor: (theme) => theme.palette.header.main,
             "&:hover": {
               backgroundColor: (theme) => theme.palette.primary.dark,
             },
+          }}
+          onClick={() => {
+            console.log("filter clicked");
           }}
         >
           <FilterListIcon
