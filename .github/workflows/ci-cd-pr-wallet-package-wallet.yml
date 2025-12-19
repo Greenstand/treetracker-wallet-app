@@ -1,10 +1,15 @@
-# This workflow triggers on pull requests that modify files (other than *.md) in the wallet package (i.e., package/wallet/**)
+# This workflow triggers on pull requests that modify files (other than *.md) in the wallet package (i.e., packages/wallet/**)
 # It runs e2e tests to validate changes.
 
 name: PR CI for Wallet Package
 
 on:
-  pull_request:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
     paths:
       - "packages/wallet/**"
       - "!**/*.md"
@@ -22,6 +27,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
