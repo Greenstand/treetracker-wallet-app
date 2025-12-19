@@ -4,7 +4,12 @@
 name: PR CI for Web module
 
 on:
-  pull_request:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
     paths:
       - "apps/web/**"
       - "!apps/web/**/*.md"
@@ -29,7 +34,11 @@ jobs:
       PRIVATE_WALLET_API_KEY: ${{ secrets.PRIVATE_WALLET_API_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
