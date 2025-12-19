@@ -1,0 +1,53 @@
+# This workflow triggers on pull requests that modify non-Markdown files in the User module (apps/user/**).
+# It runs e2e, integration and unit tests to validate those changes.
+
+name: PR CI for User module
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+  workflow_dispatch:
+
+jobs:
+  unit-integration-e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+      PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
+      PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
+      PRIVATE_WALLET_API_KEY: ${{ secrets.PRIVATE_WALLET_API_KEY }}
+      CORS_ORIGINS_DEV: ${{ vars.CORS_ORIGINS_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run Unit Tests
+        run: yarn user:test:unit
+
+      - name: Run Integration Tests
+        run: yarn user:test:int
+
+      - name: Run User Service E2E Tests
+        run: yarn user:test:e2e --forceExit

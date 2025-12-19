@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
 import { useHeader } from "@/context/HeaderContext";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 const styles = {
   sharedBox: {
@@ -44,6 +45,23 @@ function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
           isExpanded={false}
           onCollapse={() => {}}
         />
+
+        <IconButton
+          sx={{
+            ml: 1,
+            backgroundColor: (theme) => theme.palette.header.main,
+            "&:hover": {
+              backgroundColor: (theme) => theme.palette.primary.dark,
+            },
+          }}
+          onClick={() => {
+            console.log("filter clicked");
+          }}
+        >
+          <FilterListIcon
+            sx={{ color: (theme) => theme.palette.common.white }}
+          />
+        </IconButton>
       </Box>
     </Box>
   );
@@ -78,15 +96,16 @@ export default function Header() {
           width: "100%",
           backgroundColor:
             pathname === "/notifications"
-              ? theme => theme.palette.secondary.main
+              ? (theme) => theme.palette.secondary.main
               : isSearchExpanded
                 ? "transparent"
-                : theme => theme.palette.header.main,
+                : (theme) => theme.palette.header.main,
           padding: isSearchExpanded
-            ? theme => theme.spacing(2)
-            : theme => theme.spacing(2, 4),
+            ? (theme) => theme.spacing(2)
+            : (theme) => theme.spacing(2, 4),
           transition: "background-color 0.3s ease",
-        }}>
+        }}
+      >
         {pathname === "/notifications" ? (
           <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
         ) : isSearchExpanded ? (

@@ -1,0 +1,47 @@
+# This workflow triggers on pull requests that modify files (other than *.md) in the wallet package (i.e., packages/wallet/**)
+# It runs e2e tests to validate changes.
+
+name: PR CI for Wallet Package
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+    paths:
+      - "packages/wallet/**"
+      - "!**/*.md"
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
+      PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
+      PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
+      PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
+      NEXT_PUBLIC_TREETRACKER_API: ${{ secrets.NEXT_PUBLIC_TREETRACKER_API }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run e2e test for wallet package
+        run: |
+          yarn workspace @treetracker/wallet test
