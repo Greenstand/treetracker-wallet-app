@@ -26,12 +26,7 @@ export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
       </TouchableOpacity>
 
       {/* Small info circle beside the button */}
-      <TouchableOpacity
-        style={styles.infoCircle}
-        onPress={handleInfoPress}
-        accessibilityRole="button"
-        accessibilityLabel="Wallet info"
-      >
+      <TouchableOpacity style={styles.infoCircle} onPress={handleInfoPress}>
         <Text style={styles.infoText}>i</Text>
       </TouchableOpacity>
     </View>
