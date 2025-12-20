@@ -20,9 +20,12 @@ export default function WalletItem({
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-      }}>
+      }}
+    >
       <Box>
-        <Typography variant="body2">{name}</Typography>
+        <Typography variant="body2" data-test={`wallet-item-name-${name}`}>
+          {name}
+        </Typography>
         <Typography variant="body2" color="text.secondary">
           {created_at}
         </Typography>

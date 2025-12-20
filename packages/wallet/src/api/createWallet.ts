@@ -1,6 +1,6 @@
 import axios, { isAxiosError } from "axios";
 import { Wallet } from "../types/wallet";
-import { TREETRACKER_API, WALLET_API_KEY } from "../utils/config";
+import { TREETRACKER_API } from "../utils/config";
 
 async function createWallet(walletData: Wallet, token: string) {
   try {
@@ -12,7 +12,6 @@ async function createWallet(walletData: Wallet, token: string) {
       },
       {
         headers: {
-          "treetracker-api-key": WALLET_API_KEY,
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },

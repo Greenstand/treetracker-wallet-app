@@ -22,16 +22,11 @@ Feature: Create wallet
     Then I should see text "Wallet name already exists"
 
 
-  @discovery
-  Scenario: As a user, I can create a new wallet (but has problem)
+  @web
+  Scenario: As a user, I can create a new wallet
     #Given test@greenstand.org is registered in the system
     Given I am on the login page
     And I login with an account
     And I am on the wallet page
     When I create a new wallet
-    Then I noticed that I can click the create button, and the pop-up dialog disappear but nothing happens, no new wallet shows up, and in the devtool network panel, there are 404 error shown below:
-    #http://localhost:3000/wallets
-    #Request Method
-    #POST
-    #Status Code 404 Not Found
-
+    Then I should see my new wallet in the list of wallets

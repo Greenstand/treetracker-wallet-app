@@ -32,6 +32,27 @@ git clone https://github.com/Greenstand/treetracker-wallet-app.git
 cd treetracker-wallet-app && yarn install
 ```
 
+### 🔧 **Environment Variables**
+```bash
+# Setup environment (first time only)
+
+# For backend user api and bdds
+cp apps/user/.env.example apps/user/.dev.env
+# → Edit .dev.env with your configuration
+
+# For web development and bdd
+cp apps/web/.env.example apps/user/.env
+# → Edit .env with your configuration
+
+# For keycloak package e2e testing
+cp packages/keycloak/.env.example packages/keycloak/.env
+# → Edit .env with your configuration
+
+# For wallet package e2e testing
+cp packages/wallet/.env.example packages/wallet/.env
+# → Edit .env with your configuration
+```
+
 ### 🏃‍♂️ Start Development
 
 #### Option 1: Quick Web Development

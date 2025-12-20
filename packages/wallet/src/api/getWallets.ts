@@ -1,4 +1,4 @@
-import { TREETRACKER_API, WALLET_API_KEY } from "../utils/config";
+import { TREETRACKER_API } from "../utils/config";
 import axios, { isAxiosError } from "axios";
 
 export async function getWallets(token: string, numberOfWallets: number = 10) {
@@ -8,7 +8,6 @@ export async function getWallets(token: string, numberOfWallets: number = 10) {
       {
         headers: {
           "Content-Type": "application/json",
-          "treetracker-api-key": WALLET_API_KEY,
           Authorization: `Bearer ${token}`,
         },
       },
