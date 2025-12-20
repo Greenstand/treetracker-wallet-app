@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { usePathname } from "next/navigation";
 import { Box, Typography, IconButton } from "@mui/material";
@@ -7,6 +8,8 @@ import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
 import { useHeader } from "@/context/HeaderContext";
 import FilterListIcon from "@mui/icons-material/FilterList";
+
+import WalletFiltersModal, { WalletFiltersValue } from "../WalletFiltersModal";
 
 const styles = {
   sharedBox: {
@@ -21,14 +24,21 @@ const styles = {
     gap: 2,
     flex: 1,
   },
-  headerSearchBox: {
+  headerActionsBox: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
+    gap: 1,
   },
 };
 
-function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
+function DefaultHeaderView({
+  onSearchExpand,
+  onFilterOpen,
+}: {
+  onSearchExpand: () => void;
+  onFilterOpen: () => void;
+}) {
   return (
     <Box sx={styles.sharedBox}>
       <Box sx={styles.headerLogoBox}>
@@ -38,7 +48,7 @@ function DefaultHeaderView({ onSearchExpand }: { onSearchExpand: () => void }) {
         </Typography>
       </Box>
 
-      <Box sx={styles.headerSearchBox}>
+      <Box sx={styles.headerActionsBox}>
         <HeaderSearch
           data-cy="search-toggle"
           onExpand={onSearchExpand}
@@ -89,6 +99,14 @@ export default function Header() {
 
   const pathname = usePathname();
 
+  const [isFilterOpen, setIsFilterOpen] = React.useState(false);
+
+  const [filters, setFilters] = React.useState<WalletFiltersValue>({
+    option: "all",
+    startDate: "",
+    endDate: "",
+  });
+
   return (
     <>
       <Box
@@ -111,9 +129,23 @@ export default function Header() {
         ) : isSearchExpanded ? (
           <ExpandedSearchView onSearchCollapse={toggleSearchExpanded} />
         ) : (
-          <DefaultHeaderView onSearchExpand={toggleSearchExpanded} />
+          <DefaultHeaderView
+            onSearchExpand={toggleSearchExpanded}
+            onFilterOpen={() => setIsFilterOpen(true)}
+          />
         )}
       </Box>
+
+      <WalletFiltersModal
+        open={isFilterOpen}
+        value={filters}
+        onClose={() => setIsFilterOpen(false)}
+        onChange={setFilters}
+        onApply={(v) => {
+          setFilters(v);
+          setIsFilterOpen(false);
+        }}
+      />
     </>
   );
 }
