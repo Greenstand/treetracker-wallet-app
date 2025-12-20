@@ -8,8 +8,9 @@ interface CreateWalletProps {
 }
 
 export const CreateWallet: React.FC<CreateWalletProps> = ({ onPress }) => {
+  // Placeholder for info icon functionality (can show tooltip or modal later)
   const handleInfoPress = () => {
-    console.log("Info icon pressed");
+    console.log("Info icon pressed"); // placeholder for now
   };
 
   return (
