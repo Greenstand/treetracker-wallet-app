@@ -1,21 +1,17 @@
 name: Deploy NextJS to AWS Dev
 
 on:
-  # Trigger the workflow on push events to the main branch
-  # only when files in the 'apps/web/' directory change.
   push:
     branches:
       - main
     paths:
       - "apps/web/**"
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
   PROJECT_DIRECTORY: ./apps/web
 
-# Security Best Practice: Define permissions for the GITHUB_TOKEN
 permissions:
   contents: read
 
@@ -36,6 +32,12 @@ jobs:
         with:
           node-version: "20.x"
           cache: "yarn"
+
+      - name: Enable Corepack and Prepare Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.4 --activate
+          yarn -v  # just to confirm the version in logs
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -62,7 +64,6 @@ jobs:
     name: Deploy to AWS
     runs-on: ubuntu-latest
     needs: [build]
-    # Only run this job if it's the main repository, not a fork.
     if: github.repository == 'Greenstand/treetracker-wallet-app'
 
     steps:
@@ -77,7 +78,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 # CloudFront requires us-east-1 for some operations
+          aws-region: us-east-1
 
       - name: Deploy to S3 Bucket
         run: |
