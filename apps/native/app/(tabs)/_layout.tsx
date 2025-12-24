@@ -14,6 +14,12 @@ export default function TabLayout() {
       <Tabs.Screen name="wallet" />
       <Tabs.Screen name="notifications" />
       <Tabs.Screen name="settings" />
+      <Tabs.Screen
+        name="search"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

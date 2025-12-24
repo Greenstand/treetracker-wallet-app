@@ -1,6 +1,5 @@
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from "@utils/dimensions";
 
-// Scale function for responsive design
 export const scaleSize = (size: number) => {
   const scale = WINDOW_WIDTH / 375;
   return Math.round(size * Math.min(scale, 1.5));
@@ -21,6 +20,7 @@ export const COLORS = {
   green: "#61892F",
   lightGreen: "#86C232",
   tint: "#61892F",
+  vanillaCream: "#F7E5C4",
 
   // Neutral Colors
   white: "#FFFFFF",
@@ -29,6 +29,7 @@ export const COLORS = {
 
   // Gray Scale (enhanced from your existing colors)
   gray50: "#F9FAFB",
+  gray74: "#BDBDBD",
   gray100: "#F3F4F6",
   gray200: "#E0E0E0",
   gray300: "#D1D5DB",

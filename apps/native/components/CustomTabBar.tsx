@@ -14,13 +14,11 @@ export default function CustomTabBar({
   const handleChooseActionPress = () => {
     setModalVisible(true);
   };
-
-  const routes = [...state.routes];
+  const routes = state.routes.filter((route) => route.name !== "search");
 
   return (
     <View style={styles.container}>
       {routes.map((route, index) => {
-        // Insert custom "Send" button in the center
         const midpoint = Math.floor(routes.length / 2);
         if (index === midpoint) {
           return (
@@ -32,7 +30,8 @@ export default function CustomTabBar({
                   color: "#dcdcdc",
                   radius: 40,
                   borderless: true,
-                }}>
+                }}
+              >
                 <View style={styles.sendButton}>
                   <MaterialIcons name="swap-horiz" size={26} color="#fff" />
                 </View>
@@ -49,7 +48,6 @@ export default function CustomTabBar({
 
   function renderTab(route: any, index: number) {
     const isFocused = state.index === index;
-    const { options } = descriptors[route.key];
 
     const onPress = () => {
       const event = navigation.emit({
@@ -86,7 +84,8 @@ export default function CustomTabBar({
         key={route.key}
         onPress={onPress}
         android_ripple={{ color: "#dcdcdc", radius: 40, borderless: true }}
-        style={styles.tabItem}>
+        style={styles.tabItem}
+      >
         <MaterialIcons
           name={renderIcon()}
           size={24}
@@ -96,7 +95,8 @@ export default function CustomTabBar({
           style={[
             styles.sizeText,
             isFocused ? styles.focusedText : styles.unfocusedText,
-          ]}>
+          ]}
+        >
           {capitalizedLabel}
         </Text>
       </Pressable>

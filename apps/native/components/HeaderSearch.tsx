@@ -1,23 +1,81 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
+  Pressable,
+  StatusBar,
+  ActivityIndicator,
 } from "react-native";
+import { useAtom, useSetAtom } from "jotai";
 import { Ionicons } from "@expo/vector-icons";
+import {
+  searchQueryAtom,
+  isSearchingAtom,
+  startSearchAtom,
+  cancelSearchAtom,
+  performSearchAtom,
+  searchLoadingAtom,
+} from "core/src/atoms/search";
+import { THEME } from "@/theme";
+import { WINDOW_WIDTH } from "@utils/dimensions";
 
 export default function HeaderSearch() {
-  const [isSearching, setIsSearching] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useAtom(searchQueryAtom);
+
+  const [isSearching] = useAtom(isSearchingAtom);
+  const [isLoading] = useAtom(searchLoadingAtom);
+
+  const startSearch = useSetAtom(startSearchAtom);
+  const cancelSearch = useSetAtom(cancelSearchAtom);
+  const performSearch = useSetAtom(performSearchAtom);
+
+  const HEADER_HEIGHT = WINDOW_WIDTH * 0.25;
+
+  const { colors, typography, layout } = THEME;
+
+  const handleSearchChange = (text: string) => {
+    setQuery(text);
+
+    if (text.length > 0) {
+      performSearch(text);
+    } else {
+      performSearch("");
+    }
+  };
+
+  const handleStartSearch = () => {
+    startSearch();
+  };
+
+  const handleCancelSearch = () => {
+    cancelSearch();
+  };
+
+  const handleSubmitSearch = () => {
+    if (query.trim()) {
+      performSearch(query);
+    }
+  };
 
   return (
     <View
       style={[
         styles.headerContainer,
-        { backgroundColor: isSearching ? "#ffffff" : "#86c232" },
-      ]}>
+        {
+          paddingHorizontal: layout.screenPadding,
+          backgroundColor: isSearching ? colors.white : colors.lightGreen,
+          height: HEADER_HEIGHT,
+        },
+      ]}
+    >
+      <StatusBar
+        barStyle={isSearching ? "dark-content" : "light-content"}
+        backgroundColor={colors.lightGreen}
+      />
+
       <View style={[styles.leftArea, { width: isSearching ? 30 : 60 }]}>
         {!isSearching && (
           <View style={{ alignItems: "center" }}>
@@ -27,39 +85,48 @@ export default function HeaderSearch() {
             />
           </View>
         )}
-
         {isSearching && (
-          <TouchableOpacity
+          <Pressable
             accessibilityLabel="Close search"
-            onPress={() => {
-              setIsSearching(false);
-              setQuery("");
-            }}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="arrow-back" size={24} color="#838687" />
-          </TouchableOpacity>
+            onPress={handleCancelSearch}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="arrow-back" size={24} color={colors.darkGray} />
+          </Pressable>
         )}
       </View>
 
       <View
-        style={[styles.centerArea, { paddingHorizontal: isSearching ? 0 : 8 }]}>
+        style={[styles.centerArea, { paddingHorizontal: isSearching ? 0 : 8 }]}
+      >
         {isSearching && (
-          <View style={styles.searchBox}>
+          <View style={[styles.searchBox, { backgroundColor: colors.gray100 }]}>
             <Ionicons
               name="search"
               size={20}
-              color="#838687"
+              color={colors.darkGray}
               style={styles.leftIcon}
             />
             <TextInput
-              style={styles.searchInput}
+              style={[
+                styles.searchInput,
+                {
+                  color: colors.darkGray,
+                  fontSize: typography.size.base,
+                  fontFamily: typography.weight.regular,
+                },
+              ]}
               placeholder="name, company, wallet..."
-              placeholderTextColor="#838687"
+              placeholderTextColor={colors.darkGray}
               value={query}
-              onChangeText={setQuery}
+              onChangeText={handleSearchChange}
+              onSubmitEditing={handleSubmitSearch}
               autoFocus
               returnKeyType="search"
             />
+            {isLoading && (
+              <ActivityIndicator size="small" color={colors.gray500} />
+            )}
           </View>
         )}
       </View>
@@ -68,25 +135,23 @@ export default function HeaderSearch() {
         {!isSearching && (
           <TouchableOpacity
             accessibilityLabel="Open search"
-            onPress={() => setIsSearching(true)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="search" size={24} color="#ffffff" />
+            onPress={handleStartSearch}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="search" size={24} color={colors.white} />
           </TouchableOpacity>
         )}
       </View>
+      <StatusBar hidden />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: "100%",
-    height: 90,
-    paddingHorizontal: 12,
-    paddingTop: 20,
-    paddingBottom: 20,
     flexDirection: "row",
     alignItems: "center",
+    paddingTop: 45,
   },
   leftArea: {
     alignItems: "flex-start",
@@ -103,7 +168,6 @@ const styles = StyleSheet.create({
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
     borderRadius: 4,
     paddingHorizontal: 8,
     borderWidth: 1,
@@ -114,8 +178,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: "#828587",
-    fontSize: 16,
     paddingVertical: 8,
   },
 });
