@@ -15,6 +15,7 @@ import {
   selectCategoryAtom,
 } from "core/src/atoms/search";
 import SearchResults from "@components/ui/SearchResults";
+import ScanQRCodeCard from "@components/ui/ScanQRCodeCard";
 
 export const balanceData = [
   { id: 1, value: "1000", label: "Tokens" },
@@ -108,6 +109,9 @@ export default function Home() {
     >
       {isSearching ? (
         <>
+          <View style={{ marginTop: spacing.md }}>
+            <ScanQRCodeCard />
+          </View>
           <View
             style={{
               paddingHorizontal: 10,
