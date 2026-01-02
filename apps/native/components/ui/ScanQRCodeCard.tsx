@@ -1,26 +1,45 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Image as RNImage,
+} from "react-native";
 import { THEME, TypographyWeight } from "@/theme";
+import Avatar from "@components/ui/common/Avatar";
 
 export default function ScanQRCodeCard({ onPress }: { onPress?: () => void }) {
   const { colors, spacing, typography, layout } = THEME;
+  const qrIconUri = RNImage.resolveAssetSource(
+    require("@assets/images/QRIcon.png"),
+  ).uri;
 
   return (
-    <TouchableOpacity
-      style={[
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Scan or show QR code"
+      accessibilityHint="Open QR code actions to send or request tokens"
+      onPress={onPress}
+      style={({ pressed }) => [
         styles.container,
         {
           backgroundColor: colors.white,
           padding: spacing.md,
           borderRadius: layout.cardBorderRadius,
+          opacity: pressed ? 0.85 : 1,
         },
       ]}
-      onPress={onPress}
     >
-      <Image
-        source={require("@assets/images/QRIcon.png")}
-        style={styles.icon}
-      />
+      <View style={styles.avatarWrapper}>
+        <Avatar
+          id="scan-qr-card"
+          avatarUrl={qrIconUri}
+          fallbackImage={require("@assets/images/QRIcon.png")}
+          size={48}
+          backgroundColor="transparent"
+        />
+      </View>
       <View style={styles.textContainer}>
         <Text
           style={[
@@ -46,7 +65,7 @@ export default function ScanQRCodeCard({ onPress }: { onPress?: () => void }) {
           Quickly send or request tokens
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -55,9 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  icon: {
-    width: 48,
-    height: 48,
+  avatarWrapper: {
     marginRight: 16,
   },
   textContainer: {
