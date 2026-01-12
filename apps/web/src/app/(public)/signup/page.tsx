@@ -19,6 +19,7 @@ import CustomTextField from "@/components/common/CustomTextField";
 import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
+import OrText from "@/components/common/OrText";
 
 import { registerAtom } from "core";
 
@@ -43,7 +44,7 @@ const SignUp = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -96,7 +97,8 @@ const SignUp = () => {
         <form
           onSubmit={handleSubmit}
           autoComplete="off"
-          data-test="signup-form">
+          data-test="signup-form"
+        >
           <CustomTextField
             label="Username"
             name="username"
@@ -134,7 +136,8 @@ const SignUp = () => {
               variant="body2"
               color="error"
               sx={{ mt: 1 }}
-              data-test="signup-error">
+              data-test="signup-error"
+            >
               {fieldErrors.general}
             </Typography>
           )}
@@ -143,7 +146,8 @@ const SignUp = () => {
               variant="body2"
               color="success.main"
               sx={{ mt: 1 }}
-              data-test="signup-success">
+              data-test="signup-success"
+            >
               {successMessage.message}
             </Typography>
           )}
@@ -154,9 +158,7 @@ const SignUp = () => {
           />
         </form>
 
-        <Box sx={{ my: 3, display: "flex", justifyContent: "center" }}>
-          <Typography variant="body2">Or</Typography>
-        </Box>
+        <OrText />
 
         <Box
           sx={{
@@ -164,7 +166,8 @@ const SignUp = () => {
             gap: "1rem",
             display: "flex",
             flexDirection: "column",
-          }}>
+          }}
+        >
           <SocialButtons text="Sign Up With Gmail" icon={<EmailIcon />} />
           <SocialButtons text="Sign Up With Facebook" icon={<FacebookIcon />} />
           <SocialButtons text="Sign Up With GitHub" icon={<GitHubIcon />} />

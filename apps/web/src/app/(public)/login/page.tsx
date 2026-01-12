@@ -19,6 +19,7 @@ import CustomTextField from "@/components/common/CustomTextField";
 import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
+import OrText from "@/components/common/OrText";
 
 import { loginAtom, tokenAtom } from "core";
 
@@ -33,7 +34,7 @@ const Login = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormState(prev => ({ ...prev, [name]: value }));
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -105,7 +106,8 @@ const Login = () => {
               variant="body2"
               color="error"
               sx={{ mt: 1 }}
-              data-test="login-error">
+              data-test="login-error"
+            >
               {fieldErrors.general}
             </Typography>
           )}
@@ -117,9 +119,7 @@ const Login = () => {
           />
         </form>
 
-        <Box sx={{ my: 3, display: "flex", justifyContent: "center" }}>
-          <Typography variant="body2">Or</Typography>
-        </Box>
+        <OrText />
 
         <Box
           sx={{
@@ -127,7 +127,8 @@ const Login = () => {
             gap: "1rem",
             display: "flex",
             flexDirection: "column",
-          }}>
+          }}
+        >
           <SocialButtons text="Login With Gmail" icon={<EmailIcon />} />
           <SocialButtons text="Login With Facebook" icon={<FacebookIcon />} />
           <SocialButtons text="Login With GitHub" icon={<GitHubIcon />} />
