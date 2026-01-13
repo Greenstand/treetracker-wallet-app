@@ -7,6 +7,19 @@ export const CAPABILITY_WEB_CHROME = [
   },
 ];
 
+export const CAPABILITY_WEB_CHROME_FOR_DEBUG = [
+  {
+    browserName: "chrome",
+    "goog:chromeOptions": {
+      args: [
+        "--disable-gpu",
+        "--window-size=1920,1080",
+        "--auto-open-devtools-for-tabs",
+      ],
+    },
+  },
+];
+
 export const CAPABILITY_ANDROID = [
   {
     platformName: "Android",

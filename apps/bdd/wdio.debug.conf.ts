@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import { baseConfig } from "./wdio.base.conf";
-import { CAPABILITY_WEB_CHROME } from "./utils/capabilities";
+import { CAPABILITY_WEB_CHROME_FOR_DEBUG } from "./utils/capabilities";
 
 // Video reporter for recording test execution - useful for debugging and demos
 import Video from "wdio-video-reporter";
@@ -34,7 +34,7 @@ export const config: WebdriverIO.Config = {
   connectionRetryTimeout: 240000, // Extended for debugging
 
   // Debug capabilities (headed browser)
-  capabilities: CAPABILITY_WEB_CHROME,
+  capabilities: CAPABILITY_WEB_CHROME_FOR_DEBUG,
 
   // Debug services
   services: ["chromedriver"] as any,
@@ -86,7 +86,7 @@ export const config: WebdriverIO.Config = {
   // Debug cucumber options - override base with debug settings
   cucumberOpts: {
     ...baseConfig.cucumberOpts,
-    tags: "@debug", // Only run debug scenarios
+    //tags: "@debug", // Only run debug scenarios
     timeout: 120000, // Extended timeout for debugging
   },
 
@@ -259,7 +259,7 @@ export const config: WebdriverIO.Config = {
   after: async function (_result, _capabilities, _specs): Promise<void> {
     const ms = Number(process.env.WDIO_ARTIFACTS_FLUSH_MS ?? 150);
     if (ms > 0) {
-      await new Promise((resolve) => setTimeout(resolve, ms));
+      await new Promise(resolve => setTimeout(resolve, ms));
     }
   },
 
@@ -270,7 +270,7 @@ export const config: WebdriverIO.Config = {
     // Allow the video reporter to finish writing
     const settleMs = Number(process.env.WDIO_VIDEO_SETTLE_MS ?? 800);
     if (settleMs > 0) {
-      await new Promise((r) => setTimeout(r, settleMs));
+      await new Promise(r => setTimeout(r, settleMs));
     }
 
     const cid =
