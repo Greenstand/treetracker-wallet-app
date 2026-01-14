@@ -7,9 +7,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { WalletActivity } from "@/components/wallet/WalletActivity";
 import { WalletDetails } from "@/components/wallet/WalletDetails";
+import { WalletDetailsHeader } from "@/components/wallet/WalletDetailsHeader";
+import { WalletFilterModal } from "@/components/wallet/WalletFilterModal";
 import { Colors } from "@/constants/Colors";
 import { getPlaceholderWalletActivity } from "@/data/walletActivityPlaceholder";
 
@@ -27,23 +29,37 @@ const renderTabContent = (content: React.ReactNode) => (
   <ScrollView
     style={styles.scrollView}
     contentContainerStyle={styles.scrollContent}
-    showsVerticalScrollIndicator={false}>
+    showsVerticalScrollIndicator={false}
+  >
     {content}
   </ScrollView>
 );
 
 export default function WalletDetail() {
   const params = useLocalSearchParams();
+  const router = useRouter();
   const walletId = mapParamsToString(params.walletId);
+  const walletName = mapParamsToString(params.name);
+  const headerTitle =
+    walletName || (walletId ? `Wallet ${walletId}` : "Wallet");
   const balanceValue = Number.parseFloat(mapParamsToString(params.balance));
   const walletBalance = Number.isFinite(balanceValue) ? balanceValue : 0;
   const [activeTab, setActiveTab] = useState<WalletTab>(WALLET_TABS[0].value);
+  const [filterVisible, setFilterVisible] = useState(false);
+  const isActivityTab = activeTab === "activity";
 
   const { pending, completed, completedLabel } =
     getPlaceholderWalletActivity(walletId);
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <WalletDetailsHeader
+        title={headerTitle}
+        onBack={() => router.back()}
+        showAction={isActivityTab}
+        onActionPress={() => setFilterVisible(true)}
+      />
+
       <View style={styles.tabBar}>
         {WALLET_TABS.map(({ label, value }) => (
           <TabButton
@@ -65,6 +81,11 @@ export default function WalletDetail() {
             />,
           )
         : renderTabContent(<WalletDetails balance={walletBalance} />)}
+
+      <WalletFilterModal
+        visible={filterVisible}
+        onClose={() => setFilterVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -86,7 +107,8 @@ function TabButton({ label, isActive, onPress }: TabButtonProps) {
         styles.tabButton,
         isActive && styles.tabButtonActive,
         pressed && styles.tabButtonPressed,
-      ]}>
+      ]}
+    >
       <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
         {label}
       </Text>
