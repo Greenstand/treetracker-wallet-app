@@ -15,10 +15,10 @@ function run(cmd, args) {
 
 (async () => {
   // Accept an optional script name (e.g., "test:local"); default to "test"
-  const which = (process.argv[2] || "test").trim();
+  const which = (process.argv[2] || "test:web").trim();
 
   // Basic guard: only allow scripts that start with "test"
-  const testScript = which.startsWith("test") ? which : "test";
+  const testScript = which.startsWith("test") ? which : "test:web";
 
   const testExit = await run("yarn", [testScript]); // run chosen test script
   await run("yarn", ["report:cucumber"]); // always generate report
