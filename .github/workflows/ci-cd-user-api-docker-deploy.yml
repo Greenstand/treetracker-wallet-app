@@ -23,11 +23,15 @@ jobs:
         with:
           node-version: "18.x"
           
-      - name: Install dependencies
-        working-directory: ${{ env.project-directory }}
+      - name: Enable Corepack & Yarn 4
         run: |
           corepack enable
-          yarn install --immutable
+          corepack prepare yarn@4.9.4 --activate
+          yarn --version
+
+      - name: Install dependencies
+        working-directory: ${{ env.project-directory }}
+        run: yarn install --immutable
 
       - name: Build application
         working-directory: ${{ env.project-directory }}
@@ -48,10 +52,12 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ${{ env.project-directory }}
+          context: .
           file: ${{ env.project-directory }}/Dockerfile
           push: true
           tags: greenstand/treetracker-wallet-app:test-user-api
+          build-args: |
+            YARN_VERSION=4.9.4
 
   deploy:
     name: Deploy to Dev Environment
