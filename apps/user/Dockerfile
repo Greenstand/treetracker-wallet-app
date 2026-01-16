@@ -13,6 +13,7 @@ RUN yarn workspaces focus --production
 
 FROM node:18-alpine AS prod
 WORKDIR /app
+RUN ls -la /app
 COPY --from=builder /app/apps/user/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
