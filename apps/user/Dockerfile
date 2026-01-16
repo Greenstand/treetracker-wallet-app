@@ -4,6 +4,7 @@ RUN apk add --no-cache python3 make g++ bash
 RUN corepack enable && corepack prepare yarn@4.9.4 --activate
 ENV PATH=/app/node_modules/.bin:$PATH
 COPY package.json yarn.lock ./
+COPY .yarnrc.yml ./
 COPY packages ./packages
 COPY apps ./apps
 RUN yarn install --silent
