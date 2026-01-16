@@ -12,6 +12,6 @@ RUN yarn workspaces focus --production
 FROM node:18-alpine AS prod
 WORKDIR /app
 COPY --from=builder /app/apps/user/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/user/node_modules ./node_modules
 EXPOSE 8080
 CMD ["node", "dist/src/main.js"]
