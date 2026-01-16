@@ -3,7 +3,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare yarn@4.9.4 --activate
 ENV PATH=/app/node_modules/.bin:$PATH
 COPY package.json ./
-RUN yarn install --immutable
+RUN yarn install --silent
 COPY . .
 RUN yarn build
 RUN yarn install --production --ignore-scripts --prefer-offline
