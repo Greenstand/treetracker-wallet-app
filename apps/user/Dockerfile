@@ -9,7 +9,7 @@ COPY apps ./apps
 RUN yarn install --silent
 WORKDIR /app/apps/user
 RUN yarn build
-RUN yarn workspaces focus --production --all
+RUN yarn workspaces focus --production
 
 FROM node:18-alpine AS prod
 WORKDIR /app
