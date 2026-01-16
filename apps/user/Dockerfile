@@ -5,6 +5,7 @@ RUN corepack enable && corepack prepare yarn@4.9.4 --activate
 ENV PATH=/app/node_modules/.bin:$PATH
 COPY package.json yarn.lock ./
 COPY .yarnrc.yml ./
+COPY .yarn ./.yarn
 COPY packages ./packages
 COPY apps ./apps
 RUN yarn install --silent
