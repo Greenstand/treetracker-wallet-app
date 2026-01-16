@@ -8,8 +8,7 @@ COPY apps ./apps
 RUN yarn install --silent
 WORKDIR /app/apps/user
 RUN yarn build
-RUN yarn install --production --prefer-offline
-
+RUN yarn workspaces focus --production
 FROM node:18-alpine AS prod
 WORKDIR /app
 COPY --from=builder /app/apps/user/dist ./dist
