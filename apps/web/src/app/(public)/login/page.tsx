@@ -33,7 +33,7 @@ const Login = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormState(prev => ({ ...prev, [name]: value }));
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -105,7 +105,8 @@ const Login = () => {
               variant="body2"
               color="error"
               sx={{ mt: 1 }}
-              data-test="login-error">
+              data-test="login-error"
+            >
               {fieldErrors.general}
             </Typography>
           )}
@@ -127,7 +128,8 @@ const Login = () => {
             gap: "1rem",
             display: "flex",
             flexDirection: "column",
-          }}>
+          }}
+        >
           <SocialButtons text="Login With Gmail" icon={<EmailIcon />} />
           <SocialButtons text="Login With Facebook" icon={<FacebookIcon />} />
           <SocialButtons text="Login With GitHub" icon={<GitHubIcon />} />

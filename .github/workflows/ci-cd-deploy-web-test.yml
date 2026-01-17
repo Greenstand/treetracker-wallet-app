@@ -1,0 +1,89 @@
+name: Deploy Wallet App to Test Environment
+
+on:
+  workflow_dispatch:
+  
+env:
+  PROJECT_DIRECTORY: ./apps/web
+  NODE_VERSION: "20.x"
+  TEST_URL: https://wallet-test.treetracker.org
+  
+  # AWS Setup Required
+  TEST_CDN_S3_BUCKET: ${{ secrets.TEST_CDN_S3_BUCKET }}
+  TEST_CDN_DISTRIBUTION_ID: ${{ secrets.TEST_CDN_DISTRIBUTION_ID }}
+  
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Next.js Static Site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack 
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.4 --activate
+
+      - name: Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION}}
+
+      - name: Install Dependencies
+        run: yarn install --immutable
+
+      - name: Set Environment Variables for Build
+        run: |
+         echo "DEPLOYMENT_HOSTNAME=$TEST_URL" > ${{ env.PROJECT_DIRECTORY }}/.env.production
+         echo "Generated .env.production:"
+         cat ${{ env.PROJECT_DIRECTORY }}/.env.production
+
+      - name: Build Static Site
+        run: |
+          cd ${{ env.PROJECT_DIRECTORY }}
+          yarn build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-site-build
+          path: ${{ env.PROJECT_DIRECTORY }}/out
+          retention-days: 1
+  
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.repository == 'Greenstand/treetracker-wallet-app'
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: static-site-build
+          path: build/
+    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+    
+      - name: Set S3 Bucket and CloudFront ID
+        run: |
+         echo "S3_BUCKET=$TEST_CDN_S3_BUCKET" >> $GITHUB_ENV
+         echo "DISTRIBUTION_ID=$TEST_CDN_DISTRIBUTION_ID" >> $GITHUB_ENV
+
+      - name: Deploy to S3 Bucket
+        run: aws s3 sync build/ s3://$S3_BUCKET/ --delete
+
+      - name: Invalidate CloudFront Cache
+        run: aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+
+      - name: Deployment Complete
+        run: |
+         echo "::notice title=Deployment Complete::Website deployed to $TEST_URL"
