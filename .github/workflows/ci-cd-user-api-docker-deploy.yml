@@ -89,6 +89,11 @@ jobs:
         run: |
           doctl kubernetes cluster kubeconfig save ${{ secrets.DEV_CLUSTER_NAME }}
 
+      - name: Ensure namespace exists
+        run: |
+          kubectl get namespace ${{ secrets.K8S_NAMESPACE }} \
+          || kubectl create namespace ${{ secrets.K8S_NAMESPACE }}
+          
       - name: Deploy to Kubernetes
         run: |
           kustomize build apps/user/deployment/overlays/development \
