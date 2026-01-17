@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -7,10 +7,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import { WalletActivity } from "@/components/wallet/WalletActivity";
 import { WalletDetails } from "@/components/wallet/WalletDetails";
-import { WalletDetailsHeader } from "@/components/wallet/WalletDetailsHeader";
 import { WalletFilterModal } from "@/components/wallet/WalletFilterModal";
 import { Colors } from "@/constants/Colors";
 import { getPlaceholderWalletActivity } from "@/data/walletActivityPlaceholder";
@@ -37,7 +38,7 @@ const renderTabContent = (content: React.ReactNode) => (
 
 export default function WalletDetail() {
   const params = useLocalSearchParams();
-  const router = useRouter();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const walletId = mapParamsToString(params.walletId);
   const walletName = mapParamsToString(params.name);
   const headerTitle =
@@ -51,15 +52,52 @@ export default function WalletDetail() {
   const { pending, completed, completedLabel } =
     getPlaceholderWalletActivity(walletId);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: headerTitle,
+      headerBackTitleVisible: false,
+      headerBackVisible: false,
+      headerBackButtonDisplayMode: "minimal",
+      headerTintColor: Colors.darkGray,
+      headerStyle: {
+        backgroundColor: Colors.white,
+        shadowOpacity: 0,
+        shadowColor: "transparent",
+        elevation: 0,
+      },
+      headerShadowVisible: false,
+      headerTransparent: false,
+      headerLeftContainerStyle: styles.headerSideContainer,
+      headerRightContainerStyle: styles.headerSideContainer,
+      headerTitleStyle: {
+        fontSize: 18,
+        fontWeight: "700",
+        color: Colors.darkGray,
+      },
+      headerLeft: () => (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          onPress={navigation.goBack}
+          hitSlop={12}
+          style={({ pressed }) => [
+            styles.headerIconButton,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Ionicons name="arrow-back" size={22} color={Colors.darkGray} />
+        </Pressable>
+      ),
+      headerRight: () =>
+        isActivityTab ? (
+          <HeaderFilterButton onPress={() => setFilterVisible(true)} />
+        ) : null,
+    });
+  }, [navigation, headerTitle, isActivityTab]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <WalletDetailsHeader
-        title={headerTitle}
-        onBack={() => router.back()}
-        showAction={isActivityTab}
-        onActionPress={() => setFilterVisible(true)}
-      />
-
       <View style={styles.tabBar}>
         {WALLET_TABS.map(({ label, value }) => (
           <TabButton
@@ -87,6 +125,31 @@ export default function WalletDetail() {
         onClose={() => setFilterVisible(false)}
       />
     </SafeAreaView>
+  );
+}
+
+type HeaderFilterButtonProps = {
+  onPress: () => void;
+};
+
+function HeaderFilterButton({ onPress }: HeaderFilterButtonProps) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Open filters"
+      onPress={onPress}
+      hitSlop={12}
+      style={({ pressed }) => [
+        styles.headerIconButton,
+        pressed && styles.pressed,
+      ]}
+    >
+      <View style={styles.filterIcon}>
+        <View style={styles.filterLineLong} />
+        <View style={styles.filterLineMid} />
+        <View style={styles.filterLineShort} />
+      </View>
+    </Pressable>
   );
 }
 
@@ -164,5 +227,46 @@ const styles = StyleSheet.create({
     right: 0,
     height: 2,
     backgroundColor: Colors.green,
+  },
+  headerIconButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  headerSideContainer: {
+    backgroundColor: "transparent",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  pressed: {
+    opacity: 0.7,
+  },
+  filterIcon: {
+    width: 20,
+    height: 16,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  filterLineLong: {
+    width: 20,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: Colors.darkGray,
+  },
+  filterLineMid: {
+    width: 14,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: Colors.darkGray,
+  },
+  filterLineShort: {
+    width: 8,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: Colors.darkGray,
   },
 });

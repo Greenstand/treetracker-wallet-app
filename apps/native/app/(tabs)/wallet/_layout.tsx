@@ -12,7 +12,7 @@ export default function WalletLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="[walletId]" options={{ headerShown: false }} />
+      <Stack.Screen name="[walletId]" options={{ headerShown: true }} />
     </Stack>
   );
 }
