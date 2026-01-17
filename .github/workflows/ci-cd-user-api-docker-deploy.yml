@@ -98,3 +98,24 @@ jobs:
         run: |
           kustomize build apps/user/deployment/overlays/development \
           | kubectl apply --wait -f -
+          
+      - name: Get deployed URL
+        run: |
+          # Use namespace from secret
+          NAMESPACE="${{ secrets.K8S_NAMESPACE }}"
+          
+          # Get Ambassador external IP
+          HOST=$(kubectl get svc -n ambassador ambassador -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          
+          # Get Mapping prefix
+          PREFIX=$(kubectl get mapping treetracker-wallet-monorepo-user-api \
+            -n "$NAMESPACE" \
+            -o jsonpath='{.spec.prefix}')
+          
+          # Combine
+          URL="http://$HOST$PREFIX"
+          
+          echo "Deployed URL: $URL"
+          
+          # Optional: set as workflow environment variable for later steps
+          echo "DEPLOYED_URL=$URL" >> $GITHUB_ENV
