@@ -22,4 +22,4 @@ subscribe({
 
 ## To run e2e test
 
-`npm run test`
+`NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL=[ask admin for this] npm run test`
