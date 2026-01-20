@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/aneepal55/treetracker-wallet-app-aneesh/compare/v1.0.0...v1.1.0) (2026-01-20)
+
+
+### Features
+
+* test report ([510c127](https://github.com/aneepal55/treetracker-wallet-app-aneesh/commit/510c127442b309c5c294bd6119fd6343d2285535))
+
 # 1.0.0 (2026-01-17)
 
 
