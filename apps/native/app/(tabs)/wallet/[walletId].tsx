@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { WalletActivity } from "@/components/wallet/WalletActivity";
 import { WalletDetails } from "@/components/wallet/WalletDetails";
 import { WalletFilterModal } from "@/components/wallet/WalletFilterModal";
@@ -54,41 +53,7 @@ export default function WalletDetail() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: true,
       headerTitle: headerTitle,
-      headerBackTitleVisible: false,
-      headerBackVisible: false,
-      headerBackButtonDisplayMode: "minimal",
-      headerTintColor: Colors.darkGray,
-      headerStyle: {
-        backgroundColor: Colors.white,
-        shadowOpacity: 0,
-        shadowColor: "transparent",
-        elevation: 0,
-      },
-      headerShadowVisible: false,
-      headerTransparent: false,
-      headerLeftContainerStyle: styles.headerSideContainer,
-      headerRightContainerStyle: styles.headerSideContainer,
-      headerTitleStyle: {
-        fontSize: 18,
-        fontWeight: "700",
-        color: Colors.darkGray,
-      },
-      headerLeft: () => (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-          onPress={navigation.goBack}
-          hitSlop={12}
-          style={({ pressed }) => [
-            styles.headerIconButton,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="arrow-back" size={22} color={Colors.darkGray} />
-        </Pressable>
-      ),
       headerRight: () =>
         isActivityTab ? (
           <HeaderFilterButton onPress={() => setFilterVisible(true)} />
@@ -233,11 +198,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "transparent",
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  headerSideContainer: {
     backgroundColor: "transparent",
     shadowOpacity: 0,
     elevation: 0,
