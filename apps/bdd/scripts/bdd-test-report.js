@@ -1,9 +1,16 @@
 /**
  * Run BDD tests and ALWAYS generate the HTML report.
- * - Executes `yarn test`, then `yarn report:cucumber` regardless of pass/fail.
- * - Exits with the original test exit code (so CI still reflects failures).
- * Usage: from root `yarn bdd:test:report`, `yarn bdd:test:report:local`, or here `yarn test:report`.
+ * - Executes the selected yarn BDD test script
+ * - Always runs `yarn report:cucumber`
+ * - Preserves the original exit code for CI
+ *
+ * Usage:
+ *   yarn test:web:report
+ *   yarn test:native:android", "test:native:ios", "test:web:local:report
+ *   node bdd-test-report.js test:web
+ *   node bdd-test-report.js test:native:android", "test:native:ios", "test:web:local
  */
+
 const { spawn } = require("node:child_process");
 
 function run(cmd, args) {
@@ -14,13 +21,15 @@ function run(cmd, args) {
 }
 
 (async () => {
-  // Accept an optional script name (e.g., "test:local"); default to "test"
-  const which = (process.argv[2] || "test:web").trim();
+  const script = (process.argv[2] || "test:web").trim();
 
-  // Basic guard: only allow scripts that start with "test"
-  const testScript = which.startsWith("test") ? which : "test:web";
+  const ALLOWED = new Set(["test:web", "test:native:android"]);
 
-  const testExit = await run("yarn", [testScript]); // run chosen test script
-  await run("yarn", ["report:cucumber"]); // always generate report
-  process.exit(testExit); // preserve test exit code
+  const testScript = ALLOWED.has(script) ? script : "test:web";
+
+  const testExitCode = await run("yarn", [testScript]);
+
+  await run("yarn", ["report:cucumber"]);
+
+  process.exit(testExitCode);
 })();
