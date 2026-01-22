@@ -1,6 +1,7 @@
 FROM node:20-alpine AS builder
 RUN apk add --no-cache python3 make g++ bash
 RUN corepack enable && corepack prepare yarn@4.9.4 --activate
+
 WORKDIR /app
 ENV PATH=/app/node_modules/.bin:$PATH
 COPY package.json yarn.lock .yarnrc.yml .yarn ./
