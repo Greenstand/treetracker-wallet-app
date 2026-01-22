@@ -108,4 +108,8 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save ${{ secrets.DEV_CLUSTER_NAME }}
 
       - name: Deploy Kubernetes resources
-        run: kustomize build apps/user/deployment/overlays/development | kubectl apply -n ${{ secrets.K8S_NAMESPACE }} --wait -f -
+        run: | 
+          cd apps/user/deployment/overlays/development
+          kustomize edit set namespace ${{ secrets.K8S_NAMESPACE }}
+          kustomize build . | kubectl apply --wait -f -
+
