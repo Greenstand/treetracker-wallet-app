@@ -6,6 +6,7 @@ ENV PATH=/app/node_modules/.bin:$PATH
 COPY package.json yarn.lock .yarnrc.yml .yarn ./
 COPY packages ./packages
 COPY apps ./apps
+
 RUN yarn install --silent
 WORKDIR /app/apps/user
 RUN yarn build
