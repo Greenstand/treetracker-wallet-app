@@ -4,11 +4,20 @@ import SearchResults from "@components/ui/SearchResults";
 import { THEME, TypographyWeight } from "@/theme";
 import Heading from "@components/ui/common/Heading";
 
+import { useRouter } from "expo-router";
+import QRCodeDisplay from "@components/ui/QRCodeDisplay";
+
 function Search() {
   const { typography, spacing } = THEME;
+  const router = useRouter();
+
+  function handlePress() {
+    router.push("/scancode");
+  }
 
   return (
     <View style={[styles.container, { paddingHorizontal: spacing.md }]}>
+      <QRCodeDisplay onPress={handlePress} />
       <View
         style={{
           paddingHorizontal: 10,
