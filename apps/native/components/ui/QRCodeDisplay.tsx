@@ -9,7 +9,7 @@ import {
 import { THEME, TypographyWeight } from "@/theme";
 import Avatar from "@components/ui/common/Avatar";
 
-export default function ScanQRCodeCard({ onPress }: { onPress?: () => void }) {
+export default function QRCodeDisplay({ onPress }: { onPress?: () => void }) {
   const { colors, spacing, typography, layout } = THEME;
   const qrIconUri = RNImage.resolveAssetSource(
     require("@assets/images/QRIcon.png"),
@@ -25,7 +25,9 @@ export default function ScanQRCodeCard({ onPress }: { onPress?: () => void }) {
         styles.container,
         {
           backgroundColor: colors.white,
-          padding: spacing.md,
+          paddingVertical: spacing.md,
+          paddingHorizontal: spacing.lg,
+          marginTop: 30,
           borderRadius: layout.cardBorderRadius,
           opacity: pressed ? 0.85 : 1,
         },
@@ -55,7 +57,6 @@ export default function ScanQRCodeCard({ onPress }: { onPress?: () => void }) {
         </Text>
         <Text
           style={[
-            styles.subtitle,
             {
               color: colors.gray500,
               fontSize: typography.size.sm,
@@ -83,5 +84,4 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 2,
   },
-  subtitle: {},
 });
