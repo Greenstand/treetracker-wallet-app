@@ -1,6 +1,7 @@
 import { pgClient } from "@packages/queue/pgClient.js";
 import subscribe from "@packages/queue/subscribe.js";
 import { randomUUID } from "crypto";
+import { Logger } from "@nestjs/common";
 
 type NotificationPayload = {
   capture_id: string;
@@ -20,12 +21,21 @@ const messageObj = {
 };
 
 export function onQueueNotification(callback: (accountId: string) => void) {
+  // Skip queue subscription if database is not configured
+  if (!pgClient) {
+    Logger.warn(
+      "Queue listener disabled: DATABASE_URL not configured",
+      "QueueListener",
+    );
+    return Promise.resolve();
+  }
+
   return subscribe({
     pgClient: pgClient,
     channel: messageObj.channel,
     clientID: clientId,
-  }).then(emitter =>
-    emitter.on("message", msg => {
+  }).then((emitter) =>
+    emitter.on("message", (msg) => {
       const payload: NotificationPayload = JSON.parse(msg.payload);
       callback(payload.account_id);
     }),
