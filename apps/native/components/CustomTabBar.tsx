@@ -3,6 +3,9 @@ import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ModalContext } from "@/context/ModalContext";
+import { CopilotStep, walkthroughable } from "react-native-copilot";
+
+const WalkthroughableView = walkthroughable(View);
 
 export default function CustomTabBar({
   state,
@@ -23,19 +26,25 @@ export default function CustomTabBar({
         if (index === midpoint) {
           return (
             <React.Fragment key="chooseAction">
-              <Pressable
-                onPress={handleChooseActionPress}
-                style={styles.sendButtonWrapper}
-                android_ripple={{
-                  color: "#dcdcdc",
-                  radius: 40,
-                  borderless: true,
-                }}
+              <CopilotStep
+                text={"Tap to send or request tokens."}
+                order={3}
+                name="homeSendAction"
               >
-                <View style={styles.sendButton}>
-                  <MaterialIcons name="swap-horiz" size={26} color="#fff" />
-                </View>
-              </Pressable>
+                <WalkthroughableView style={styles.sendButtonWrapper}>
+                  <Pressable
+                    onPress={handleChooseActionPress}
+                    style={styles.sendButton}
+                    android_ripple={{
+                      color: "#dcdcdc",
+                      radius: 40,
+                      borderless: true,
+                    }}
+                  >
+                    <MaterialIcons name="swap-horiz" size={26} color="#fff" />
+                  </Pressable>
+                </WalkthroughableView>
+              </CopilotStep>
               {renderTab(route, index)}
             </React.Fragment>
           );

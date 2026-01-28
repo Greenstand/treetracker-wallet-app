@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { CopilotStep, walkthroughable, useCopilot } from "react-native-copilot";
 import Heading from "@common/Heading";
 import WalletSummary from "@components/ui/WalletSummary";
 import { THEME, TypographyWeight } from "@/theme";
@@ -23,10 +24,14 @@ export const balanceData = [
   { id: 2, value: "2", label: "Wallets", icon: "wallet-outline" },
 ];
 
+const WalkthroughableView = walkthroughable(View);
+
 export default function Home() {
   const [isSearching] = useAtom(isSearchingAtom);
   const [isLoading] = useAtom(searchLoadingAtom);
   const [, selectCategory] = useAtom(selectCategoryAtom);
+  const { start } = useCopilot();
+  const hasStartedRef = useRef(false);
 
   const router = useRouter();
 
@@ -41,6 +46,19 @@ export default function Home() {
     }
   }, [selectCategory, isSearching]);
 
+  useEffect(() => {
+    if (isSearching || isLoading || hasStartedRef.current) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      hasStartedRef.current = true;
+      start();
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, isSearching, start]);
+
   const ActivityHeader = () => (
     <View
       style={{
@@ -50,25 +68,10 @@ export default function Home() {
     >
       <View style={[styles.balancesContainer, { gap: spacing.md }]}>
         {balanceData.map((item) => (
-          <WalletSummary
+          <BalanceCard
             key={item.id}
-            value={item.value}
-            icon={
-              item.label === "Tokens" ? (
-                <MaterialIcons name="toll" size={24} color={colors.primary} />
-              ) : (
-                <MaterialCommunityIcons
-                  name="wallet-outline"
-                  size={24}
-                  color={colors.gray700}
-                />
-              )
-            }
-            label={item.label}
-            style={[
-              styles.balanceCard,
-              { width: Math.max(layout.screenPadding * 8, 140) },
-            ]}
+            item={item}
+            cardWidth={Math.max(layout.screenPadding * 8, 140)}
           />
         ))}
       </View>
@@ -148,6 +151,65 @@ export default function Home() {
       )}
     </View>
   );
+}
+
+function BalanceCard({
+  item,
+  cardWidth,
+}: {
+  item: (typeof balanceData)[number];
+  cardWidth: number;
+}) {
+  const { colors } = THEME;
+
+  const content = (
+    <WalletSummary
+      value={item.value}
+      icon={
+        item.label === "Tokens" ? (
+          <MaterialIcons name="toll" size={24} color={colors.primary} />
+        ) : (
+          <MaterialCommunityIcons
+            name="wallet-outline"
+            size={24}
+            color={colors.gray700}
+          />
+        )
+      }
+      label={item.label}
+      style={[styles.balanceCard, { width: cardWidth }]}
+    />
+  );
+
+  if (item.label === "Tokens") {
+    return (
+      <CopilotStep
+        text={
+          "Here you can view the total amount of tokens (a digital asset representing your contributions)."
+        }
+        order={1}
+        name="homeTokens"
+      >
+        <WalkthroughableView>{content}</WalkthroughableView>
+      </CopilotStep>
+    );
+  }
+
+  if (item.label === "Wallets") {
+    return (
+      <CopilotStep
+        text={
+          "Here you can see the total amount of wallets (restricted to max 2 at this time)."
+        }
+        order={2}
+        name="homeWallets"
+      >
+        <WalkthroughableView>{content}</WalkthroughableView>
+      </CopilotStep>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({
