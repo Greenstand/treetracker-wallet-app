@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -7,9 +7,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { WalletActivity } from "@/components/wallet/WalletActivity";
 import { WalletDetails } from "@/components/wallet/WalletDetails";
+import { WalletFilterModal } from "@/components/wallet/WalletFilterModal";
 import { Colors } from "@/constants/Colors";
 import { getPlaceholderWalletActivity } from "@/data/walletActivityPlaceholder";
 
@@ -27,20 +29,37 @@ const renderTabContent = (content: React.ReactNode) => (
   <ScrollView
     style={styles.scrollView}
     contentContainerStyle={styles.scrollContent}
-    showsVerticalScrollIndicator={false}>
+    showsVerticalScrollIndicator={false}
+  >
     {content}
   </ScrollView>
 );
 
 export default function WalletDetail() {
   const params = useLocalSearchParams();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const walletId = mapParamsToString(params.walletId);
+  const walletName = mapParamsToString(params.name);
+  const headerTitle =
+    walletName || (walletId ? `Wallet ${walletId}` : "Wallet");
   const balanceValue = Number.parseFloat(mapParamsToString(params.balance));
   const walletBalance = Number.isFinite(balanceValue) ? balanceValue : 0;
   const [activeTab, setActiveTab] = useState<WalletTab>(WALLET_TABS[0].value);
+  const [filterVisible, setFilterVisible] = useState(false);
+  const isActivityTab = activeTab === "activity";
 
   const { pending, completed, completedLabel } =
     getPlaceholderWalletActivity(walletId);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: headerTitle,
+      headerRight: () =>
+        isActivityTab ? (
+          <HeaderFilterButton onPress={() => setFilterVisible(true)} />
+        ) : null,
+    });
+  }, [navigation, headerTitle, isActivityTab]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -65,7 +84,37 @@ export default function WalletDetail() {
             />,
           )
         : renderTabContent(<WalletDetails balance={walletBalance} />)}
+
+      <WalletFilterModal
+        visible={filterVisible}
+        onClose={() => setFilterVisible(false)}
+      />
     </SafeAreaView>
+  );
+}
+
+type HeaderFilterButtonProps = {
+  onPress: () => void;
+};
+
+function HeaderFilterButton({ onPress }: HeaderFilterButtonProps) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Open filters"
+      onPress={onPress}
+      hitSlop={12}
+      style={({ pressed }) => [
+        styles.headerIconButton,
+        pressed && styles.pressed,
+      ]}
+    >
+      <View style={styles.filterIcon}>
+        <View style={styles.filterLineLong} />
+        <View style={styles.filterLineMid} />
+        <View style={styles.filterLineShort} />
+      </View>
+    </Pressable>
   );
 }
 
@@ -86,7 +135,8 @@ function TabButton({ label, isActive, onPress }: TabButtonProps) {
         styles.tabButton,
         isActive && styles.tabButtonActive,
         pressed && styles.tabButtonPressed,
-      ]}>
+      ]}
+    >
       <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
         {label}
       </Text>
@@ -142,5 +192,41 @@ const styles = StyleSheet.create({
     right: 0,
     height: 2,
     backgroundColor: Colors.green,
+  },
+  headerIconButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  pressed: {
+    opacity: 0.7,
+  },
+  filterIcon: {
+    width: 20,
+    height: 16,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  filterLineLong: {
+    width: 20,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: Colors.darkGray,
+  },
+  filterLineMid: {
+    width: 14,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: Colors.darkGray,
+  },
+  filterLineShort: {
+    width: 8,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: Colors.darkGray,
   },
 });

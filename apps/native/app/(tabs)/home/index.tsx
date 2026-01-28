@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useAtom } from "jotai";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import { useRouter } from "expo-router";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Heading from "@common/Heading";
 import WalletSummary from "@components/ui/WalletSummary";
@@ -15,7 +16,7 @@ import {
   selectCategoryAtom,
 } from "core/src/atoms/search";
 import SearchResults from "@components/ui/SearchResults";
-import ScanQRCodeCard from "@components/ui/ScanQRCodeCard";
+import QRCodeDisplay from "@components/ui/QRCodeDisplay";
 
 export const balanceData = [
   { id: 1, value: "1000", label: "Tokens" },
@@ -26,6 +27,12 @@ export default function Home() {
   const [isSearching] = useAtom(isSearchingAtom);
   const [isLoading] = useAtom(searchLoadingAtom);
   const [, selectCategory] = useAtom(selectCategoryAtom);
+
+  const router = useRouter();
+
+  function handlePress() {
+    router.push("/scancode");
+  }
 
   const { colors, typography, layout, spacing } = THEME;
   useEffect(() => {
@@ -110,7 +117,7 @@ export default function Home() {
       {isSearching ? (
         <>
           <View style={{ marginTop: spacing.md }}>
-            <ScanQRCodeCard />
+            <QRCodeDisplay onPress={handlePress} />
           </View>
           <View
             style={{

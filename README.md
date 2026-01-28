@@ -21,7 +21,7 @@ blockchain technology._
 ### Prerequisites
 
 - **Node.js** (v20 or higher)
-- **Yarn** (v1.22 or higher)
+- **Yarn** (v4 or higher)
 - **Docker** (for backend development)
 
 ### 🚀 One-Command Setup
@@ -289,7 +289,7 @@ yarn native:start # Terminal 3
 
 ### Quick Testing
 
-````bash
+```bash
 # E2E tests (best way to understand the project)
 yarn cypress-e2e-test
 
@@ -301,6 +301,8 @@ yarn test
 
 # Lint and format
 yarn lint:fix
+```
+
 
 ## Commit hooks and test behavior
 
@@ -314,8 +316,6 @@ Yarn versions, run:
 corepack enable
 corepack prepare yarn@4.9.4 --activate
 yarn -v  # should show a Yarn 4.x version
-````
-
 ```
 
 ## How to set up: lint, code format, Typescript for a new package/app
@@ -346,5 +346,4 @@ standards, testing, and review processes.
 - **Slack:** Join our Slack community (Ask the maintainers for an invite)
 - **Discussions:** Ask questions in Slack
 
-<!-- trigger -->
-```
+

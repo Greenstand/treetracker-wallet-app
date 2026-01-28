@@ -1,30 +1,26 @@
 import { Stack } from "expo-router";
-
-const mapParamsToString = (param?: string | string[]): string => {
-  if (Array.isArray(param)) {
-    return param.join("");
-  }
-
-  return param ?? "";
-};
+import { Colors } from "@/constants/Colors";
 
 export default function WalletLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={{ title: "Wallets" }} />
       <Stack.Screen
         name="[walletId]"
-        options={({ route }) => {
-          const params = route.params as
-            | { name?: string | string[] }
-            | undefined;
-          const walletName = mapParamsToString(params?.name);
-
-          return {
-            headerShown: true,
-            headerShadowVisible: false,
-            title: walletName.trim() || "Wallet",
-          };
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: Colors.darkGray,
+          headerStyle: {
+            backgroundColor: Colors.white,
+          },
+          headerTransparent: false,
+          headerTitleStyle: {
+            fontSize: 18,
+            fontWeight: "700",
+            color: Colors.darkGray,
+          },
         }}
       />
     </Stack>
