@@ -19,6 +19,7 @@ import CustomTextField from "@/components/common/CustomTextField";
 import CustomSubmitButton from "@/components/common/CustomSubmitButton";
 import SocialButtons from "@/components/common/SocialButtons";
 import TermsSection from "@/components/common/TermsSection";
+import OrText from "@/components/common/OrText";
 
 import { loginAtom, tokenAtom } from "core";
 
@@ -118,9 +119,7 @@ const Login = () => {
           />
         </form>
 
-        <Box sx={{ my: 3, display: "flex", justifyContent: "center" }}>
-          <Typography variant="body2">Or</Typography>
-        </Box>
+        <OrText />
 
         <Box
           sx={{
