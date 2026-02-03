@@ -20,7 +20,9 @@ async function waitForEmail(subject: string, timeoutMs = 8000) {
   throw new Error(`Timed out waiting for email with subject: ${subject}`);
 }
 
-describe("sendEmail (MailHog E2E)", () => {
+const shouldRun = !process.env.CI;
+
+(shouldRun ? describe : describe.skip)("sendEmail (MailHog E2E)", () => {
   it("sends an email that appears in MailHog", async () => {
     const subject = `E2E MailHog ${Date.now()}`;
     const body = "Hello MailHog!\nThis is an automated test.";
