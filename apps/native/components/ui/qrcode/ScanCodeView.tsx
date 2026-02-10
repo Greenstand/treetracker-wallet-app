@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { COLORS, THEME } from "@/theme";
 import ScanTab from "./ScanTab";
+
 // import RequestTab from "./RequestTab";
 
 type TabType = "scan" | "request";
