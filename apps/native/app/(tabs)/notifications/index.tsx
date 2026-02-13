@@ -1,90 +1,37 @@
 import React from "react";
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
-import WalletSvg from "../../../assets/svg/wallet.svg";
 
-// Mock notification data
-const notifications: Notification[] = [
-  {
-    id: 1,
-    type: "pending",
-    title: "Pending tokens from Restaurant XY to Wallet 1",
-    description:
-      "You will receive confirmation once the transaction is successful.",
-    time: "1h",
-    icon: "XY",
-  },
-  {
-    id: 2,
-    type: "received",
-    title: "Received tokens from Restaurant XY to Wallet 1",
-    description:
-      "You received 100 tokens to your Wallet 1 from Restaurant XY_wallet.",
-    time: "6d",
-    icon: "XY",
-  },
-  {
-    id: 3,
-    type: "pending",
-    title: "Pending tokens from Restaurant XY to Wallet 1",
-    description:
-      "You will receive confirmation once the transaction is successful.",
-    time: "6d",
-    icon: "XY",
-  },
-  {
-    id: 4,
-    type: "sent",
-    title: "Sent tokens to Greenstand from Wallet 2",
-    description:
-      "You have sent 200 tokens from your Wallet 2 to Greenstand_wallet.",
-    time: "7d",
-    icon: "GR",
-  },
-];
+import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 
-// Notification data structure
-type Notification = {
-  id: number;
-  type: "pending" | "received" | "sent";
-  title: string;
-  description: string;
-  time: string;
-  icon: string;
-};
-
-// Individual notification item component
-const NotificationItem = ({
-  notification,
-  isLatest,
-}: {
-  notification: Notification;
-  isLatest?: boolean;
-}) => {
-  // Highlight latest pending notifications
-  const getBackgroundColor = () => {
-    if (isLatest && notification.type === "pending") {
-      return "#FFF3CD";
-    }
-    return "#F8F9FA";
+export default function NotificationsLayout() {
+  const handleBackPress = () => {
+    // Replace with navigation.goBack() if using React Navigation
+    console.log("Back button pressed");
   };
 
+  const handleSettingsPress = () => {
+    console.log("Settings button pressed");
+  };
   return (
-    <View
-      style={[
-        styles.notificationItem,
-        { backgroundColor: getBackgroundColor() },
-      ]}>
-      {/* Icon container */}
-      <View style={styles.iconContainer}>
-        <Text style={styles.iconText}>{notification.icon}</Text>
+    <View style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handleBackPress}>
+            <Ionicons name="arrow-back" size={24} color="#222629DE" />
+          </TouchableOpacity>
+
+          <Text style={[styles.commonText, styles.description]}>
+            Notifications
+          </Text>
+
+          <TouchableOpacity onPress={handleSettingsPress}>
+            <Ionicons name="settings-outline" size={24} color="#222629DE" />
+          </TouchableOpacity>
+        </View>
       </View>
-      {/* Notification content */}
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>{notification.title}</Text>
-        <Text style={styles.description}>{notification.description}</Text>
-      </View>
-      {/* Timestamp */}
-      <Text style={styles.time}>{notification.time}</Text>
+
+
     </View>
   );
 };
@@ -211,5 +158,14 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 16,
     lineHeight: 24,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#FFFFFF",
   },
 });
