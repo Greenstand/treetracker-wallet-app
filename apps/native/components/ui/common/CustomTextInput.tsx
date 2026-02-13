@@ -19,6 +19,7 @@ interface CustomTextInputProps {
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
   helperText?: string;
   error?: boolean;
+  multiline?: boolean;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -30,10 +31,13 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   keyboardType = "default",
   helperText,
   error = false,
+  multiline = false,
 }) => {
   const [isSecure, setIsSecure] = useState(secureTextEntry);
   const [isFocused, setIsFocused] = useState(false);
-  const labelAnim = useRef(new Animated.Value(value ? 1 : 0)).current;
+  const labelAnim = useRef(
+    new Animated.Value(value || multiline ? 1 : 0),
+  ).current;
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -46,7 +50,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 
   const handleBlur = () => {
     setIsFocused(false);
-    if (!value) {
+    // multiline do not need label animation
+    if (!value && !multiline) {
       Animated.timing(labelAnim, {
         toValue: 0,
         duration: 150,
@@ -71,7 +76,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
             }),
             color: error ? Colors.red : isFocused ? Colors.green : "#777",
           },
-        ]}>
+        ]}
+      >
         {label}
       </Animated.Text>
 
@@ -80,14 +86,28 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           styles.inputContainer,
           error && styles.inputError,
           isFocused && styles.inputFocused,
-        ]}>
+          multiline && {
+            height: "auto",
+            alignItems: "flex-start",
+            paddingBottom: 12,
+          },
+        ]}
+      >
         <TextInput
-          placeholder={isFocused ? placeholder : ""}
+          placeholder={isFocused || multiline ? placeholder : ""}
           secureTextEntry={isSecure}
           onChangeText={onChangeText}
           value={value}
           keyboardType={keyboardType}
-          style={styles.input}
+          multiline={multiline}
+          style={[
+            styles.input,
+            multiline && {
+              textAlignVertical: "bottom",
+              paddingTop: 14,
+              maxHeight: 70,
+            },
+          ]}
           placeholderTextColor={Colors.darkGray}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -101,8 +121,9 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           />
         ) : value.length > 0 && secureTextEntry ? (
           <TouchableOpacity
-            onPress={() => setIsSecure(prev => !prev)}
-            style={styles.icon}>
+            onPress={() => setIsSecure((prev) => !prev)}
+            style={styles.icon}
+          >
             <MaterialCommunityIcons
               name={isSecure ? "eye-off" : "eye"}
               size={24}
@@ -112,7 +133,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
         ) : value.length > 0 ? (
           <TouchableOpacity
             onPress={() => onChangeText("")}
-            style={styles.icon}>
+            style={styles.icon}
+          >
             <MaterialCommunityIcons
               name="close-circle"
               size={24}
@@ -152,6 +174,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: Colors.lightGray,
     paddingHorizontal: 14,
+    paddingTop: 12,
     height: 60,
     borderBottomWidth: 2,
     borderBottomColor: "#BDBDBD",
