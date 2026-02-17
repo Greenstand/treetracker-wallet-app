@@ -1,0 +1,42 @@
+# This workflow triggers on pull requests that modify files (other than *.md) in the wallet package (i.e., packages/queue/**)
+# It runs e2e tests to validate changes.
+
+name: PR CI for Queue Package
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+    paths:
+      - "packages/queue/**"
+      - "!**/*.md"
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        working-directory: packages/queue
+        run: npm install --no-workspaces --legacy-peer-deps --ignore-scripts
+
+      - name: Run e2e test for queue package
+        working-directory: packages/queue
+        run: npm run test
