@@ -24,8 +24,8 @@ export function onQueueNotification(callback: (accountId: string) => void) {
     pgClient: pgClient,
     channel: messageObj.channel,
     clientID: clientId,
-  }).then(emitter =>
-    emitter.on("message", msg => {
+  }).then((emitter) =>
+    emitter.on("message", (msg) => {
       const payload: NotificationPayload = JSON.parse(msg.payload);
       callback(payload.account_id);
     }),

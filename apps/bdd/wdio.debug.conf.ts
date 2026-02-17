@@ -13,18 +13,6 @@ import {
 } from "./utils/artifacts";
 import cucumberJson from "wdio-cucumberjs-json-reporter";
 
-/**
- * Maps WebdriverIO worker IDs (cid) to their current feature bucket.
- * A "feature bucket" is derived from the feature file name, e.g.:
- *   "register.feature" -> "register"
- *
- * Lifecycle:
- * - Set in `beforeFeature`
- * - Read in `afterStep` / `afterScenario`
- * - Cleared in `afterFeature`
- */
-const FEATURE_BUCKET_BY_CID: Record<string, string> = {};
-
 export const config: WebdriverIO.Config = {
   ...baseConfig,
 
@@ -58,30 +46,7 @@ export const config: WebdriverIO.Config = {
   // ============
   // Reporters
   // ============
-  reporters: [
-    "spec",
-    // Capture execution videos via wdio-video-reporter
-    [
-      Video as any,
-      {
-        saveAllVideos: true, // keep videos for passed and failed scenarios
-        outputDir: VIDEOS_TMP, // temp output root for MP4s this run
-        rawPath: path.join(VIDEOS_TMP, ".video-reporter-screenshots"), // reporter's cached frame screenshots
-        videoFormat: "mp4",
-        videoSlowdownMultiplier: 1,
-        // Optional tuning (uncomment as needed):
-        // excludedActions: ['execute', 'keys'],           // reduce noisy frames
-        // screenshotIntervalSecs: 0.75,                   // throttle frame capture (>= 0.5)
-      },
-    ],
-    // Write Cucumber JSON for the HTML report generator
-    [
-      "cucumberjs-json",
-      {
-        jsonFolder: path.join(REPORTS_ROOT, "cucumber"),
-      },
-    ],
-  ],
+  reporters: ["spec"],
 
   // Debug cucumber options - override base with debug settings
   cucumberOpts: {
@@ -103,155 +68,22 @@ export const config: WebdriverIO.Config = {
   /**
    * Gets executed once before all workers get launched.
    */
-  onPrepare: function (_config, _capabilities) {
-    const cucumberJsonDir = path.join(REPORTS_ROOT, "cucumber");
-    const cucumberHtmlDir = path.join(REPORTS_ROOT, "cucumber-html");
-    const videosTmpDir = VIDEOS_TMP;
-    const videosDir = path.dirname(videosTmpDir);
-    const framesRootDir = path.join(
-      videosTmpDir,
-      ".video-reporter-screenshots",
-    );
-
-    // Ensure a clean Cucumber JSON output directory for this run
-    try {
-      fs.rmSync(cucumberJsonDir, { recursive: true, force: true });
-    } catch {}
-    fs.mkdirSync(cucumberJsonDir, { recursive: true });
-
-    // Clean Cucumber HTML directory
-    try {
-      fs.rmSync(cucumberHtmlDir, { recursive: true, force: true });
-    } catch {}
-    fs.mkdirSync(cucumberHtmlDir, { recursive: true });
-
-    // Always start with a fresh test-videos tree
-    try {
-      fs.rmSync(videosDir, { recursive: true, force: true });
-    } catch {}
-    fs.mkdirSync(videosDir, { recursive: true });
-
-    // Recreate the temp area used by wdio-video-reporter
-    fs.mkdirSync(videosTmpDir, { recursive: true });
-    fs.mkdirSync(framesRootDir, { recursive: true });
-  },
+  onPrepare: function (_config, _capabilities) {},
 
   // Remember the current feature "bucket" for this worker (cid).
-  beforeFeature: function (uri: string) {
-    const cid =
-      process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
-
-    // Derive a stable bucket name from the feature file name
-    try {
-      const filename = path.basename(uri);
-      const bucket = filename.replace(/\.feature$/i, "");
-      FEATURE_BUCKET_BY_CID[cid] = bucket || "feature";
-    } catch {
-      FEATURE_BUCKET_BY_CID[cid] = "feature";
-    }
-  },
+  beforeFeature: function (uri: string) {},
 
   /**
    * After each Cucumber step, capture and attach a screenshot if the step failed.
    */
-  afterStep: async function (_step, _scenario, result, context) {
-    if (result.passed) return;
+  afterStep: async function (_step, _scenario, result, context) {},
 
-    // Grab a PNG screenshot and attach it to the Cucumber JSON
-    const screenshotB64 = await browser.takeScreenshot();
-    // @ts-ignore
-    cucumberJson.attach(screenshotB64, "image/png");
-
-    // Derive the feature "bucket" recorded for this worker
-    const world = context as unknown as {
-      gherkinDocument?: { feature?: { name?: string } };
-      pickle?: { name?: string };
-    };
-
-    const cid =
-      process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
-    const featureBucket =
-      FEATURE_BUCKET_BY_CID[cid] ||
-      world.gherkinDocument?.feature?.name ||
-      "feature";
-
-    const scenarioName = world.pickle?.name ?? _scenario?.name ?? "scenario";
-    const { base, screenshots } = scenarioDirs(featureBucket, scenarioName);
-
-    // Persist a single failure image in the scenario folder
-    fs.writeFileSync(
-      path.join(screenshots, `${Date.now()}-failed-step.png`),
-      Buffer.from(screenshotB64, "base64"),
-    );
-
-    // Remove any legacy logs folder
-    try {
-      fs.rmSync(path.join(base, "logs"), { recursive: true, force: true });
-    } catch {}
-  },
-
-  /**
-   * After each Cucumber scenario:
-   * - Move the recorded MP4 for this worker into the scenario's folder.
-   * - Remove the temporary frame screenshots.
-   * - Attach an HTML <video> player to the Cucumber JSON.
-   */
-  afterScenario: async function (world, result, context) {
-    const cid =
-      process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
-    const featureBucket =
-      FEATURE_BUCKET_BY_CID[cid] ||
-      world.gherkinDocument?.feature?.name ||
-      "feature";
-
-    const scenarioName = world.pickle?.name ?? "scenario";
-    const { base } = scenarioDirs(featureBucket, scenarioName);
-
-    // Move the MP4 produced by wdio-video-reporter
-    const srcVideo = cid ? findVideoForCid(cid) : null;
-
-    let videoRelPath = "";
-    if (srcVideo) {
-      const destVideo = path.join(base, "run.mp4");
-      // Overwrite any stale file
-      try {
-        if (fs.existsSync(destVideo)) fs.rmSync(destVideo, { force: true });
-      } catch {}
-
-      fs.renameSync(srcVideo, destVideo);
-
-      // Path relative to report output
-      videoRelPath = path
-        .relative(path.join(REPORTS_ROOT, "cucumber-html"), destVideo)
-        .split(path.sep)
-        .join("/");
-    }
-
-    // Remove any legacy logs folder
-    try {
-      fs.rmSync(path.join(base, "logs"), { recursive: true, force: true });
-    } catch {}
-
-    // Attach a <video> player to the Cucumber JSON
-    try {
-      const html = videoRelPath
-        ? `<details><summary>Scenario video</summary><video controls width="880" src="${videoRelPath}"></video></details>`
-        : `<em>No video found</em>`;
-      // @ts-ignore
-      await context.attach(html, "text/html");
-    } catch {}
-  },
+  afterScenario: async function (world, result, context) {},
 
   /**
    * Clear the worker's cached feature bucket after each feature.
    */
-  afterFeature: function (_uri: string, _feature): void {
-    const cid =
-      process.env.WDIO_WORKER_ID || (browser as any)?.config?.cid || "";
-    if (cid) {
-      delete FEATURE_BUCKET_BY_CID[cid];
-    }
-  },
+  afterFeature: function (_uri: string, _feature): void {},
 
   /**
    * Gets executed after all tests are done.
