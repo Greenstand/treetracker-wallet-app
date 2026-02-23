@@ -1,3 +1,5 @@
+import path from "node:path";
+
 export const CAPABILITY_WEB_CHROME = [
   {
     browserName: "chrome",
@@ -20,14 +22,27 @@ export const CAPABILITY_WEB_CHROME_FOR_DEBUG = [
   },
 ];
 
+const ANDROID_APP_PATH =
+  process.env.ANDROID_APP_PATH ||
+  path.resolve(
+    process.cwd(),
+    "..",
+    "treetracker-android",
+    "app",
+    "build",
+    "outputs",
+    "apk",
+    "release",
+    "app-release.apk",
+  );
+
 export const CAPABILITY_ANDROID = [
   {
     platformName: "Android",
     "appium:deviceName": "Pixel_9a",
-    "appium:app": `${process.env.PROJECT_ROOT_ANDROID}/android/app/build/outputs/apk/debug/app-debug.apk`,
+    "appium:app": ANDROID_APP_PATH,
     "appium:automationName": "UiAutomator2",
-    "appium:appPackage": "com.gtw.app",
-    "appium:appActivity": "com.gtw.app.MainActivity",
+    "appium:ignoreHiddenApiPolicyError": true,
     "appium:noReset": true,
     "appium:newCommandTimeout": 240,
     "appium:appWaitPackage": "*",

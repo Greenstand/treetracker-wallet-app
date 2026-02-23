@@ -7,6 +7,10 @@ const PLATFORM = process.env.PLATFORM || "android";
 export const config: Options.Testrunner = {
   ...baseConfig,
 
+  hostname: "localhost",
+  port: 4723,
+  path: "/",
+
   // Mobile-specific settings
   maxInstances: 1,
   waitforTimeout: 30000,

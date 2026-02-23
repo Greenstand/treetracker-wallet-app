@@ -15,3 +15,16 @@ Then("I should see the first screen", async () => {
   await elem.waitForDisplayed({ timeout: 20000 });
   await expect(elem).toBeDisplayed();
 });
+
+Given("the user installed the tree capture app", async function () {
+  console.log("Tree capture app is installed");
+});
+
+Then(
+  "the user can open the app and start populating the user info",
+  async () => {
+    const elem = await $("~onboardingScreen");
+    await elem.waitForDisplayed({ timeout: 20000 });
+    await expect(elem).toBeDisplayed();
+  },
+);
