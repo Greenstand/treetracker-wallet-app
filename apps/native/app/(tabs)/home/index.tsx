@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { CopilotStep, walkthroughable, useCopilot } from "react-native-copilot";
 import Heading from "@common/Heading";
@@ -25,6 +26,7 @@ export const balanceData = [
 ];
 
 const WalkthroughableView = walkthroughable(View);
+const HOME_TOUR_SEEN_KEY = "hasSeenHomeTour";
 
 export default function Home() {
   const [isSearching] = useAtom(isSearchingAtom);
@@ -40,6 +42,22 @@ export default function Home() {
   }
 
   const { colors, typography, layout, spacing } = THEME;
+
+  useEffect(() => {
+    const checkHomeTourStatus = async () => {
+      try {
+        const hasSeenTour = await AsyncStorage.getItem(HOME_TOUR_SEEN_KEY);
+        if (hasSeenTour === "true") {
+          hasStartedRef.current = true;
+        }
+      } catch (error) {
+        console.warn("Failed to read home tour status:", error);
+      }
+    };
+
+    checkHomeTourStatus();
+  }, []);
+
   useEffect(() => {
     if (!isSearching) {
       selectCategory("all");
@@ -51,8 +69,13 @@ export default function Home() {
       return;
     }
 
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
       hasStartedRef.current = true;
+      try {
+        await AsyncStorage.setItem(HOME_TOUR_SEEN_KEY, "true");
+      } catch (error) {
+        console.warn("Failed to persist home tour status:", error);
+      }
       start();
     }, 300);
 
