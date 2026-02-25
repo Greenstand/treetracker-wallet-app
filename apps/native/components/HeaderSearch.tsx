@@ -22,7 +22,15 @@ import {
 import { THEME } from "@/theme";
 import { WINDOW_WIDTH } from "@utils/dimensions";
 
-export default function HeaderSearch() {
+interface HeaderSearchProps {
+  showBackOnLeft?: boolean;
+  onLeftBackPress?: () => void;
+}
+
+export default function HeaderSearch({
+  showBackOnLeft = false,
+  onLeftBackPress,
+}: HeaderSearchProps) {
   const [query, setQuery] = useAtom(searchQueryAtom);
 
   const [isSearching] = useAtom(isSearchingAtom);
@@ -77,14 +85,23 @@ export default function HeaderSearch() {
       />
 
       <View style={[styles.leftArea, { width: isSearching ? 30 : 60 }]}>
-        {!isSearching && (
-          <View style={{ alignItems: "center" }}>
-            <Image
-              source={require("../assets/images/greenstandLogo.png")}
-              style={{ width: 40, height: 40 }}
-            />
-          </View>
-        )}
+        {!isSearching &&
+          (showBackOnLeft ? (
+            <Pressable
+              accessibilityLabel="Go back"
+              onPress={onLeftBackPress}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="arrow-back" size={24} color={colors.white} />
+            </Pressable>
+          ) : (
+            <View style={{ alignItems: "center" }}>
+              <Image
+                source={require("../assets/images/greenstandLogo.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </View>
+          ))}
         {isSearching && (
           <Pressable
             accessibilityLabel="Close search"
