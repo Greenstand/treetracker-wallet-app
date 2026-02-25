@@ -4,7 +4,11 @@ import { SectionList } from "react-native";
 import { useSearchResults } from "core/src/hooks";
 import SearchResultItem from "./SearchResultItem";
 
-const SearchResults = () => {
+interface SearchResultsProps {
+  onItemPress?: (item: any) => void;
+}
+
+const SearchResults = ({ onItemPress }: SearchResultsProps) => {
   const { sections, hasNoResults } = useSearchResults();
 
   if (hasNoResults) {
@@ -14,7 +18,9 @@ const SearchResults = () => {
   return (
     <SectionList
       sections={sections}
-      renderItem={({ item }) => <SearchResultItem item={item} />}
+      renderItem={({ item }) => (
+        <SearchResultItem item={item} onPress={onItemPress} />
+      )}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={<EmptyState />}
       initialNumToRender={8}

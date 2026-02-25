@@ -5,14 +5,15 @@ import Avatar from "./common/Avatar";
 
 interface SearchResultItemProps {
   item: any;
-  onPress?: () => void;
+  onPress?: (item: any) => void;
 }
 
 function SearchResultItem({ item, onPress }: SearchResultItemProps) {
   const { colors, typography, spacing } = THEME;
+
   const handlePress = () => {
     if (onPress) {
-      onPress();
+      onPress(item);
     }
   };
 
