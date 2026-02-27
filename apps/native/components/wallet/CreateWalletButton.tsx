@@ -24,8 +24,8 @@ export const CreateWallet: React.FC<CreateWalletProps> = ({
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <Ionicons
           name="add"
-          size={20}
-          color={isActive ? Colors.green : "#999"}
+          size={25}
+          color={isActive ? Colors.green : Colors.light.tabIconDefault}
           style={{ marginRight: 6 }}
         />
         <Text style={[styles.text, isActive && styles.activeText]}>
@@ -47,12 +47,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fafafa",
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#ddd",
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
@@ -63,8 +59,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 14,
-    color: "#999",
+    fontSize: 16,
+    color: Colors.light.tabIconDefault,
     fontWeight: "600",
     letterSpacing: 0.5,
   },
@@ -72,17 +68,16 @@ const styles = StyleSheet.create({
     color: Colors.green,
   },
   infoCircle: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#7A7D80", // close to your gray
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: Colors.light.tabIconDefault,
     alignItems: "center",
     justifyContent: "center",
   },
   infoText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 15,
     fontWeight: "600",
-    lineHeight: 17,
   },
 });
