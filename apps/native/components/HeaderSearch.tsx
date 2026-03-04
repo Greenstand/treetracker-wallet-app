@@ -24,7 +24,6 @@ import { WINDOW_WIDTH } from "@utils/dimensions";
 
 export default function HeaderSearch() {
   const [query, setQuery] = useAtom(searchQueryAtom);
-
   const [isSearching] = useAtom(isSearchingAtom);
   const [isLoading] = useAtom(searchLoadingAtom);
 
@@ -33,12 +32,10 @@ export default function HeaderSearch() {
   const performSearch = useSetAtom(performSearchAtom);
 
   const HEADER_HEIGHT = WINDOW_WIDTH * 0.25;
-
   const { colors, typography, layout } = THEME;
 
   const handleSearchChange = (text: string) => {
     setQuery(text);
-
     if (text.length > 0) {
       performSearch(text);
     } else {
@@ -46,14 +43,8 @@ export default function HeaderSearch() {
     }
   };
 
-  const handleStartSearch = () => {
-    startSearch();
-  };
-
-  const handleCancelSearch = () => {
-    cancelSearch();
-  };
-
+  const handleStartSearch = () => startSearch();
+  const handleCancelSearch = () => cancelSearch();
   const handleSubmitSearch = () => {
     if (query.trim()) {
       performSearch(query);
@@ -76,6 +67,7 @@ export default function HeaderSearch() {
         backgroundColor={colors.lightGreen}
       />
 
+      {/* LEFT: Logo or back arrow */}
       <View style={[styles.leftArea, { width: isSearching ? 30 : 60 }]}>
         {!isSearching && (
           <View style={{ alignItems: "center" }}>
@@ -96,6 +88,7 @@ export default function HeaderSearch() {
         )}
       </View>
 
+      {/* CENTER: Search input when active */}
       <View
         style={[styles.centerArea, { paddingHorizontal: isSearching ? 0 : 8 }]}
       >
@@ -131,17 +124,29 @@ export default function HeaderSearch() {
         )}
       </View>
 
-      <View style={[styles.rightArea, { width: isSearching ? 0 : 40 }]}>
+      {/* RIGHT: Search + Filter icons */}
+      <View style={[styles.rightArea, { width: isSearching ? 0 : 70 }]}>
         {!isSearching && (
-          <TouchableOpacity
-            accessibilityLabel="Open search"
-            onPress={handleStartSearch}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons name="search" size={24} color={colors.white} />
-          </TouchableOpacity>
+          <View style={styles.iconRow}>
+            <TouchableOpacity
+              accessibilityLabel="Open search"
+              onPress={handleStartSearch}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="search" size={24} color={colors.white} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              accessibilityLabel="Filter wallets"
+              onPress={() => {}}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={{ marginLeft: 16 }}
+            >
+              <Ionicons name="options-outline" size={24} color={colors.white} />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
+
       <StatusBar hidden />
     </View>
   );
@@ -164,6 +169,10 @@ const styles = StyleSheet.create({
   rightArea: {
     alignItems: "flex-end",
     justifyContent: "center",
+  },
+  iconRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchBox: {
     flexDirection: "row",

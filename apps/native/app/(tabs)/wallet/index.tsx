@@ -5,6 +5,8 @@ import { WalletList } from "../../../components/wallet/WalletList";
 import { CreateWallet } from "../../../components/wallet/CreateWalletButton";
 import { WalletCreateDrawer } from "../../../components/wallet/WalletCreateDrawer";
 import { Colors } from "../../../constants/Colors";
+import HeaderSearch from "../../../components/HeaderSearch";
+
 
 const mockWallets = [
   { id: "1", name: "Wallet 2", balance: 1000, date: "May 22, 2024" },
@@ -62,6 +64,10 @@ export default function Wallet() {
   };
 
   return (
+    <>
+      <HeaderSearch />
+    
+    
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         style={styles.scrollView}
@@ -85,6 +91,7 @@ export default function Wallet() {
         <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 }
 
