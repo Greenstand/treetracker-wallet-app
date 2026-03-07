@@ -18,7 +18,6 @@ export default function Wallet() {
 
   const handleWalletPress = (walletId: string) => {
     const selectedWallet = mockWallets.find((wallet) => wallet.id === walletId);
-
     router.push({
       pathname: "/(tabs)/wallet/[walletId]",
       params: {
@@ -30,18 +29,12 @@ export default function Wallet() {
     });
   };
 
-  // Handle create wallet button press
-  const handleCreateWalletToggle = () => {
-    setIsCreatingWallet(true);
-  };
+  const handleCreateWalletToggle = () => setIsCreatingWallet(true);
 
   const handleDrawerRequestClose = (isDirty: boolean) => {
-    console.log("handleDrawerRequestClose called, isDirty:", isDirty);
     if (isDirty) {
-      console.log("Showing discard modal");
       setShowDiscardModal(true);
     } else {
-      console.log("Closing drawer directly");
       setIsCreatingWallet(false);
     }
   };
@@ -51,13 +44,10 @@ export default function Wallet() {
     setIsCreatingWallet(false);
   };
 
-  const handleKeep = () => {
-    setShowDiscardModal(false);
-  };
+  const handleKeep = () => setShowDiscardModal(false);
 
   const handleFormSubmit = (data: { name: string; description: string }) => {
     console.log("Creating wallet with:", data);
-    // TODO: Call API to create wallet
     setIsCreatingWallet(false);
   };
 
@@ -67,7 +57,6 @@ export default function Wallet() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Create Wallet Button Component */}
         <CreateWallet
           onPress={handleCreateWalletToggle}
           isActive={isCreatingWallet}
@@ -81,14 +70,12 @@ export default function Wallet() {
           onDiscardConfirm={handleDiscard}
           onDiscardCancel={handleKeep}
         />
-
         <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-// Styling for the Wallet screen
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
