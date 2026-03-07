@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import { selectCategoryAtom } from "core/src/atoms/search";
 import { useAtom } from "jotai";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { SEARCH_CATEGORIES } from "core/src/types/search";
 import { THEME, TypographyWeight } from "@/theme";
 
@@ -44,7 +44,10 @@ export default function ActionSelectionModal() {
           onPress={() => {
             handleCategorySelect(SEARCH_CATEGORIES.SEND);
             setModalVisible(false);
-            router.push("/search");
+            router.push({
+              pathname: "/transfer",
+              params: { mode: SEARCH_CATEGORIES.SEND },
+            });
           }}
         >
           <Text
@@ -70,7 +73,10 @@ export default function ActionSelectionModal() {
           onPress={() => {
             handleCategorySelect(SEARCH_CATEGORIES.REQUEST);
             setModalVisible(false);
-            router.push("/search");
+            router.push({
+              pathname: "/transfer",
+              params: { mode: SEARCH_CATEGORIES.REQUEST },
+            });
           }}
         >
           <Text
