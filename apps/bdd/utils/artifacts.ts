@@ -1,5 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import { dirname } from "node:path";
+
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Root folders for test artifacts (reports + videos).
