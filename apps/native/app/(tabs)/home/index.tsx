@@ -1,9 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAtom } from "jotai";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useRouter } from "expo-router";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { CopilotStep, walkthroughable, useCopilot } from "react-native-copilot";
 import Heading from "@common/Heading";
 import WalletSummary from "@components/ui/WalletSummary";
@@ -30,8 +40,12 @@ export default function Home() {
   const [isSearching] = useAtom(isSearchingAtom);
   const [isLoading] = useAtom(searchLoadingAtom);
   const [, selectCategory] = useAtom(selectCategoryAtom);
+  const params = useLocalSearchParams();
   const { start } = useCopilot();
   const hasStartedRef = useRef(false);
+  const lastSnackbarKeyRef = useRef<string | null>(null);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const router = useRouter();
 
@@ -58,6 +72,47 @@ export default function Home() {
 
     return () => clearTimeout(timeout);
   }, [isLoading, isSearching, start]);
+
+  const snackbarKey = useMemo(() => {
+    const key = params.snackbarKey;
+    return Array.isArray(key) ? key[0] : key;
+  }, [params.snackbarKey]);
+
+  const snackbarAmount = useMemo(() => {
+    const amount = params.snackbarAmount;
+    return Array.isArray(amount) ? amount[0] : amount;
+  }, [params.snackbarAmount]);
+
+  const snackbarAction = useMemo(() => {
+    const action = params.snackbarAction;
+    return Array.isArray(action) ? action[0] : action;
+  }, [params.snackbarAction]);
+
+  useEffect(() => {
+    if (!snackbarKey || snackbarKey === lastSnackbarKeyRef.current) {
+      return;
+    }
+
+    const parsedAmount = Number.parseFloat(snackbarAmount ?? "");
+    const amountText = Number.isFinite(parsedAmount) ? parsedAmount : 0;
+    const actionText = snackbarAction === "request" ? "requested!" : "sent!";
+
+    setSnackbarMessage(`${amountText} Tokens ${actionText}`);
+    setSnackbarVisible(true);
+    lastSnackbarKeyRef.current = snackbarKey;
+  }, [snackbarAction, snackbarAmount, snackbarKey]);
+
+  useEffect(() => {
+    if (!snackbarVisible) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSnackbarVisible(false);
+    }, 6000);
+
+    return () => clearTimeout(timeout);
+  }, [snackbarVisible]);
 
   const ActivityHeader = () => (
     <View
@@ -149,6 +204,21 @@ export default function Home() {
           />
         </>
       )}
+
+      {snackbarVisible ? (
+        <View style={styles.snackbarContainer}>
+          <Text style={styles.snackbarMessage}>{snackbarMessage}</Text>
+          <Pressable
+            onPress={() => setSnackbarVisible(false)}
+            style={styles.snackbarUndoButton}
+          >
+            <Text style={styles.snackbarUndoText}>UNDO</Text>
+          </Pressable>
+          <Pressable onPress={() => setSnackbarVisible(false)}>
+            <Ionicons name="close" size={24} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -247,5 +317,37 @@ const styles = StyleSheet.create({
 
   viewAllText: {
     textDecorationLine: "underline",
+  },
+
+  snackbarContainer: {
+    position: "absolute",
+    left: 12,
+    right: 12,
+    bottom: 92,
+    borderRadius: 4,
+    backgroundColor: "#323232",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    elevation: 7,
+  },
+  snackbarMessage: {
+    flex: 1,
+    color: "#FFFFFF",
+    fontSize: 28 / 2,
+  },
+  snackbarUndoButton: {
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  snackbarUndoText: {
+    color: "#61892F",
+    fontSize: 12,
+    fontWeight: "700",
   },
 });
