@@ -34,7 +34,7 @@ export default function TransferNotificationScreen() {
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <HeaderSearch />
+      <HeaderSearch disableSearch centerLogo />
 
       <View
         style={[styles.mainContent, { backgroundColor: colors.background }]}

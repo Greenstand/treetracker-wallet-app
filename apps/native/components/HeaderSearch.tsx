@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   TextInput,
@@ -25,11 +25,15 @@ import { WINDOW_WIDTH } from "@utils/dimensions";
 interface HeaderSearchProps {
   showBackOnLeft?: boolean;
   onLeftBackPress?: () => void;
+  disableSearch?: boolean;
+  centerLogo?: boolean;
 }
 
 export default function HeaderSearch({
   showBackOnLeft = false,
   onLeftBackPress,
+  disableSearch = false,
+  centerLogo = false,
 }: HeaderSearchProps) {
   const [query, setQuery] = useAtom(searchQueryAtom);
 
@@ -39,6 +43,14 @@ export default function HeaderSearch({
   const startSearch = useSetAtom(startSearchAtom);
   const cancelSearch = useSetAtom(cancelSearchAtom);
   const performSearch = useSetAtom(performSearchAtom);
+
+  const showSearchState = !disableSearch && isSearching;
+
+  useEffect(() => {
+    if (disableSearch) {
+      cancelSearch();
+    }
+  }, [disableSearch, cancelSearch]);
 
   const HEADER_HEIGHT = WINDOW_WIDTH * 0.25;
 
@@ -74,18 +86,18 @@ export default function HeaderSearch({
         styles.headerContainer,
         {
           paddingHorizontal: layout.screenPadding,
-          backgroundColor: isSearching ? colors.white : colors.lightGreen,
+          backgroundColor: showSearchState ? colors.white : colors.lightGreen,
           height: HEADER_HEIGHT,
         },
       ]}
     >
       <StatusBar
-        barStyle={isSearching ? "dark-content" : "light-content"}
+        barStyle={showSearchState ? "dark-content" : "light-content"}
         backgroundColor={colors.lightGreen}
       />
 
-      <View style={[styles.leftArea, { width: isSearching ? 30 : 60 }]}>
-        {!isSearching &&
+      <View style={[styles.leftArea, { width: showSearchState ? 30 : 60 }]}>
+        {!showSearchState &&
           (showBackOnLeft ? (
             <Pressable
               accessibilityLabel="Go back"
@@ -94,15 +106,17 @@ export default function HeaderSearch({
             >
               <Ionicons name="arrow-back" size={24} color={colors.white} />
             </Pressable>
-          ) : (
+          ) : !centerLogo ? (
             <View style={{ alignItems: "center" }}>
               <Image
                 source={require("../assets/images/greenstandLogo.png")}
                 style={{ width: 40, height: 40 }}
               />
             </View>
+          ) : (
+            <View />
           ))}
-        {isSearching && (
+        {showSearchState && (
           <Pressable
             accessibilityLabel="Close search"
             onPress={handleCancelSearch}
@@ -114,9 +128,12 @@ export default function HeaderSearch({
       </View>
 
       <View
-        style={[styles.centerArea, { paddingHorizontal: isSearching ? 0 : 8 }]}
+        style={[
+          styles.centerArea,
+          { paddingHorizontal: showSearchState ? 0 : 8 },
+        ]}
       >
-        {isSearching && (
+        {showSearchState && (
           <View style={[styles.searchBox, { backgroundColor: colors.gray100 }]}>
             <Ionicons
               name="search"
@@ -146,10 +163,18 @@ export default function HeaderSearch({
             )}
           </View>
         )}
+        {!showSearchState && centerLogo && (
+          <View style={styles.logoCenterContainer}>
+            <Image
+              source={require("../assets/images/greenstandLogo.png")}
+              style={{ width: 40, height: 40 }}
+            />
+          </View>
+        )}
       </View>
 
-      <View style={[styles.rightArea, { width: isSearching ? 0 : 40 }]}>
-        {!isSearching && (
+      <View style={[styles.rightArea, { width: showSearchState ? 0 : 40 }]}>
+        {!showSearchState && !disableSearch && (
           <TouchableOpacity
             accessibilityLabel="Open search"
             onPress={handleStartSearch}
@@ -176,6 +201,10 @@ const styles = StyleSheet.create({
   },
   centerArea: {
     flex: 1,
+    justifyContent: "center",
+  },
+  logoCenterContainer: {
+    alignItems: "center",
     justifyContent: "center",
   },
   rightArea: {

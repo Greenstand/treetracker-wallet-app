@@ -37,6 +37,8 @@ export default function TransferRecipientScreen() {
       <HeaderSearch
         showBackOnLeft
         onLeftBackPress={() => router.replace("/home")}
+        disableSearch
+        centerLogo
       />
       <View style={[styles.container, { paddingHorizontal: spacing.md }]}>
         <QRCodeDisplay onPress={handlePress} />
