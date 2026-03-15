@@ -45,6 +45,10 @@ export default function HeaderSearch({
   const performSearch = useSetAtom(performSearchAtom);
 
   const showSearchState = !disableSearch && isSearching;
+  const nonSearchLeftWidth = 60;
+  const nonSearchRightWidth = centerLogo ? nonSearchLeftWidth : 40;
+  const leftAreaWidth = showSearchState ? 30 : nonSearchLeftWidth;
+  const rightAreaWidth = showSearchState ? 0 : nonSearchRightWidth;
 
   useEffect(() => {
     if (disableSearch) {
@@ -96,7 +100,7 @@ export default function HeaderSearch({
         backgroundColor={colors.lightGreen}
       />
 
-      <View style={[styles.leftArea, { width: showSearchState ? 30 : 60 }]}>
+      <View style={[styles.leftArea, { width: leftAreaWidth }]}>
         {!showSearchState &&
           (showBackOnLeft ? (
             <Pressable
@@ -173,7 +177,7 @@ export default function HeaderSearch({
         )}
       </View>
 
-      <View style={[styles.rightArea, { width: showSearchState ? 0 : 40 }]}>
+      <View style={[styles.rightArea, { width: rightAreaWidth }]}>
         {!showSearchState && !disableSearch && (
           <TouchableOpacity
             accessibilityLabel="Open search"
