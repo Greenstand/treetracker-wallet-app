@@ -1,0 +1,20 @@
+name: Deploy Queue to Prod env
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Run queue migration
+        env:
+          DATABASE_URL: ${{ secrets.QUEUE_DATABASE_URL_PROD }}
+        run: |
+          psql "$DATABASE_URL" -f packages/queue/migrations/001_create_queue_message.sql
