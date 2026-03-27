@@ -1,5 +1,7 @@
 import { generateGiftToken } from '../generateGiftToken';
 
+jest.setTimeout(30000);
+
 describe('generateGiftToken (e2e)', () => {
   it('should return a JWT string', async () => {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
