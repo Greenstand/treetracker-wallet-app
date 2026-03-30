@@ -7,7 +7,6 @@ import {
   Keyboard,
   Platform,
   LayoutAnimation,
-  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
@@ -19,7 +18,7 @@ import { Colors } from "@/constants/Colors";
 interface Props {
   visible: boolean;
   onRequestClose: (isDirty: boolean) => void;
-  onSubmit: (data: { name: string; description: string }) => void;
+  onSubmit: (data: { name: string; description: string }) => Promise<void>;
   existingWalletNames: string[];
   showDiscardPrompt?: boolean;
   onDiscardConfirm?: () => void;
@@ -38,6 +37,8 @@ export const WalletCreateDrawer: React.FC<Props> = ({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [bottomOffset, setBottomOffset] = useState(0);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const normalizedName = name.trim().toLowerCase();
 
@@ -59,8 +60,16 @@ export const WalletCreateDrawer: React.FC<Props> = ({
     if (!visible) {
       setName("");
       setDescription("");
+      setSubmitError("");
+      setIsSubmitting(false);
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (submitError) {
+      setSubmitError("");
+    }
+  }, [name, description]);
 
   // Keyboard animation
   useEffect(() => {
@@ -85,13 +94,24 @@ export const WalletCreateDrawer: React.FC<Props> = ({
     };
   }, []);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!isValidName) return;
 
-    onSubmit({
-      name: name.trim(),
-      description: description.trim(),
-    });
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      await onSubmit({
+        name: name.trim(),
+        description: description.trim(),
+      });
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to create wallet",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -134,10 +154,22 @@ export const WalletCreateDrawer: React.FC<Props> = ({
           />
         </View>
 
+        {submitError ? (
+          <View style={styles.errorRow}>
+            <Ionicons
+              name="alert-circle"
+              size={16}
+              color={Colors.red}
+              style={styles.errorIcon}
+            />
+            <Text style={styles.errorText}>{submitError}</Text>
+          </View>
+        ) : null}
+
         <CustomSubmitButton
           title="CREATE WALLET"
           onPress={handleCreate}
-          disabled={isValidName}
+          disabled={isValidName && !isSubmitting}
           style={styles.submitButton}
         />
       </View>
@@ -163,5 +195,18 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.lightGray,
   },
   title: { fontSize: 20, fontWeight: "600" },
+  errorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  errorIcon: {
+    marginRight: 6,
+  },
+  errorText: {
+    flex: 1,
+    color: Colors.red,
+    fontSize: 12,
+  },
   submitButton: { marginTop: 30 },
 });
