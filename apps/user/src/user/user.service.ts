@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { LoginUserDto } from "@dtos/login-user.dto";
 import { RegisterUserDto } from "@dtos/register-user.dto";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
@@ -14,7 +15,7 @@ export class UserService {
     private authService: AuthService,
   ) {}
 
-  public async loginUser(loginUserDto) {
+  public async loginUser(loginUserDto: LoginUserDto) {
     if (!loginUserDto.username || !loginUserDto.password) {
       throw new HttpException("Missing credentials", HttpStatus.BAD_REQUEST);
     }
@@ -52,6 +53,10 @@ export class UserService {
       }
       return { access_token };
     } catch (error: any) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       const status = error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR;
       const message =
         error.response?.data?.error_description ||
@@ -108,18 +113,36 @@ export class UserService {
       if (response?.status === 201) {
         return { success: true, message: "User created successfully!" };
       }
+
+      throw new HttpException(
+        "Unexpected response from identity provider",
+        HttpStatus.BAD_GATEWAY,
+      );
     } catch (error: any) {
-      const errorMessage = error.response?.data?.errorMessage || error.message;
-      if (error.status === 409) {
-        // user already exists
-        throw new HttpException(errorMessage, 409);
-      } else {
-        // Logger.error(errorMessage);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      const errorMessage =
+        error.response?.data?.errorMessage || error.message || "Unknown error";
+
+      if (error.response?.status === 409) {
+        Logger.warn(
+          `User registration conflict: ${errorMessage}`,
+          UserService.name,
+        );
         throw new HttpException(
-          "Error creating user",
-          HttpStatusCode.Forbidden,
+          errorMessage || "User already exists",
+          HttpStatus.CONFLICT,
         );
       }
+
+      Logger.error(
+        `User creation failed: ${errorMessage}`,
+        undefined,
+        UserService.name,
+      );
+      throw new HttpException("Error creating user", HttpStatusCode.Forbidden);
     }
   }
 }

@@ -1,6 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpModule } from "@nestjs/axios";
-import { HttpException, HttpStatus, INestApplication } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  INestApplication,
+  ValidationPipe,
+} from "@nestjs/common";
 import supertest from "supertest";
 import { UserService } from "./user.service";
 import { AuthService } from "../auth/auth.service";
@@ -22,6 +27,7 @@ describe("User Registration Integration Tests", () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     userService = moduleFixture.get<UserService>(UserService);
     authService = moduleFixture.get<AuthService>(AuthService);
     await app.init();
@@ -57,7 +63,30 @@ describe("User Registration Integration Tests", () => {
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.CREATED)
-      .expect(response => {
+      .expect((response) => {
+        expect(response.body).toEqual(mockResponse);
+      });
+  });
+
+  it("should register a user without firstName/lastName (web app payload)", async () => {
+    const mockResponse = {
+      success: true,
+      message: "User created successfully!",
+    };
+
+    jest.spyOn(userService, "createUser").mockResolvedValue(mockResponse);
+
+    const minimalDto = {
+      username: "webuser",
+      email: "webuser@example.com",
+      password: "securepassword123",
+    };
+
+    await supertest(app.getHttpServer())
+      .post("/register")
+      .send(minimalDto)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
         expect(response.body).toEqual(mockResponse);
       });
   });
@@ -84,7 +113,7 @@ describe("User Registration Integration Tests", () => {
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.CONFLICT)
-      .expect(response => {
+      .expect((response) => {
         expect(response.body.message).toBe("User already exists");
       });
   });
@@ -112,7 +141,7 @@ describe("User Registration Integration Tests", () => {
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.FORBIDDEN)
-      .expect(response => {
+      .expect((response) => {
         expect(response.body.message).toBe("Error creating user");
       });
   });
@@ -139,7 +168,7 @@ describe("User Registration Integration Tests", () => {
       .post("/register")
       .send(registerUserDto)
       .expect(HttpStatus.FORBIDDEN)
-      .expect(response => {
+      .expect((response) => {
         expect(response.body.message).toBe("Error creating user");
       });
   });
@@ -160,31 +189,24 @@ describe("User Registration Integration Tests", () => {
         .post("/login")
         .send(loginDto)
         .expect(HttpStatus.OK)
-        .expect(response => {
+        .expect((response) => {
           // Adjust this based on actual controller output
           expect(response.body.access_token).toBe(mockToken);
         });
     });
 
-    it("should return 400 if credentials are missing", async () => {
+    it("should return 400 if credentials are missing (ValidationPipe rejects empty fields)", async () => {
       const loginDto = {
         username: "",
         password: "",
       };
 
-      const mockError = new HttpException(
-        "Missing credentials",
-        HttpStatus.BAD_REQUEST,
-      );
-
-      jest.spyOn(userService, "loginUser").mockRejectedValue(mockError);
-
       await supertest(app.getHttpServer())
         .post("/login")
         .send(loginDto)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
-          expect(response.body.message).toBe("Missing credentials");
+        .expect((response) => {
+          expect(Array.isArray(response.body.message)).toBe(true);
         });
     });
 
@@ -205,8 +227,18 @@ describe("User Registration Integration Tests", () => {
         .post("/login")
         .send(loginDto)
         .expect(HttpStatus.UNAUTHORIZED)
-        .expect(response => {
+        .expect((response) => {
           expect(response.body.message).toBe("Invalid username or password");
+        });
+    });
+
+    it("should return 400 if login body is entirely missing", async () => {
+      await supertest(app.getHttpServer())
+        .post("/login")
+        .send({})
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect((response) => {
+          expect(Array.isArray(response.body.message)).toBe(true);
         });
     });
 
@@ -227,7 +259,7 @@ describe("User Registration Integration Tests", () => {
         .post("/login")
         .send(loginDto)
         .expect(HttpStatus.INTERNAL_SERVER_ERROR)
-        .expect(response => {
+        .expect((response) => {
           expect(response.body.message).toBe("Internal server error");
         });
     });
