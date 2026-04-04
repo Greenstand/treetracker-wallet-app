@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
+import { createWallet } from "@treetracker/wallet";
 import { WalletList } from "../../../components/wallet/WalletList";
 import { CreateWallet } from "../../../components/wallet/CreateWalletButton";
 import { WalletCreateDrawer } from "../../../components/wallet/WalletCreateDrawer";
@@ -13,6 +16,7 @@ const mockWallets = [
 
 export default function Wallet() {
   const router = useRouter();
+  const token = useAtomValue(tokenAtom);
   const [isCreatingWallet, setIsCreatingWallet] = useState(false);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
 
@@ -46,8 +50,22 @@ export default function Wallet() {
 
   const handleKeep = () => setShowDiscardModal(false);
 
-  const handleFormSubmit = (data: { name: string; description: string }) => {
-    console.log("Creating wallet with:", data);
+  const handleFormSubmit = async (data: {
+    name: string;
+    description: string;
+  }) => {
+    if (!token) {
+      throw new Error("User not authenticated");
+    }
+
+    await createWallet(
+      {
+        name: data.name,
+        about: data.description,
+      },
+      token,
+    );
+
     setIsCreatingWallet(false);
   };
 

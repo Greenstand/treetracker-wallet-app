@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 let TREETRACKER_API: string = "";
 
 const isNative =
@@ -12,6 +10,8 @@ if (!isNative) {
   TREETRACKER_API =
     Constants.expoConfig?.extra?.apiBaseUrl ??
     Constants.manifest?.extra?.apiBaseUrl ??
+    Constants.expoConfig?.extra?.EXPO_PUBLIC_TREETRACKER_API ??
+    Constants.manifest?.extra?.EXPO_PUBLIC_TREETRACKER_API ??
     "";
 }
 
