@@ -1,10 +1,18 @@
 import { Stack } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import HeaderSearch from "@/components/HeaderSearch";
 
 export default function WalletLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" options={{ title: "Wallets" }} />
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Wallets",
+          headerShown: true,
+          header: () => <HeaderSearch />,
+        }}
+      />
       <Stack.Screen
         name="[walletId]"
         options={{

@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 
 type KeycloakResponse = {
@@ -41,18 +41,19 @@ export class AuthService {
       );
 
       this.bearerToken = response?.data?.access_token;
-      this.tokenExpiresAt = Date.now() * response?.data?.expires_in * 1000;
+      this.tokenExpiresAt = Date.now() + response?.data?.expires_in * 1000;
 
       return response?.data?.access_token;
     } catch (e) {
+      const status = e.response?.status || HttpStatus.SERVICE_UNAVAILABLE;
+      const description =
+        e.response?.data?.error_description || e.message || "Unknown error";
+
       Logger.error(
-        `logger: keycloak service account auth returned with ${e.response.status}, ${e.response.data.error_description}, `,
+        `Keycloak service account auth failed: HTTP ${status} - ${description}`,
       );
 
-      throw new HttpException(
-        `Service account failed to authenticate`,
-        e.response.status,
-      );
+      throw new HttpException(`Service account failed to authenticate`, status);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { setupSwagger } from "@utils/swagger";
@@ -15,8 +15,8 @@ async function bootstrap() {
   const corsOptions = {
     origin:
       process.env.NODE_ENV === "production"
-        ? process.env.CORS_ORIGINS?.split(",").map(origin => origin.trim())
-        : process.env.CORS_ORIGINS_DEV?.split(",").map(origin =>
+        ? process.env.CORS_ORIGINS?.split(",").map((origin) => origin.trim())
+        : process.env.CORS_ORIGINS_DEV?.split(",").map((origin) =>
             origin.trim(),
           ) || [
             "http://localhost:3000",
@@ -30,6 +30,9 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   };
 
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: false }),
+  );
   app.enableCors(corsOptions);
   await app.listen(port, "0.0.0.0");
   Logger.log(
@@ -39,7 +42,7 @@ async function bootstrap() {
   );
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   Logger.error(`Failed to start application: ${err.message}`);
   process.exit(1);
 });
