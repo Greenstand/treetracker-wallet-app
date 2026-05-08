@@ -1,8 +1,8 @@
 # This workflow triggers on pull requests that modify files (other than *.md)
-# in the wallet package (packages/wallet/**) or its dependencies (packages/keycloak/**, packages/core/**).
+# in the queue package (packages/queue/**).
 # It runs e2e tests to validate changes.
 
-name: PR CI for Wallet Package
+name: PR CI/CD for Queue Package
 
 on:
   pull_request_target:
@@ -12,24 +12,19 @@ on:
       - reopened
       - edited
     paths:
-      - "packages/wallet/**"
-      - "packages/keycloak/**"
-      - "packages/core/**"
-      - ".github/workflows/ci-cd-pr-wallet-package-wallet.yml"
+      - "packages/queue/**"
+      - ".github/workflows/ci-cd-pr-package-queue.yml"
       - "!**/*.md"
   workflow_dispatch:
 
 jobs:
   e2e-tests:
-    name: E2E Tests for Wallet Package
+    name: E2E Tests for Queue Package
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     env:
-      PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
-      PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
-      PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
-      PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
-      NEXT_PUBLIC_TREETRACKER_WALLET_API: ${{ vars.NEXT_PUBLIC_TREETRACKER_WALLET_API }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
 
     steps:
       - name: Checkout repository (PR head)
@@ -48,12 +43,10 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Install dependencies
-        run: yarn install --immutable
+        working-directory: packages/queue
+        run: npm install --no-workspaces --legacy-peer-deps --ignore-scripts
 
-      - name: Run e2e test for wallet package
-        run: |
-          yarn workspace @treetracker/wallet test
+      - name: Run e2e tests for queue package
+        working-directory: packages/queue
+        run: npm run test

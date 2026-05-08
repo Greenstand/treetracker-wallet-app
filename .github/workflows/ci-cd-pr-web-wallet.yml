@@ -1,5 +1,5 @@
 # This workflow triggers on pull requests that modify files in the web module (i.e., apps/web/**)
-# It runs component and end-to-end (E2E) tests to validate changes.
+# It runs component and integration (Cypress) tests to validate changes.
 
 name: PR CI for Web module
 
@@ -12,12 +12,15 @@ on:
       - edited
     paths:
       - "apps/web/**"
+      - ".github/workflows/ci-cd-pr-web-wallet.yml"
       - "!apps/web/**/*.md"
   workflow_dispatch:
 
 jobs:
   component-e2e-tests:
+    name: component e2e tests for web module
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
       NEXT_PUBLIC_TREETRACKER_WALLET_API: ${{ vars.NEXT_PUBLIC_TREETRACKER_WALLET_API }}
@@ -35,11 +38,16 @@ jobs:
       PRIVATE_WALLET_API_KEY: ${{ secrets.PRIVATE_WALLET_API_KEY }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (PR head)
+        if: github.event_name == 'pull_request_target'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repository (default)
+        if: github.event_name != 'pull_request_target'
+        uses: actions/checkout@v4
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
