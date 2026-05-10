@@ -1,0 +1,52 @@
+# This workflow triggers on pull requests that modify files (other than *.md)
+# in the queue package (packages/queue/**).
+# It runs e2e tests to validate changes.
+
+name: PR CI/CD for Queue Package
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+    paths:
+      - "packages/queue/**"
+      - ".github/workflows/ci-cd-pr-package-queue.yml"
+      - "!**/*.md"
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    name: E2E Tests for Queue Package
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+    steps:
+      - name: Checkout repository (PR head)
+        if: github.event_name == 'pull_request_target'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repository (default)
+        if: github.event_name != 'pull_request_target'
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        working-directory: packages/queue
+        run: npm install --no-workspaces --legacy-peer-deps --ignore-scripts
+
+      - name: Run e2e tests for queue package
+        working-directory: packages/queue
+        run: npm run test
