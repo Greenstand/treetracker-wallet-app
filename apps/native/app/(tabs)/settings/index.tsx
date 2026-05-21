@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import ScreenHeader from "@/components/ScreenHeader";
 
 type SettingsItemType = {
   id: string;
@@ -111,17 +112,10 @@ export default function Settings() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header - commented out because header should not be implemented but ready to be added back or replaced.
-      <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#666" />
-        <Text style={styles.headerTitle}>Settings</Text>
-        <Ionicons name="settings-outline" size={24} color="#666" />
-      </View>
-      */}
+      {/* Header */}
+      <ScreenHeader title="Settings" />
 
       <ScrollView style={styles.scrollContainer}>
-        {/* Settings Title */}
-        <Text style={styles.settingsTitle}>Settings</Text>
 
         {/* Settings Items */}
         <View style={styles.settingsContainer}>
@@ -157,30 +151,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  // Header styles
-  // header: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   backgroundColor: "#f5f5f5",
-  // },
-  // headerTitle: {
-  //   fontSize: 18,
-  //   fontWeight: "600",
-  //   color: "#333",
-  // },
   scrollContainer: {
     flex: 1,
     paddingHorizontal: 16,
-  },
-  settingsTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-    color: "#333",
-    marginTop: 24,
-    marginBottom: 16,
+    paddingTop: 16,
   },
   settingsContainer: {
     backgroundColor: Colors.white,
