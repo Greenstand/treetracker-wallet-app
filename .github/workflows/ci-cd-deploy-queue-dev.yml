@@ -1,0 +1,39 @@
+# This workflow deploys the queue package database migration to the dev environment.
+# The queue package has no API server — deployment means running db-migrate
+# to create/update the queue schema, message table, and NOTIFY trigger.
+
+name: Deploy Queue to dev env
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/queue/database/**"
+      - ".github/workflows/ci-cd-deploy-queue-dev.yml"
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    name: Run Queue Migration (dev)
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.QUEUE_DATABASE_URL_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run db-migrate up
+        run: yarn workspace queue db-migrate-ci
