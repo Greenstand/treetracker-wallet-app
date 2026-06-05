@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { registerSchema } from "../../schemas";
 import { User } from "../../types/auth";
-import { WALLET_APP_API } from "../../utils/config";
+import { TREETRACKER_USER_API } from "../../utils/config";
 import { trimInputs, handleValidationError } from "../../utils/validation";
 import { loadingAtom } from "./loadingAtom";
 
@@ -20,7 +20,7 @@ export const registerAtom = atom(null, async (_get, set, formValues: User) => {
   set(loadingAtom, true);
 
   try {
-    const response = await fetch(`${WALLET_APP_API}/register`, {
+    const response = await fetch(`${TREETRACKER_USER_API}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),
@@ -30,7 +30,11 @@ export const registerAtom = atom(null, async (_get, set, formValues: User) => {
     const data = await response.json();
 
     if (response.ok) {
-      return data;
+      return {
+        success: true,
+        message: data.message || "Registration successful",
+        ...data,
+      };
     } else {
       return { error: data.message || "Registration failed" };
     }

@@ -1,5 +1,5 @@
 // apps/wallets/tests/createWallet.spec.e2e.ts
-import createWallet from "../src/api/createWallet";
+import { createWallet } from "../src";
 import { Wallet } from "../src/types/wallet";
 import { fetchTokenFromKeycloak } from "@treetracker/keycloak";
 

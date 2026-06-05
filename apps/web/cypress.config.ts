@@ -21,7 +21,7 @@ export default defineConfig({
     baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
     env: {
       api_server:
-        process.env.NEXT_PUBLIC_WALLET_APP_API || "http://localhost:8080",
+        process.env.NEXT_PUBLIC_TREETRACKER_USER_API || "http://localhost:8080",
     },
 
     setupNodeEvents(on, config) {

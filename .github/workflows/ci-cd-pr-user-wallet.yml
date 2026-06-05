@@ -10,11 +10,17 @@ on:
       - synchronize
       - reopened
       - edited
+    paths:
+      - "apps/user/**"
+      - ".github/workflows/ci-cd-pr-user-wallet.yml"
+      - "!**/*.md"
   workflow_dispatch:
 
 jobs:
   unit-integration-e2e-tests:
+    name: Unit, integration & e2e tests for User
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
       PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
@@ -26,11 +32,16 @@ jobs:
       CORS_ORIGINS_DEV: ${{ vars.CORS_ORIGINS_DEV }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (PR head)
+        if: github.event_name == 'pull_request_target'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repository (default)
+        if: github.event_name != 'pull_request_target'
+        uses: actions/checkout@v4
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4

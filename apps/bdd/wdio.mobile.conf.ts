@@ -1,6 +1,6 @@
 import type { Options } from "@wdio/types";
-import { baseConfig } from "./wdio.base.conf";
-import { CAPABILITY_ANDROID, CAPABILITY_IOS } from "./utils/capabilities";
+import { baseConfig } from "./wdio.base.conf.ts";
+import { CAPABILITY_ANDROID, CAPABILITY_IOS } from "./utils/capabilities.ts";
 
 const PLATFORM = process.env.PLATFORM || "android";
 
@@ -23,7 +23,7 @@ export const config: Options.Testrunner = {
         command: "appium",
         args: {
           port: 4723,
-          address: "localhost",
+          address: "127.0.0.1",
         },
         logPath: "./logs",
       },

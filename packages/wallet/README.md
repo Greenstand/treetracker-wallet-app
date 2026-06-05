@@ -187,7 +187,7 @@ Configure via `app.config.js`:
 Create a `.env` file in the `packages/wallet` directory:
 
 ```sh
-NEXT_PUBLIC_WALLET_APP_API=http://localhost:8080
+NEXT_PUBLIC_TREETRACKER_USER_API=http://localhost:8080
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 PRIVATE_KEYCLOAK_REALM =

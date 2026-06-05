@@ -3,6 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   output: "export",
   transpilePackages: ["wallet_state"],
+  serverExternalPackages: ["expo-constants", "expo-modules-core"],
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Ignore specific modules in the build
     config.externals = [

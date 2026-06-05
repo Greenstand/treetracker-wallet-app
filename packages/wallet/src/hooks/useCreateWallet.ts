@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
-import createWallet from "../api/createWallet";
+import { createWallet } from "../api/createWallet";
 import { Wallet } from "../types/wallet";
 
 export const useCreateWallet = () => {

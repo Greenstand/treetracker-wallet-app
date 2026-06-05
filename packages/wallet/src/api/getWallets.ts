@@ -1,10 +1,10 @@
-import { TREETRACKER_API } from "../utils/config";
+import { TREETRACKER_WALLET_API } from "../utils/config";
 import axios, { isAxiosError } from "axios";
 
 export async function getWallets(token: string, numberOfWallets: number = 10) {
   try {
     const response = await axios.get(
-      `${TREETRACKER_API}/wallets?limit=${numberOfWallets}`,
+      `${TREETRACKER_WALLET_API}/wallets?limit=${numberOfWallets}`,
       {
         headers: {
           "Content-Type": "application/json",

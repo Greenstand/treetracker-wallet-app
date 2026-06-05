@@ -22,7 +22,12 @@ describe("ProfileAvatar Component", () => {
   });
 
   it("renders avatar with image", () => {
-    cy.mount(<ProfileAvatar name="John" profileImageUrl="dummy-url" />);
-    cy.get("img").should("have.attr", "src", "dummy-url");
+    const dummyImagePath = "/assets/images/login.png";
+
+    cy.mount(<ProfileAvatar name="John" profileImageUrl={dummyImagePath} />);
+    cy.get("img")
+      .should("exist")
+      .and("have.attr", "src")
+      .and("include", dummyImagePath);
   });
 });

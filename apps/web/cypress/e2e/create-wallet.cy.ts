@@ -8,13 +8,13 @@ let walletData: {
 
 describe("Wallet - Create flow (integration, all requests mocked)", () => {
   before(() => {
-    cy.fixture("wallet.json").then(data => {
+    cy.fixture("wallet.json").then((data) => {
       walletData = data;
     });
   });
 
   beforeEach(() => {
-    cy.intercept("GET", "/wallets*", {
+    cy.intercept("GET", "**/wallets*", {
       statusCode: 200,
       body: walletData?.mocks?.initialList ?? [],
     }).as("getWallets");
@@ -27,6 +27,8 @@ describe("Wallet - Create flow (integration, all requests mocked)", () => {
         );
       },
     });
+
+    cy.wait("@getWallets");
   });
 
   it("happy path: jump -> input wallet name -> create", () => {
@@ -36,12 +38,14 @@ describe("Wallet - Create flow (integration, all requests mocked)", () => {
 
     cy.getByData(SELECTORS.walletNameInput).clear().type(name);
 
-    cy.intercept("POST", "/wallets", req => {
+    cy.intercept("POST", "**/wallets", (req) => {
       expect(req.body).to.have.property("wallet", name);
       req.reply({ statusCode: 201, body: walletData.mocks.createdWallet });
     }).as("createWallet");
 
     cy.getByData(SELECTORS.walletCreateSubmitButton).click();
+
+    cy.wait("@createWallet");
 
     cy.contains(name).should("exist");
   });
@@ -52,12 +56,13 @@ describe("Wallet - Create flow (integration, all requests mocked)", () => {
     cy.getByData(SELECTORS.walletCreateOpen).click();
     cy.getByData(SELECTORS.walletNameInput).type(dupName);
 
-    cy.intercept("POST", "/wallets", req => {
+    cy.intercept("POST", "**/wallets", (req) => {
       expect(req.body).to.have.property("wallet", dupName);
       req.reply({ statusCode: 201, body: walletData.mocks.createdWallet });
     }).as("createWallet");
 
     cy.getByData(SELECTORS.walletCreateSubmitButton).click();
+    cy.wait("@createWallet");
     cy.contains(dupName).should("exist");
 
     cy.getByData(SELECTORS.walletCreateOpen).click();

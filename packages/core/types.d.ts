@@ -1,7 +1,7 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      NEXT_PUBLIC_WALLET_APP_API: string;
+      NEXT_PUBLIC_TREETRACKER_USER_API: string;
     }
   }
 }

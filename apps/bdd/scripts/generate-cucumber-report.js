@@ -6,16 +6,24 @@
  *
  * Usage: yarn report:cucumber
  */
-const report = require("multiple-cucumber-html-reporter");
-const path = require("path");
+import { generate } from "multiple-cucumber-html-reporter";
+import { resolve, join, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const REPORTS_ROOT = path.resolve(__dirname, "../test-artifacts/reports");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const REPORTS_ROOT = resolve(__dirname, "../test-artifacts/reports");
+const PLATFORM = (process.env.PLATFORM ?? "web").toLowerCase();
+const PLATFORM_LABEL =
+  PLATFORM === "ios"
+    ? "iOS"
+    : PLATFORM.charAt(0).toUpperCase() + PLATFORM.slice(1);
+const PLATFORM_REPORTS_ROOT = join(REPORTS_ROOT, PLATFORM);
 
-report.generate({
-  jsonDir: path.join(REPORTS_ROOT, "cucumber"),
-  reportPath: path.join(REPORTS_ROOT, "cucumber-html"),
-  pageTitle: "Treetracker Wallet E2E Test Report",
-  reportName: "Cucumber Test Results",
+generate({
+  jsonDir: join(PLATFORM_REPORTS_ROOT, "cucumber"),
+  reportPath: join(PLATFORM_REPORTS_ROOT, "cucumber-html"),
+  pageTitle: `Treetracker Wallet E2E Test Report - ${PLATFORM_LABEL}`,
+  reportName: `Cucumber Test Results - ${PLATFORM_LABEL}`,
   disableLog: true,
   displayDuration: true,
   metadata: {
@@ -32,7 +40,7 @@ report.generate({
   },
 });
 
-const reportPath = path.resolve(REPORTS_ROOT, "cucumber-html/index.html");
+const reportPath = resolve(PLATFORM_REPORTS_ROOT, "cucumber-html/index.html");
 
 console.log("✅ HTML report generated successfully!");
 console.log("📊 Report location:", reportPath);

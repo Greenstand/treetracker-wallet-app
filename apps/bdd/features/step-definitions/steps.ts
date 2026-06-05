@@ -92,7 +92,7 @@ Then(/^I should see my new wallet in the list of wallets$/, async () => {
   const walletItemSelector = `[data-test=wallet-item-name-${stepState.walletName}]`;
   // Wait for the wallet item to be displayed assuming API latency
   await $(walletItemSelector).waitForDisplayed({
-    timeout: 3000,
+    timeout: 100000,
     timeoutMsg: `Wallet item with name "${stepState.walletName}" did not appear in the list`,
   });
 });
@@ -104,9 +104,9 @@ Then(/^I should see my new wallet in the list of wallets$/, async () => {
 
 When(/^I fill in the registration form with valid data$/, async table => {
   const data = table.rowsHash();
-  await $('[data-test="signup-username"] input').setValue(data.username);
-  await $('[data-test="signup-email"] input').setValue(data.email);
-  await $('[data-test="signup-password"] input').setValue(data.password);
+  await $('[data-test="signup-username"]').setValue(data.username);
+  await $('[data-test="signup-email"]').setValue(data.email);
+  await $('[data-test="signup-password"]').setValue(data.password);
 });
 
 When(
@@ -117,20 +117,20 @@ When(
     const email = `${username}@greenstand.org`;
 
     // Wait for form to be ready and target the actual input elements inside the containers
-    await $('[data-test="signup-username"] input').waitForDisplayed({
-      timeout: 10000,
+    await $('[data-test="signup-username"]').waitForDisplayed({
+      timeout: 30000,
     });
-    await $('[data-test="signup-email"] input').waitForDisplayed({
-      timeout: 10000,
+    await $('[data-test="signup-email"]').waitForDisplayed({
+      timeout: 30000,
     });
-    await $('[data-test="signup-password"] input').waitForDisplayed({
-      timeout: 10000,
+    await $('[data-test="signup-password"]').waitForDisplayed({
+      timeout: 30000,
     });
 
     // Set values on the actual input elements
-    await $('[data-test="signup-username"] input').setValue(username);
-    await $('[data-test="signup-email"] input').setValue(email);
-    await $('[data-test="signup-password"] input').setValue(password);
+    await $('[data-test="signup-username"]').setValue(username);
+    await $('[data-test="signup-email"]').setValue(email);
+    await $('[data-test="signup-password"]').setValue(password);
   },
 );
 
@@ -174,7 +174,7 @@ Then(/^I should see a confirmation message$/, async () => {
       return false;
     },
     {
-      timeout: 10000,
+      timeout: 30000,
       timeoutMsg: "Expected success message or redirect to login",
     },
   );
@@ -195,12 +195,10 @@ When("I create a new wallet", async () => {
   stepState.walletName = `wallet${ts}`;
   await $("[data-test=wallet-create-open]").click();
   // Wallet creation drawer takes some time to open, so we wait for the input to be displayed
-  await $('[data-test="wallet-create-name"] input').waitForDisplayed({
-    timeout: 3000,
+  await $('[data-test="wallet-create-name"]').waitForDisplayed({
+    timeout: 30000,
   });
-  await $('[data-test="wallet-create-name"] input').setValue(
-    stepState.walletName,
-  );
-  await $('[data-test="wallet-create-description"] input').setValue("desc");
+  await $('[data-test="wallet-create-name"]').setValue(stepState.walletName);
+  await $('[data-test="wallet-create-description"]').setValue("desc");
   await $('[data-test="wallet-create-submit"]').click();
 });

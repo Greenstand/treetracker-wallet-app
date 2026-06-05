@@ -1,7 +1,5 @@
 // 🚀 Shared Auth Constants & Helpers for 10x Development with Fixtures
 
-import sinonChai from "cypress/types/sinon-chai";
-
 // Static Selectors (don't change often, keep in constants)
 export const SELECTORS = {
   // Login selectors
@@ -98,7 +96,7 @@ export const expectFormFieldError = (message: string) => {
 export const generateUniqueEmail = () => `testuser${Date.now()}@example.com`;
 
 export const clearAuthSession = () => {
-  cy.window().then(win => {
+  cy.window().then((win) => {
     win.sessionStorage.clear();
     win.localStorage.clear();
   });

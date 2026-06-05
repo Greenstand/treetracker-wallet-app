@@ -1,31 +1,37 @@
 import path from "node:path";
 import fs from "node:fs";
-import { baseConfig } from "./wdio.base.conf";
-import { CAPABILITY_WEB_CHROME_FOR_DEBUG } from "./utils/capabilities";
+import { fileURLToPath } from "node:url";
+import { baseConfig } from "./wdio.base.conf.ts";
+import { CAPABILITY_WEB_CHROME_FOR_DEBUG } from "./utils/capabilities.ts";
+import { REPORTS_ROOT, VIDEOS_TMP } from "./utils/artifacts.ts";
 
-// Video reporter for recording test execution - useful for debugging and demos
-import Video from "wdio-video-reporter";
-import {
-  REPORTS_ROOT,
-  VIDEOS_TMP,
-  scenarioDirs,
-  findVideoForCid,
-} from "./utils/artifacts";
-import cucumberJson from "wdio-cucumberjs-json-reporter";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const snapChromedriver = "/snap/bin/chromium.chromedriver";
+const npmChromedriver = path.resolve(
+  __dirname,
+  "..",
+  "..",
+  "node_modules",
+  "chromedriver",
+  "bin",
+  "chromedriver",
+);
+const chromedriverBin = fs.existsSync(snapChromedriver)
+  ? snapChromedriver
+  : npmChromedriver;
 
 export const config: WebdriverIO.Config = {
   ...baseConfig,
 
-  // Debug-specific settings
   logLevel: "debug",
-  waitforTimeout: 60000, // Extended for debugging
-  connectionRetryTimeout: 240000, // Extended for debugging
-
-  // Debug capabilities (headed browser)
+  waitforTimeout: 60000,
+  connectionRetryTimeout: 240000,
   capabilities: CAPABILITY_WEB_CHROME_FOR_DEBUG,
 
-  // Debug services
-  services: ["chromedriver"] as any,
+  services: [
+    ["chromedriver", { chromedriverCustomPath: chromedriverBin }],
+  ] as any,
 
   // ==================
   // Specify Test Files
@@ -51,7 +57,6 @@ export const config: WebdriverIO.Config = {
   // Debug cucumber options - override base with debug settings
   cucumberOpts: {
     ...baseConfig.cucumberOpts,
-    //tags: "@debug", // Only run debug scenarios
     timeout: 120000, // Extended timeout for debugging
   },
 

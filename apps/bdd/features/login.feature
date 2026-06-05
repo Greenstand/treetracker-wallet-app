@@ -1,6 +1,7 @@
 Feature: Wallet app login
   In order to access my wallet
 
+  @web
   Scenario: Wrong login
     Given I am on the login page
     When I login with foobar and barfoo

@@ -1,11 +1,11 @@
 import axios, { isAxiosError } from "axios";
 import { Wallet } from "../types/wallet";
-import { TREETRACKER_API } from "../utils/config";
+import { TREETRACKER_WALLET_API } from "../utils/config";
 
-async function createWallet(walletData: Wallet, token: string) {
+export async function createWallet(walletData: Wallet, token: string) {
   try {
     const response = await axios.post(
-      `${TREETRACKER_API}/wallets`,
+      `${TREETRACKER_WALLET_API}/wallets`,
       {
         wallet: walletData.name,
         about: walletData.about,
@@ -21,6 +21,7 @@ async function createWallet(walletData: Wallet, token: string) {
     return response.data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
+      console.log(error);
       const errorMessage =
         error.response.data?.message || "Failed to create wallet";
       throw new Error(errorMessage);
@@ -28,5 +29,3 @@ async function createWallet(walletData: Wallet, token: string) {
     throw error;
   }
 }
-
-export default createWallet;

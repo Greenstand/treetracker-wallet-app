@@ -1,4 +1,5 @@
-# This workflow triggers on pull requests that modify files (other than *.md) in the wallet package (i.e., packages/wallet/**)
+# This workflow triggers on pull requests that modify files (other than *.md)
+# in the wallet package (packages/wallet/**) or its dependencies (packages/keycloak/**, packages/core/**).
 # It runs e2e tests to validate changes.
 
 name: PR CI for Wallet Package
@@ -12,24 +13,35 @@ on:
       - edited
     paths:
       - "packages/wallet/**"
+      - "packages/keycloak/**"
+      - "packages/core/**"
+      - ".github/workflows/ci-cd-pr-wallet-package-wallet.yml"
       - "!**/*.md"
   workflow_dispatch:
 
 jobs:
   e2e-tests:
+    name: e2e tests for wallet package
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       PRIVATE_KEYCLOAK_REALM: ${{ secrets.PRIVATE_KEYCLOAK_REALM }}
       PRIVATE_KEYCLOAK_BASE_URL: ${{ secrets.PRIVATE_KEYCLOAK_BASE_URL }}
       PRIVATE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_SECRET }}
       PRIVATE_KEYCLOAK_CLIENT_ID: ${{ secrets.PRIVATE_KEYCLOAK_CLIENT_ID }}
-      NEXT_PUBLIC_TREETRACKER_API: ${{ secrets.NEXT_PUBLIC_TREETRACKER_API }}
+      NEXT_PUBLIC_TREETRACKER_WALLET_API: ${{ vars.NEXT_PUBLIC_TREETRACKER_WALLET_API }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository (PR head)
+        if: github.event_name == 'pull_request_target'
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repository (default)
+        if: github.event_name != 'pull_request_target'
+        uses: actions/checkout@v4
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4

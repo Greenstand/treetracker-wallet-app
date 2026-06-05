@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { loginSchema } from "../../schemas";
 import { User } from "../../types/auth";
-import { WALLET_APP_API } from "../../utils/config";
+import { TREETRACKER_USER_API } from "../../utils/config";
 import { trimInputs, handleValidationError } from "../../utils/validation";
 import { loadingAtom } from "./loadingAtom";
 
@@ -18,7 +18,7 @@ export const loginAtom = atom(null, async (get, set, formValues: User) => {
 
   set(loadingAtom, true);
   try {
-    const response = await fetch(`${WALLET_APP_API}/login`, {
+    const response = await fetch(`${TREETRACKER_USER_API}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),

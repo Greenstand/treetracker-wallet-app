@@ -29,7 +29,7 @@ export interface CustomTextFieldProps {
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
-const CustomTextField: React.FC<CustomTextFieldProps> = memo(props => {
+const CustomTextField: React.FC<CustomTextFieldProps> = memo((props) => {
   const {
     label,
     type = "text",
@@ -81,26 +81,27 @@ const CustomTextField: React.FC<CustomTextFieldProps> = memo(props => {
           isPassword && (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => setShowPassword(s => !s)}
-                onMouseDown={e => e.preventDefault()}
+                onClick={() => setShowPassword((s) => !s)}
+                onMouseDown={(e) => e.preventDefault()}
                 edge="end"
                 data-test="toggle-password-visibility"
                 tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}>
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           )
         }
-        data-test={testId}
-        inputProps={inputProps}
+        inputProps={{ ...inputProps, "data-test": testId }}
         inputRef={inputRef}
       />
       {helperText?.trim() && (
         <FormHelperText
           sx={{ fontSize: 12, color: "red" }}
           id={helperId}
-          data-test="error-helper-text">
+          data-test="error-helper-text"
+        >
           {helperText}
         </FormHelperText>
       )}

@@ -5,9 +5,13 @@ import path from "node:path";
  * Root folders for test artifacts (reports + videos).
  * These are consumed by wdio.conf.ts and the report generator.
  */
-export const ARTIFACTS_ROOT = path.resolve(__dirname, "../test-artifacts");
+export const ARTIFACTS_ROOT = path.resolve(process.cwd(), "test-artifacts");
 export const REPORTS_ROOT = path.join(ARTIFACTS_ROOT, "reports");
 export const VIDEOS_ROOT = path.join(ARTIFACTS_ROOT, "test-videos");
+
+export const PLATFORM = (process.env.PLATFORM ?? "web").toLowerCase();
+export const PLATFORM_REPORTS_ROOT = path.join(REPORTS_ROOT, PLATFORM);
+export const PLATFORM_VIDEOS_ROOT = path.join(VIDEOS_ROOT, PLATFORM);
 // Feature bucket tracking
 export const FEATURE_BUCKET_BY_CID: Record<string, string> = {};
 
@@ -44,7 +48,7 @@ export function scenarioDirs(
   screenshots: string;
 } {
   const base = path.join(
-    VIDEOS_ROOT,
+    PLATFORM_VIDEOS_ROOT,
     slugify(featureName),
     slugify(scenarioName),
   );
