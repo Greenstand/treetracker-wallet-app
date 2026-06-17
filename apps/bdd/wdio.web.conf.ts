@@ -12,7 +12,9 @@ export const config: Options.Testrunner = {
     [
       "chromedriver",
       {
-        version: "147",
+        // Use the chromedriver npm binary (pinned to match local Chrome major,
+        // currently 149). Bump the chromedriver devDep when Chrome auto-updates.
+        version: "149",
       },
     ],
   ],
