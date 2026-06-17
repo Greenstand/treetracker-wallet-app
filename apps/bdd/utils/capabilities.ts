@@ -10,7 +10,7 @@ export const CAPABILITY_WEB_CHROME = [
         "--no-sandbox",
         "--disable-dev-shm-usage",
         "--start-maximized",
-        "--headless=new",
+        // "--headless=new", // disabled so the browser is visible while the test runs
         "--window-size=1920,1080",
       ],
     },

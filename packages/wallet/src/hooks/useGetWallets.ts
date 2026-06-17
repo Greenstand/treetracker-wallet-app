@@ -25,7 +25,10 @@ export const useGetWallets = () => {
         console.log(result);
         setWallets(
           result.wallets.map((w: any) => ({
+            id: w.id,
             name: w.name,
+            about: w.about,
+            display_name: w.display_name,
             created_at: new Date(w.created_at).toLocaleString("en-US", {
               month: "long",
               day: "numeric",

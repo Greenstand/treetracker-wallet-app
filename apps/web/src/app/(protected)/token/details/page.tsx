@@ -14,7 +14,11 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { useGetToken } from "@treetracker/wallet";
+import {
+  useGetToken,
+  useGetTokenTransactions,
+  Transaction,
+} from "@treetracker/wallet";
 
 const MAP_URL =
   process.env.NEXT_PUBLIC_MAP_URL ?? "https://dev.treetracker.org";
@@ -26,6 +30,7 @@ function TokenDetails() {
   const wallet = params?.get("wallet") ?? "";
 
   const { token, isTokenLoading, error } = useGetToken(id);
+  const { transactions, isLoading: isTxLoading } = useGetTokenTransactions(id);
 
   return (
     <Box sx={{ p: 2 }} data-test="token-details-page">
@@ -97,6 +102,32 @@ function TokenDetails() {
           </Typography>
         )}
       </Paper>
+
+      <Typography variant="subtitle1" fontWeight={500} sx={{ mt: 3 }}>
+        Transaction history
+      </Typography>
+      {isTxLoading && <Typography variant="body2">Loading…</Typography>}
+      <Stack spacing={0.5} sx={{ mt: 1 }} data-test="token-transactions">
+        {!isTxLoading && transactions.length === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            No transactions recorded for this token.
+          </Typography>
+        )}
+        {transactions.map((tx: Transaction) => (
+          <Paper key={tx.id} sx={{ p: 1.5 }} data-test={`token-tx-${tx.id}`}>
+            <Typography variant="body2">
+              {(tx.source_wallet_name ?? tx.source_wallet_id ?? "—") +
+                " → " +
+                (tx.destination_wallet_name ?? tx.destination_wallet_id ?? "—")}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {tx.processed_at
+                ? new Date(tx.processed_at).toLocaleString()
+                : ""}
+            </Typography>
+          </Paper>
+        ))}
+      </Stack>
     </Box>
   );
 }
