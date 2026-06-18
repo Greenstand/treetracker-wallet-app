@@ -12,7 +12,11 @@ import {
   Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useGetTransfer, acceptTransfer } from "@treetracker/wallet";
+import {
+  useGetTransfer,
+  acceptTransfer,
+  getTransferTokens,
+} from "@treetracker/wallet";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
 
@@ -36,8 +40,18 @@ function MessageDetail() {
     setAcceptError(null);
     try {
       await acceptTransfer(authToken, id);
-      // The confirmation needs the token id — use the first token in the transfer.
-      const tokenId = tokens[0]?.id ?? id;
+      // After accept, the transfer is completed and its transactions point at the
+      // tokens that actually landed in the wallet. For a bundle transfer these are
+      // different ids than the pre-accept transfer tokens, so re-fetch to report a
+      // real, wallet-resident token id.
+      let tokenId = tokens[0]?.id ?? id;
+      try {
+        const res = await getTransferTokens(authToken, id);
+        const creditedId = res?.tokens?.[0]?.id;
+        if (creditedId) tokenId = creditedId;
+      } catch {
+        // keep the fallback id if the re-fetch fails
+      }
       setReceivedTokenId(tokenId);
     } catch (e) {
       setAcceptError(e instanceof Error ? e.message : "Failed to accept");
