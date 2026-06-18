@@ -15,6 +15,11 @@
 
 import { Given, When, Then } from "@wdio/cucumber-framework";
 import { expect, $ } from "@wdio/globals";
+import { seedAccount, tokenFor, SeededAccount } from "../../utils/seed.ts";
+// Wallet api functions by subpath (the package index pulls in React hooks → core;
+// see utils/seed.ts).
+import { getTransfers } from "@treetracker/wallet/src/api/getTransfers.ts";
+import { getTransferTokens } from "@treetracker/wallet/src/api/getTransferTokens.ts";
 
 // State object to share data between steps
 const stepState: Record<string, string> = {
@@ -325,3 +330,313 @@ Then(
     );
   },
 );
+
+//#endregion
+
+// ============================================================================
+// [SEND-TOKEN] Send → notification → accept → receive flows
+// ============================================================================
+//#region SEND-TOKEN
+
+const SEND_TOKEN_PASSWORD = "Abcde123$x";
+// Seeded accounts keyed by their email (also the Keycloak username).
+const seededAccounts: Record<string, SeededAccount> = {};
+// Transfer/token captured after the UI send, for selector targeting.
+let sendTokenTransferId = "";
+let sendTokenReceivedTokenId = "";
+
+const baseUrl = () => process.env.E2E_BASE_URL ?? "http://localhost:3000";
+
+// Log out the current user (clears the Keycloak SSO session) and log in as
+// another — needed because the scenario acts as two different users.
+const KC_BASE = process.env.PRIVATE_KEYCLOAK_BASE_URL ?? "";
+const KC_REALM = process.env.PRIVATE_KEYCLOAK_REALM ?? "";
+
+async function switchUser(username: string, password: string) {
+  // Truly switch accounts. The end-session redirect didn't reliably clear the
+  // SSO session (Keycloak then silently re-authenticated the previous user, so
+  // the app stayed logged in as them). Instead, hard-delete Keycloak's SSO
+  // cookie: deleteAllCookies only affects the current document's origin, so go
+  // to a Keycloak page first, wipe its cookies, then load /login — with no SSO
+  // cookie, Keycloak always shows the hosted #username form, where we sign in as
+  // the intended user.
+  await browser.url(
+    `${KC_BASE}/realms/${KC_REALM}/.well-known/openid-configuration`,
+  );
+  await browser.deleteAllCookies();
+  // Also clear the app's mirrored token on the app origin.
+  await browser.url(`${baseUrl()}/login`);
+  await browser.execute(() => {
+    try {
+      window.sessionStorage.clear();
+      window.localStorage.clear();
+    } catch {
+      /* ignore */
+    }
+  });
+  await browser.deleteAllCookies();
+  // Reload /login → Keycloak authorize → (no SSO) → hosted login form.
+  await browser.url(`${baseUrl()}/login`);
+  await $("#username").waitForDisplayed({ timeout: 30000 });
+  await keycloakLogin(username, password);
+}
+
+// Given: registered account + wallet holding one token (the sender).
+Given(
+  /^There is a registered account: (\S+), and there is an wallet named: (\S+), and there is one token in this wallet$/,
+  async (email: string, walletName: string) => {
+    const acct: SeededAccount = {
+      email,
+      password: SEND_TOKEN_PASSWORD,
+      walletName,
+    };
+    seededAccounts[email] = acct;
+    await seedAccount(acct, true);
+  },
+);
+
+// Given: registered account + wallet (the receiver).
+Given(
+  /^There is a registered account: (\S+), and there is an wallet named: (\S+)$/,
+  async (email: string, walletName: string) => {
+    const acct: SeededAccount = {
+      email,
+      password: SEND_TOKEN_PASSWORD,
+      walletName,
+    };
+    seededAccounts[email] = acct;
+    await seedAccount(acct, false);
+  },
+);
+
+// When: user 1 logs in and sends 1 token from their wallet to user 2's wallet.
+When(
+  /^(\S+) login and click the send token button, and pick: (\S+) as sender and (\S+) as receiver, and input (\d+) token to send, and submit$/,
+  async (
+    email: string,
+    senderWallet: string,
+    receiverWallet: string,
+    amount: string,
+  ) => {
+    const acct = seededAccounts[email];
+    await switchUser(acct.email, acct.password);
+
+    // Open the send page via the bottom-nav send button.
+    await $("[data-test=bottom-nav-send]").waitForDisplayed({ timeout: 15000 });
+    await $("[data-test=bottom-nav-send]").click();
+    await $("[data-test=send-page]").waitForDisplayed({ timeout: 15000 });
+
+    // The source select is disabled until wallets load; the page then defaults
+    // the source to the user's (only) wallet. Wait for that default to settle —
+    // which also satisfies "pick <senderWallet> as sender".
+    await browser.waitUntil(
+      async () =>
+        (await $("[data-test=send-source-wallet]").getText()).includes(
+          senderWallet,
+        ),
+      {
+        timeout: 20000,
+        interval: 500,
+        timeoutMsg: `source wallet ${senderWallet} did not load as the default`,
+      },
+    );
+
+    // Recipient + amount + submit (target the inner <input> of each MUI field).
+    await $("[data-test=send-recipient] input").setValue(receiverWallet);
+    // The amount field already holds the default "1"; setValue doesn't reliably
+    // clear a controlled MUI input (it would append → "11"). Select-all + delete,
+    // then type the desired amount.
+    const amt = await $("[data-test=send-amount] input");
+    await amt.click();
+    await browser.keys([
+      process.platform === "darwin" ? "Meta" : "Control",
+      "a",
+    ]);
+    await browser.keys("Backspace");
+    await amt.addValue(amount);
+    const submit = await $("[data-test=send-submit]");
+    await submit.waitForEnabled({ timeout: 10000 });
+    await submit.click();
+
+    // Success either flashes the snackbar or redirects to /transfers (the page
+    // navigates ~1.2s after success). Treat either as done; fail fast on error.
+    await browser.waitUntil(
+      async () => {
+        if (await $("[data-test=send-error]").isExisting()) {
+          throw new Error(
+            `send failed: ${await $("[data-test=send-error]").getText()}`,
+          );
+        }
+        if (await $("[data-test=send-success]").isExisting()) return true;
+        return (await browser.getUrl()).includes("/transfers");
+      },
+      {
+        timeout: 25000,
+        interval: 400,
+        timeoutMsg: "send did not complete (no success/redirect)",
+      },
+    );
+  },
+);
+
+// Then: user 2 logs in and opens Notifications. Also resolve the just-sent
+// transfer (+ its token) via the API so later steps can target it precisely.
+Then(
+  /^(\S+) login and click: noticiation navigation bar$/,
+  async (email: string) => {
+    const acct = seededAccounts[email];
+
+    // Find the pending transfer into user 2's wallet (newest first).
+    const token = await tokenFor(acct);
+    await browser.waitUntil(
+      async () => {
+        for (const state of ["pending", "requested"]) {
+          const res = await getTransfers(token, {
+            state,
+            wallet: acct.walletName,
+            limit: 100,
+          });
+          const list = res.transfers ?? [];
+          if (list.length > 0) {
+            sendTokenTransferId = list[0].id;
+            return true;
+          }
+        }
+        return false;
+      },
+      {
+        timeout: 20000,
+        interval: 1500,
+        timeoutMsg: `no pending transfer found for wallet ${acct.walletName}`,
+      },
+    );
+    const tk = await getTransferTokens(token, sendTokenTransferId);
+    sendTokenReceivedTokenId = tk.tokens?.[0]?.id ?? "";
+
+    // Switch to user 2 in the browser and open Notifications.
+    await switchUser(acct.email, acct.password);
+    await $("[data-test=bottom-nav-notifications]").waitForDisplayed({
+      timeout: 15000,
+    });
+    await $("[data-test=bottom-nav-notifications]").click();
+    await $("[data-test=notifications-page]").waitForDisplayed({
+      timeout: 15000,
+    });
+  },
+);
+
+// Then: the pending-token message is shown.
+Then(/^there is a message of pending token$/, async () => {
+  await $("[data-test=notifications-page]").waitForDisplayed({ timeout: 15000 });
+
+  // Manual-inspection pause: set BDD_PAUSE to hold the browser on the
+  // notifications page so you can see what it renders.
+  if (process.env.BDD_PAUSE) {
+    // eslint-disable-next-line no-console
+    console.log(
+      "\n⏸  Paused on the notifications page — inspect the browser (Ctrl-C / kill to stop).\n",
+    );
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      await browser.pause(3_600_000);
+    }
+  }
+
+  const countItems = () =>
+    browser.execute(
+      () =>
+        document.querySelectorAll("[data-test^='notification-item-']").length,
+    );
+  await browser.waitUntil(
+    async () => {
+      if ((await countItems()) > 0) return true;
+      await browser.refresh();
+      await browser.pause(2500); // let the transfers fetch finish post-reload
+      return (await countItems()) > 0;
+    },
+    {
+      timeout: 45000,
+      interval: 1000,
+      timeoutMsg: "no pending-token notification appeared",
+    },
+  );
+  // Capture the rendered notification's transfer id (fresh user 2 has exactly
+  // one incoming pending transfer, so the first item is the right one).
+  const item = await $("[data-test^='notification-item-']");
+  const dt = (await item.getAttribute("data-test")) || "";
+  sendTokenTransferId = dt.replace("notification-item-", "");
+  // eslint-disable-next-line no-console
+  console.log(`[DIAG] notification id=${sendTokenTransferId}`);
+});
+
+// When: user clicks the message.
+When(/^the user click the message$/, async () => {
+  await $(`[data-test=notification-item-${sendTokenTransferId}]`).click();
+});
+
+// Then: on the message detail page.
+Then(/^the user is on the message detail page\s*$/, async () => {
+  await $("[data-test=message-detail-page]").waitForDisplayed({
+    timeout: 15000,
+  });
+});
+
+// When: user clicks accept.
+When(/^the user click the accept button$/, async () => {
+  const btn = await $("[data-test=message-accept]");
+  await btn.waitForDisplayed({ timeout: 15000 });
+  // The button is disabled while the transfer detail is still loading; clicking
+  // it then would be a no-op (onAccept never fires). Wait until it's enabled.
+  await btn.waitForEnabled({ timeout: 15000 });
+  await btn.click();
+});
+
+// Then: confirmation "you received token [token id]".
+Then(
+  /^there is a confirmation message: 'you received token \[token id\]'$/,
+  async () => {
+    const el = $("[data-test=received-confirmation]");
+    await el.waitForDisplayed({ timeout: 20000 });
+    await browser.waitUntil(
+      async () => /you received token/i.test(await el.getText()),
+      {
+        timeout: 10000,
+        timeoutMsg: "confirmation message text did not match",
+      },
+    );
+    // Capture the exact token id from the confirmation ("you received token <id>")
+    // so the final wallet assertion targets the token that was actually received.
+    const m = (await el.getText()).match(/you received token\s+(\S+)/i);
+    if (m) sendTokenReceivedTokenId = m[1];
+  },
+);
+
+// Then: on the receiver wallet page.
+Then(/^on the (\S+) page$/, async (walletName: string) => {
+  await browser.url(
+    `${baseUrl()}/wallet/details?name=${encodeURIComponent(walletName)}`,
+  );
+  await $("[data-test=wallet-details-page]").waitForDisplayed({
+    timeout: 15000,
+  });
+});
+
+// And: the token sent by user 1 is present in the receiver wallet.
+Then(/^there is the token sent by the user 1$/, async () => {
+  const sel = `[data-test=token-item-${sendTokenReceivedTokenId}]`;
+  await browser.waitUntil(
+    async () => {
+      if (await $(sel).isExisting()) return true;
+      await browser.refresh();
+      await browser.pause(2000); // let getTokens fetch + render post-reload
+      return $(sel).isExisting();
+    },
+    {
+      timeout: 45000,
+      interval: 1000,
+      timeoutMsg: `received token ${sendTokenReceivedTokenId} not found in wallet`,
+    },
+  );
+});
+
+//#endregion SEND-TOKEN

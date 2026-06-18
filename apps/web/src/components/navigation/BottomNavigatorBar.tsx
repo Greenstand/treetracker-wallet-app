@@ -14,8 +14,8 @@ export default function BottomNavigationBar() {
   const router = useRouter();
 
   const handleNavigation = (newValue: number) => {
-    // Notifications/Settings aren't implemented yet — still disabled.
-    if (newValue === 3 || newValue === 4) {
+    // Settings isn't implemented yet — still disabled.
+    if (newValue === 4) {
       return;
     }
     setValue(newValue);
@@ -28,6 +28,9 @@ export default function BottomNavigationBar() {
         break;
       case 2:
         router.push("/send");
+        break;
+      case 3:
+        router.push("/notifications");
         break;
       default:
         break;
@@ -85,7 +88,7 @@ export default function BottomNavigationBar() {
           />
           <BottomNavigationAction
             label="Notifications"
-            disabled
+            data-test="bottom-nav-notifications"
             icon={<NotificationsIcon />}
           />
           <BottomNavigationAction
