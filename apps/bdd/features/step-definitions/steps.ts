@@ -978,12 +978,17 @@ When(
     if (!account) throw new Error(`Account not found: ${accountKey}`);
 
     await switchUser(account.email, account.password);
-    // Navigate to wallet list
-    await $("[data-test=wallet-list]").waitForDisplayed({ timeout: 10000 });
+    // After login, navigate to wallet page
+    await browser.url("http://localhost:3000/wallet");
+    // Wait for wallet list to load
+    const walletList = await $("[data-test=wallet-list]");
+    await walletList.waitForDisplayed({ timeout: 10000 });
     // Click first wallet (assuming it's the one we created)
-    const wallets = await $$("[data-test^=wallet-item-]");
-    if (!wallets || (wallets as any).length === 0) throw new Error("No wallets found");
-    await (wallets as any)[0].click();
+    const walletItems = await $$("[data-test^=wallet-list-item-]");
+    if (!walletItems || (walletItems as any).length === 0) {
+      throw new Error("No wallets found");
+    }
+    await (walletItems as any)[0].click();
     await $("[data-test=wallet-details-page]").waitForDisplayed({
       timeout: 10000,
     });
