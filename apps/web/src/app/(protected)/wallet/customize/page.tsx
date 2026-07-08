@@ -45,7 +45,7 @@ function CustomizeWallet() {
   // Resolve wallet by name
   const wallet = React.useMemo(
     () => (wallets as Wallet[]).find((w) => w.name === name),
-    [wallets, name]
+    [wallets, name],
   );
 
   useEffect(() => {
@@ -65,7 +65,9 @@ function CustomizeWallet() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        setError(`Logo file must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+        setError(
+          `Logo file must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`,
+        );
         return;
       }
       if (!file.type.startsWith("image/")) {
@@ -85,7 +87,9 @@ function CustomizeWallet() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        setError(`Hero image file must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+        setError(
+          `Hero image file must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`,
+        );
         return;
       }
       if (!file.type.startsWith("image/")) {
@@ -112,24 +116,29 @@ function CustomizeWallet() {
     setSuccess(false);
 
     try {
-      // Build FormData for multipart upload
-      const formData = new FormData();
-
+      // Separate fields from images
+      const fields: any = {};
       if (displayName.trim()) {
-        formData.append("display_name", displayName.trim());
+        fields.display_name = displayName.trim();
       }
       if (about.trim()) {
-        formData.append("about", about.trim());
-      }
-      if (logoFile) {
-        formData.append("logo_image", logoFile);
-      }
-      if (heroFile) {
-        formData.append("cover_image", heroFile);
+        fields.about = about;
       }
 
-      // Call the update endpoint
-      await updateWallet(wallet.id, formData as any);
+      const images: any = {};
+      if (logoFile) {
+        images.logo_image = logoFile;
+      }
+      if (heroFile) {
+        images.cover_image = heroFile;
+      }
+
+      // Call the update endpoint with correct parameters
+      await updateWallet(
+        wallet.id,
+        fields,
+        Object.keys(images).length > 0 ? images : undefined,
+      );
       setSuccess(true);
       setLogoFile(null);
       setHeroFile(null);
@@ -162,11 +171,16 @@ function CustomizeWallet() {
   }
 
   return (
-    <Box sx={{ p: 2, maxWidth: 800, mx: "auto", pb: 4 }} data-test="customize-wallet-page">
+    <Box
+      sx={{ p: 2, maxWidth: 800, mx: "auto", pb: 4 }}
+      data-test="customize-wallet-page"
+    >
       <Button
         variant="text"
         startIcon={<ArrowBackIcon />}
-        onClick={() => router.push(`/wallet/details?name=${encodeURIComponent(name)}`)}
+        onClick={() =>
+          router.push(`/wallet/details?name=${encodeURIComponent(name)}`)
+        }
         sx={{ color: "green", mb: 3 }}
         data-test="customize-wallet-back"
       >
@@ -243,7 +257,11 @@ function CustomizeWallet() {
               <img
                 src={logoPreview}
                 alt="Logo preview"
-                style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                }}
               />
             </Box>
           )}
@@ -262,7 +280,11 @@ function CustomizeWallet() {
               onChange={handleLogoChange}
             />
           </Button>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: "block", mt: 1 }}
+          >
             Max size: 5MB
           </Typography>
         </Box>
@@ -305,7 +327,11 @@ function CustomizeWallet() {
               onChange={handleHeroChange}
             />
           </Button>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: "block", mt: 1 }}
+          >
             Max size: 5MB
           </Typography>
         </Box>
