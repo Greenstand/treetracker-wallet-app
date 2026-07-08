@@ -837,7 +837,7 @@ When(/^(\S+) login and click the settings nav icon$/, async (email: string) => {
   if (!accountData) {
     throw new Error(`No seeded account found for ${email}`);
   }
-  await keycloakLogin(accountData.username, accountData.password);
+  await keycloakLogin(accountData.email, accountData.password);
   // Click settings nav icon
   const settingsNav = await $('[data-test="bottom-nav-settings"]');
   await settingsNav.waitForDisplayed({ timeout: 10000 });
@@ -973,17 +973,17 @@ When(/^I click the logout button$/, async () => {
 
 When(
   /^(\S+) login and navigate to wallet details$/,
-  async (username: string) => {
-    const account = seededAccounts[username];
-    if (!account) throw new Error(`Account not found: ${username}`);
+  async (accountKey: string) => {
+    const account = seededAccounts[accountKey];
+    if (!account) throw new Error(`Account not found: ${accountKey}`);
 
     await switchUser(account.email, account.password);
     // Navigate to wallet list
     await $("[data-test=wallet-list]").waitForDisplayed({ timeout: 10000 });
     // Click first wallet (assuming it's the one we created)
     const wallets = await $$("[data-test^=wallet-item-]");
-    if (wallets.length === 0) throw new Error("No wallets found");
-    await wallets[0].click();
+    if (!wallets || (wallets as any).length === 0) throw new Error("No wallets found");
+    await (wallets as any)[0].click();
     await $("[data-test=wallet-details-page]").waitForDisplayed({
       timeout: 10000,
     });
