@@ -29,6 +29,7 @@ export default function Settings() {
       icon: <AccountCircleIcon />,
       text: "Account",
       route: "/settings/account",
+      testId: "settings-account-item",
     },
     {
       icon: <NotificationsIcon />,
@@ -53,19 +54,24 @@ export default function Settings() {
 
   return (
     <Box
+      data-test="settings-page"
       sx={{
         padding: "16px",
         maxWidth: "600px",
         margin: "0 auto",
-      }}>
+      }}
+    >
       <Typography variant="h5" gutterBottom>
         Settings
       </Typography>
       <List>
-        {settingsItems.map(item => (
+        {settingsItems.map((item) => (
           <React.Fragment key={item.route}>
             <ListItem disablePadding sx={{ backgroundColor: "white" }}>
-              <ListItemButton onClick={() => router.push(item.route)}>
+              <ListItemButton
+                data-test={item.testId}
+                onClick={() => router.push(item.route)}
+              >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText
                   primary={item.text}

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Post,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { RegisterUserDto } from "@dtos/register-user.dto";
 import { LoginUserDto } from "@dtos/login-user.dto";
@@ -21,5 +30,14 @@ export class UserController {
   @Get("healthz")
   check(@Body() registerUserDto: RegisterUserDto) {
     return "tree growing!!";
+  }
+
+  @Get("me")
+  async getMe(@Headers("authorization") authHeader?: string) {
+    const token = authHeader?.replace(/^Bearer\s+/i, "");
+    if (!token) {
+      throw new HttpException("Missing bearer token", HttpStatus.UNAUTHORIZED);
+    }
+    return this.userService.getMe(token);
   }
 }

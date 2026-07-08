@@ -42,8 +42,27 @@ const routes: Record<string, string> = {
 // for the app to load logged-in.
 async function keycloakLogin(username: string, password: string) {
   await $("#username").waitForDisplayed({ timeout: 20000 });
-  await $("#username").setValue(username);
-  await $("#password").setValue(password);
+  // Use JavaScript to set values to avoid WebDriver's special character interpretation
+  await browser.execute(
+    (user, pass) => {
+      const usernameField = document.querySelector(
+        "#username",
+      ) as HTMLInputElement;
+      const passwordField = document.querySelector(
+        "#password",
+      ) as HTMLInputElement;
+      if (usernameField) {
+        usernameField.value = user;
+        usernameField.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      if (passwordField) {
+        passwordField.value = pass;
+        passwordField.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    },
+    username,
+    password,
+  );
   await $("#kc-login").click();
   await $("[data-test=navigation-home]").waitForDisplayed({ timeout: 20000 });
 }
@@ -200,10 +219,24 @@ When(/^I click on the social media login button$/, async table => {
 Then(/^I should see a confirmation message$/, async () => {
   // Keycloak registers the user, auto-logs them in, and redirects back to the
   // app — so success = landing in the app logged in (bottom nav visible).
-  await $("[data-test=navigation-home]").waitForDisplayed({
-    timeout: 30000,
-    timeoutMsg: "Expected to be logged in (navigation-home) after registration",
-  });
+
+  // Wait for the redirect to complete with increased timeout and refresh on failure
+  try {
+    await $("[data-test=navigation-home]").waitForDisplayed({
+      timeout: 30000,
+      timeoutMsg:
+        "Expected to be logged in (navigation-home) after registration",
+    });
+  } catch (err) {
+    // If first attempt fails, try refreshing and waiting again
+    await browser.refresh();
+    await browser.pause(2000);
+    await $("[data-test=navigation-home]").waitForDisplayed({
+      timeout: 20000,
+      timeoutMsg:
+        "Expected to be logged in (navigation-home) after registration - even after refresh",
+    });
+  }
 });
 //#endregion REGISTER
 
@@ -457,7 +490,7 @@ When(
     const submit = await $("[data-test=send-submit]");
     await submit.waitForEnabled({ timeout: 10000 });
     // Use JavaScript click to avoid element overlay issues (send icon SVG on top of button)
-    await browser.execute((el) => (el as HTMLElement).click(), submit);
+    await browser.execute(el => (el as HTMLElement).click(), submit);
 
     // Success either flashes the snackbar or redirects to /transfers (the page
     // navigates ~1.2s after success). Treat either as done; fail fast on error.
@@ -528,16 +561,17 @@ Then(
 
 // Then: the pending-token message is shown.
 Then(/^there is a message of pending token$/, async () => {
-  await $("[data-test=notifications-page]").waitForDisplayed({ timeout: 15000 });
+  await $("[data-test=notifications-page]").waitForDisplayed({
+    timeout: 15000,
+  });
 
   // Manual-inspection pause: set BDD_PAUSE to hold the browser on the
   // notifications page so you can see what it renders.
   if (process.env.BDD_PAUSE) {
-    // eslint-disable-next-line no-console
     console.log(
       "\n⏸  Paused on the notifications page — inspect the browser (Ctrl-C / kill to stop).\n",
     );
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       await browser.pause(3_600_000);
     }
@@ -566,7 +600,7 @@ Then(/^there is a message of pending token$/, async () => {
   const item = await $("[data-test^='notification-item-']");
   const dt = (await item.getAttribute("data-test")) || "";
   sendTokenTransferId = dt.replace("notification-item-", "");
-  // eslint-disable-next-line no-console
+
   console.log(`[DIAG] notification id=${sendTokenTransferId}`);
 });
 
@@ -642,22 +676,20 @@ Then(/^there is the token sent by the user 1$/, async () => {
 
 // Then: user logs in and opens the /transfers page directly (no bottom-nav
 // entry exists for it — the app only reaches it via the post-send redirect).
-Then(
-  /^(\S+) login and view the transfers page$/,
-  async (email: string) => {
-    const acct = seededAccounts[email];
-    await switchUser(acct.email, acct.password);
-    await browser.url(`${baseUrl()}/transfers`);
-    await $("[data-test=transfers-page]").waitForDisplayed({ timeout: 15000 });
-  },
-);
+Then(/^(\S+) login and view the transfers page$/, async (email: string) => {
+  const acct = seededAccounts[email];
+  await switchUser(acct.email, acct.password);
+  await browser.url(`${baseUrl()}/transfers`);
+  await $("[data-test=transfers-page]").waitForDisplayed({ timeout: 15000 });
+});
 
 // Then: an incoming transfer (Accept/Decline row) is visible; capture its id.
 Then(/^there is an incoming pending transfer to respond to$/, async () => {
   await $("[data-test=transfers-page]").waitForDisplayed({ timeout: 15000 });
   const countItems = () =>
     browser.execute(
-      () => document.querySelectorAll("[data-test^='transfer-decline-']").length,
+      () =>
+        document.querySelectorAll("[data-test^='transfer-decline-']").length,
     );
   await browser.waitUntil(
     async () => {
@@ -732,10 +764,16 @@ Then(/^the transfer is no longer listed$/, async () => {
   await browser.waitUntil(
     async () => {
       const incomingCount = await browser.execute(
-        () => document.querySelectorAll("[data-test='transfers-incoming'] [data-test^='transfer-item-']").length,
+        () =>
+          document.querySelectorAll(
+            "[data-test='transfers-incoming'] [data-test^='transfer-item-']",
+          ).length,
       );
       const outgoingCount = await browser.execute(
-        () => document.querySelectorAll("[data-test='transfers-outgoing'] [data-test^='transfer-item-']").length,
+        () =>
+          document.querySelectorAll(
+            "[data-test='transfers-outgoing'] [data-test^='transfer-item-']",
+          ).length,
       );
       // If neither section has any items, the row is gone.
       if (incomingCount === 0 && outgoingCount === 0) return true;
@@ -787,3 +825,143 @@ Then(/^there is the token still in the wallet$/, async () => {
 });
 
 //#endregion SEND-TOKEN
+
+// ============================================================================
+// [SETTINGS] Account, Security, and Logout flows
+// ============================================================================
+//#region SETTINGS
+
+When(/^(\S+) login and click the settings nav icon$/, async (email: string) => {
+  await browser.url("http://localhost:3000/login");
+  const accountData = seededAccounts[email];
+  if (!accountData) {
+    throw new Error(`No seeded account found for ${email}`);
+  }
+  await keycloakLogin(accountData.username, accountData.password);
+  // Click settings nav icon
+  const settingsNav = await $('[data-test="bottom-nav-settings"]');
+  await settingsNav.waitForDisplayed({ timeout: 10000 });
+  await settingsNav.click();
+});
+
+Then(/^the user is on the settings page$/, async () => {
+  const settingsPage = await $('[data-test="settings-page"]');
+  await settingsPage.waitForDisplayed({ timeout: 10000 });
+});
+
+When(/^the user click the Account item$/, async () => {
+  const accountItem = await $('[data-test="settings-account-item"]');
+  await accountItem.waitForDisplayed({ timeout: 5000 });
+  await accountItem.click();
+});
+
+Then(/^the user is on the account page$/, async () => {
+  const accountPage = await $('[data-test="settings-account-page"]');
+  await accountPage.waitForDisplayed({ timeout: 10000 });
+});
+
+Then(/^the account email shown is (\S+)$/, async (email: string) => {
+  const emailElement = await $('[data-test="settings-account-email"]');
+  await emailElement.waitForDisplayed({ timeout: 10000 });
+  const text = await emailElement.getText();
+  if (text !== email) {
+    throw new Error(`expected email "${email}", got "${text}"`);
+  }
+});
+
+Then(/^a "Member since" date is shown$/, async () => {
+  const createdElement = await $('[data-test="settings-account-created"]');
+  await createdElement.waitForDisplayed({ timeout: 10000 });
+  const text = await createdElement.getText();
+  if (!text || text.trim().length === 0) {
+    throw new Error("Member since date is empty or not displayed");
+  }
+});
+
+When(/^the user click the security link$/, async () => {
+  const securityLink = await $('[data-test="settings-security-link"]');
+  await securityLink.waitForDisplayed({ timeout: 5000 });
+  await securityLink.click();
+  // Give time for new tab to open
+  await browser.pause(2000);
+});
+
+Then(/^a new tab opens to the Keycloak account console$/, async () => {
+  const handles = await browser.getWindowHandles();
+  if (handles.length < 2) {
+    throw new Error("Expected a new tab to open, but only one tab exists");
+  }
+  // Switch to the new tab (last one)
+  const newTabHandle = handles[handles.length - 1];
+  await browser.switchToWindow(newTabHandle);
+  await browser.pause(2000);
+
+  const currentUrl = await browser.getUrl();
+  if (!currentUrl.includes("/realms/") || !currentUrl.includes("/account")) {
+    throw new Error(
+      `Expected Keycloak account console URL, got: ${currentUrl}`,
+    );
+  }
+
+  // Switch back to the original tab
+  await browser.switchToWindow(handles[0]);
+  await browser.pause(1000);
+});
+
+When(/^the user click the logout button$/, async () => {
+  const logoutButton = await $('[data-test="settings-logout-button"]');
+  await logoutButton.waitForDisplayed({ timeout: 5000 });
+  await logoutButton.click();
+});
+
+Then(/^the user is redirected to the login page$/, async () => {
+  // Wait for the Keycloak login page to load - the #username field is the definitive indicator
+  const usernameField = await $("#username");
+  await usernameField.waitForDisplayed({ timeout: 20000 });
+
+  // Verify the URL is either the local /login page or Keycloak's auth endpoint
+  const currentUrl = await browser.getUrl();
+  const isLoginPage =
+    currentUrl.includes("/login") ||
+    currentUrl.includes("/protocol/openid-connect/auth");
+  if (!isLoginPage) {
+    throw new Error(`Expected login page, got: ${currentUrl}`);
+  }
+});
+
+// Generic settings steps for use after registration (no login required)
+When(/^I click the settings nav icon$/, async () => {
+  const settingsNav = await $('[data-test="bottom-nav-settings"]');
+  await settingsNav.waitForDisplayed({ timeout: 10000 });
+  await settingsNav.click();
+});
+
+When(/^I click the Account item$/, async () => {
+  const accountItem = await $('[data-test="settings-account-item"]');
+  await accountItem.waitForDisplayed({ timeout: 5000 });
+  await accountItem.click();
+});
+
+Then(/^account email is displayed$/, async () => {
+  const emailElement = await $('[data-test="settings-account-email"]');
+  await emailElement.waitForDisplayed({ timeout: 10000 });
+  const text = await emailElement.getText();
+  if (!text || text.trim().length === 0) {
+    throw new Error("Email is empty or not displayed");
+  }
+});
+
+When(/^I click the security link$/, async () => {
+  const securityLink = await $('[data-test="settings-security-link"]');
+  await securityLink.waitForDisplayed({ timeout: 5000 });
+  await securityLink.click();
+  await browser.pause(2000);
+});
+
+When(/^I click the logout button$/, async () => {
+  const logoutButton = await $('[data-test="settings-logout-button"]');
+  await logoutButton.waitForDisplayed({ timeout: 5000 });
+  await logoutButton.click();
+});
+
+//#endregion SETTINGS

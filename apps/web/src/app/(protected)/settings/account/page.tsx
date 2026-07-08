@@ -1,124 +1,198 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, Button, Typography } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Typography,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
-import ProfileAvatar from "../../../../components/ProfileAvatar";
-import ProfileDetails from "../../../../components/ProfileDetails";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
+import { accountUrl } from "../../../../auth/keycloak";
 
 export default function Account() {
   const router = useRouter();
+  const token = useAtomValue(tokenAtom);
+  const [email, setEmail] = useState<string | null>(null);
+  const [createdAt, setCreatedAt] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock user data, to be replaced with actual user data later
-  const user = {
-    name: "John Doe",
-    email: "Emailaddress@gmail.com",
-    profileImageUrl: "",
+  useEffect(() => {
+    if (!token) {
+      setError("Not authenticated");
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchUserProfile = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_TREETRACKER_USER_API}/me`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            response.status === 401
+              ? "Session expired"
+              : "Failed to load profile",
+          );
+        }
+
+        const data = await response.json();
+        setEmail(data.email);
+
+        const date = new Date(data.createdAt);
+        const formattedDate = date.toLocaleString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        setCreatedAt(formattedDate);
+      } catch (err: any) {
+        setError(err.message || "Failed to load profile");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [token]);
+
+  const handleSecurityClick = () => {
+    const url = accountUrl();
+    if (url) {
+      window.open(url, "_blank");
+    }
   };
 
   return (
     <Box
+      data-test="settings-account-page"
       sx={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        maxWidth: "600px",
-        margin: "0 -1em",
-        textAlign: "center",
-        height: "90vh",
-      }}>
+        padding: "16px",
+        gap: "16px",
+        paddingBottom: "100px",
+      }}
+    >
+      {/* Account Section */}
       <Box
         sx={{
           backgroundColor: "white",
           padding: "16px",
+          borderRadius: "8px",
           boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
-          width: "100%",
-        }}>
-        <ProfileAvatar
-          name={user.name}
-          profileImageUrl={user.profileImageUrl}
-        />
-        <ProfileDetails name={user.name} email={user.email} />
-        <Stack
-          direction="row"
-          justifyContent="space-evenly"
-          alignItems="center"
-          sx={{ marginTop: 2 }}>
-          <Button
-            onClick={() => router.push("/settings/activity")}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              padding: "12px 16px",
-              color: "black",
-              background: "none",
-              border: "none",
-              boxShadow: "none",
-              textTransform: "none",
-              minWidth: "80px",
-            }}>
-            <NotificationsIcon fontSize="medium" sx={{ color: "gray" }} />
-            <Typography variant="body2">Activity</Typography>
-          </Button>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ fontSize: "40px", marginX: 2, fontWeight: "light" }}>
-            |
-          </Typography>
-          <Button
-            onClick={() => router.push("/settings/web-map")}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              padding: "12px 16px",
-              color: "black",
-              background: "none",
-              border: "none",
-              boxShadow: "none",
-              textTransform: "none",
-              minWidth: "80px",
-            }}>
-            <AccountBalanceWalletOutlinedIcon
-              fontSize="medium"
-              sx={{ color: "gray" }}
-            />
-            <Typography variant="body2">Web Map</Typography>
-          </Button>
-        </Stack>
+        }}
+      >
+        <Typography variant="h6" sx={{ marginBottom: "12px", fontWeight: 600 }}>
+          Account
+        </Typography>
+
+        {isLoading ? (
+          <Box
+            sx={{ display: "flex", justifyContent: "center", padding: "24px" }}
+          >
+            <CircularProgress size={40} />
+          </Box>
+        ) : error ? (
+          <Alert severity="error">{error}</Alert>
+        ) : (
+          <>
+            <Typography
+              variant="body2"
+              sx={{ color: "gray", marginBottom: "8px" }}
+            >
+              Email
+            </Typography>
+            <Typography
+              variant="body1"
+              data-test="settings-account-email"
+              sx={{ marginBottom: "16px" }}
+            >
+              {email}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{ color: "gray", marginBottom: "8px" }}
+            >
+              Member Since
+            </Typography>
+            <Typography
+              variant="body1"
+              data-test="settings-account-created"
+              sx={{ marginBottom: "16px" }}
+            >
+              {createdAt}
+            </Typography>
+          </>
+        )}
       </Box>
+
+      {/* Security Section */}
+      <Box
+        sx={{
+          backgroundColor: "white",
+          padding: "16px",
+          borderRadius: "8px",
+          boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Typography variant="h6" sx={{ marginBottom: "12px", fontWeight: 600 }}>
+          Security
+        </Typography>
+        <Button
+          data-test="settings-security-link"
+          onClick={handleSecurityClick}
+          fullWidth
+          sx={{
+            justifyContent: "flex-start",
+            textTransform: "none",
+            color: "inherit",
+            padding: "12px 0",
+            borderBottom: "1px solid #f0f0f0",
+            "&:hover": {
+              backgroundColor: "#f9f9f9",
+            },
+          }}
+        >
+          <Typography variant="body2">Manage password & security</Typography>
+        </Button>
+      </Box>
+
+      {/* Logout Button */}
       <Button
+        data-test="settings-logout-button"
+        variant="contained"
         fullWidth
         onClick={() => router.push("/logout")}
         sx={{
-          marginTop: 2,
-          backgroundColor: "white",
+          backgroundColor: "#d32f2f",
+          color: "white",
           textTransform: "none",
-          color: "black",
-          display: "flex",
-          justifyContent: "space-between",
           padding: "12px",
-        }}>
+          marginTop: "8px",
+          "&:hover": {
+            backgroundColor: "#b71c1c",
+          },
+        }}
+      >
         Log Out
-        <ArrowForwardIosIcon fontSize="small" />
       </Button>
-      <Box
-        sx={{
-          backgroundColor: "#f0f0f0",
-          padding: "8px",
-          width: "100%",
-          textAlign: "center",
-          boxSizing: "border-box",
-        }}>
-        <Typography variant="body2" sx={{ color: "black" }}>
-          Member since May 2023
-        </Typography>
-      </Box>
     </Box>
   );
 }

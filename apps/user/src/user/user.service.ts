@@ -145,4 +145,51 @@ export class UserService {
       throw new HttpException("Error creating user", HttpStatusCode.Forbidden);
     }
   }
+
+  public async getMe(userToken: string) {
+    const keycloakBaseUrl = process.env.PRIVATE_KEYCLOAK_BASE_URL;
+    const keycloakRealm = process.env.PRIVATE_KEYCLOAK_REALM;
+    try {
+      // Keycloak verifies the caller's own token here (401 if invalid/expired).
+      const userinfoUrl = `${keycloakBaseUrl}/realms/${keycloakRealm}/protocol/openid-connect/userinfo`;
+      const { data: userinfo } = await firstValueFrom(
+        this.httpService.get(userinfoUrl, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        }),
+      );
+
+      // createdTimestamp isn't a token claim — only available via the admin API.
+      const adminToken = await this.authService.getToken();
+      const userRecordUrl = `${keycloakBaseUrl}/admin/realms/${keycloakRealm}/users/${userinfo.sub}`;
+      const { data: record } = await firstValueFrom(
+        this.httpService.get(userRecordUrl, {
+          headers: { Authorization: `Bearer ${adminToken}` },
+        }),
+      );
+
+      return {
+        email: userinfo.email,
+        createdAt: new Date(record.createdTimestamp).toISOString(),
+      };
+    } catch (error: any) {
+      if (error instanceof HttpException) throw error;
+      const status = error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      if (status === 401) {
+        throw new HttpException(
+          "Invalid or expired token",
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      const message =
+        error.response?.data?.error_description ||
+        error.message ||
+        "Failed to load profile";
+      Logger.error(
+        `getMe failed (HTTP ${status}): ${message}`,
+        undefined,
+        UserService.name,
+      );
+      throw new HttpException(message, status);
+    }
+  }
 }

@@ -51,3 +51,10 @@ export function logout(): void {
       : undefined;
   getKeycloak()?.logout({ redirectUri });
 }
+
+export function accountUrl(): string | undefined {
+  return getKeycloak()?.createAccountUrl({
+    redirectUri:
+      typeof window !== "undefined" ? window.location.href : undefined,
+  });
+}
