@@ -14,22 +14,38 @@ import CustomSubmitButton from "@components/ui/common/CustomSubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SocialLoginButton from "@common/SocialLoginButton";
 import { Colors } from "@/constants/Colors";
+import { useSetAtom } from "jotai";
+import { loginAtom } from "core";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [isAuth, setAuth] = useState(false);
+  const login = useSetAtom(loginAtom);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const isLoginEnabled = email.length > 0 && password.length > 0;
-  console.log(isLoginEnabled);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const isLoginEnabled = username.length > 0 && password.length > 0;
 
-  const handleLogIn = () => {
-    setAuth(true);
-    if (isAuth) {
-      router.push("/(tabs)/home");
+  const handleLogIn = async () => {
+    if (!isLoginEnabled || isSubmitting) return;
 
-      AsyncStorage.setItem("isAuth", `${isAuth}`);
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const result = await login({ username, password });
+
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+
+      await AsyncStorage.setItem("isAuth", "true");
+      router.replace("/(tabs)/home");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setIsSubmitting(false);
     }
-    console.log("login....");
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -40,16 +56,14 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.keyboardContainer}
-    >
+      style={styles.keyboardContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <CustomTitle title="Log In" />
         <CustomTextInput
-          label="Email"
-          placeholder="Enter your email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
+          label="Username"
+          placeholder="Enter your username"
+          value={username}
+          onChangeText={setUsername}
           error={false}
         />
 
@@ -62,11 +76,13 @@ const LoginScreen = () => {
           error={false}
         />
 
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
         <View style={styles.buttonContainer}>
           <CustomSubmitButton
-            title="log in"
+            title={isSubmitting ? "logging in..." : "log in"}
             onPress={handleLogIn}
-            disabled={isLoginEnabled}
+            disabled={isLoginEnabled && !isSubmitting}
             style={[
               isLoginEnabled ? styles.buttonActive : styles.buttonDisabled,
               { textTransform: "uppercase" },
@@ -163,6 +179,12 @@ const styles = StyleSheet.create({
   linkText: {
     color: Colors.green,
     fontSize: 16,
+  },
+  errorText: {
+    color: Colors.red,
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: "center",
   },
 });
 
