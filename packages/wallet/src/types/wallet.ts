@@ -4,6 +4,7 @@ export type Wallet = {
   display_name?: string;
   about?: string;
   logo_url?: string;
+  cover_image_url?: string;
   created_at?: string;
   tokens_in_wallet?: number;
 };

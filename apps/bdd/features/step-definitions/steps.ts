@@ -965,3 +965,257 @@ When(/^I click the logout button$/, async () => {
 });
 
 //#endregion SETTINGS
+
+// ============================================================================
+// [CUSTOMIZE] Customize Wallet flows
+// ============================================================================
+//#region CUSTOMIZE
+
+When(
+  /^(\S+) login and navigate to wallet details$/,
+  async (username: string) => {
+    const account = seededAccounts[username];
+    if (!account) throw new Error(`Account not found: ${username}`);
+
+    await switchUser(account.email, account.password);
+    // Navigate to wallet list
+    await $("[data-test=wallet-list]").waitForDisplayed({ timeout: 10000 });
+    // Click first wallet (assuming it's the one we created)
+    const wallets = await $$("[data-test^=wallet-item-]");
+    if (wallets.length === 0) throw new Error("No wallets found");
+    await wallets[0].click();
+    await $("[data-test=wallet-details-page]").waitForDisplayed({
+      timeout: 10000,
+    });
+  }
+);
+
+When(/^the user click the customize wallet button$/, async () => {
+  const customizeBtn = await $('[data-test="wallet-customize-open"]');
+  await customizeBtn.waitForDisplayed({ timeout: 5000 });
+  await customizeBtn.click();
+});
+
+Then(/^the user is on the customize wallet page$/, async () => {
+  const pageElement = await $("[data-test=customize-wallet-page]");
+  await pageElement.waitForDisplayed({ timeout: 10000 });
+});
+
+When(/^the user enter display name: (.+)$/, async (displayName: string) => {
+  const input = await $('[data-test="customize-display-name"]');
+  await input.waitForDisplayed({ timeout: 5000 });
+  await input.clearValue();
+  await input.setValue(displayName);
+});
+
+When(
+  /^the user enter about text: (.+)$/,
+  async (aboutText: string) => {
+    const editor = await $('[data-test="customize-about"]');
+    await editor.waitForDisplayed({ timeout: 5000 });
+    // Clear existing content
+    await browser.execute((elem) => {
+      (elem as HTMLElement).innerHTML = "";
+    }, editor);
+    // Set new content
+    await editor.click();
+    await browser.keys(aboutText.split(""));
+  }
+);
+
+When(
+  /^the user enter about text with formatting:$/,
+  async (table: any) => {
+    const editor = await $('[data-test="customize-about"]');
+    await editor.waitForDisplayed({ timeout: 5000 });
+    await browser.execute((elem) => {
+      (elem as HTMLElement).innerHTML = "";
+    }, editor);
+
+    const rows = table.hashes();
+    for (const row of rows) {
+      const format = row.format.toLowerCase();
+      const text = row.text;
+
+      await editor.click();
+
+      if (format === "bold") {
+        // Select text, then apply bold
+        await browser.keys(text.split(""));
+        // Use Ctrl+A to select all in contentEditable
+        await browser.keys(["Control", "a"]);
+        // Apply bold
+        await browser.execute(() => {
+          document.execCommand("bold", false, undefined);
+        });
+      } else if (format === "italic") {
+        await browser.keys(text.split(""));
+        await browser.keys(["Control", "a"]);
+        await browser.execute(() => {
+          document.execCommand("italic", false, undefined);
+        });
+      } else {
+        // Normal text
+        await browser.keys(text.split(""));
+      }
+
+      // Add space after each format block
+      await browser.keys([" "]);
+    }
+  }
+);
+
+When(/^the user upload a logo file with size: (\d+)KB$/, async (size: string) => {
+  const uploadBtn = await $('[data-test="customize-logo-upload"]');
+  await uploadBtn.waitForDisplayed({ timeout: 5000 });
+
+  // Create a dummy image file
+  const sizeInBytes = parseInt(size) * 1024;
+  const canvas = await browser.execute((bytes) => {
+    const c = document.createElement("canvas");
+    c.width = 100;
+    c.height = 100;
+    return c.toDataURL("image/png");
+  }, sizeInBytes);
+
+  const fileInput = await $(
+    '[data-test="customize-logo-upload"] input[type="file"]'
+  );
+  const base64Data = canvas.split(",")[1];
+  const binaryString = atob(base64Data);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // Use the file input's remote upload method
+  await browser.execute(
+    (input, data) => {
+      const file = new File([data], "test-logo.png", { type: "image/png" });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      (input as HTMLInputElement).files = dataTransfer.files;
+      const event = new Event("change", { bubbles: true });
+      input.dispatchEvent(event);
+    },
+    fileInput,
+    bytes
+  );
+});
+
+When(
+  /^the user upload a hero image file with size: (\d+)KB$/,
+  async (size: string) => {
+    const uploadBtn = await $('[data-test="customize-hero-upload"]');
+    await uploadBtn.waitForDisplayed({ timeout: 5000 });
+
+    const fileInput = await $(
+      '[data-test="customize-hero-upload"] input[type="file"]'
+    );
+    const file = new File(
+      [new Uint8Array(parseInt(size) * 1024)],
+      "test-hero.png",
+      { type: "image/png" }
+    );
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    await browser.execute(
+      (input, files) => {
+        (input as HTMLInputElement).files = files;
+        const event = new Event("change", { bubbles: true });
+        input.dispatchEvent(event);
+      },
+      fileInput,
+      dataTransfer.files
+    );
+  }
+);
+
+When(
+  /^the user try to upload a logo file with size: (\d+)MB$/,
+  async (size: string) => {
+    const uploadBtn = await $('[data-test="customize-logo-upload"]');
+    await uploadBtn.waitForDisplayed({ timeout: 5000 });
+
+    const fileInput = await $(
+      '[data-test="customize-logo-upload"] input[type="file"]'
+    );
+    const oversizedFile = new File(
+      [new Uint8Array(parseInt(size) * 1024 * 1024)],
+      "oversized-logo.png",
+      { type: "image/png" }
+    );
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(oversizedFile);
+
+    await browser.execute(
+      (input, files) => {
+        (input as HTMLInputElement).files = files;
+        const event = new Event("change", { bubbles: true });
+        input.dispatchEvent(event);
+      },
+      fileInput,
+      dataTransfer.files
+    );
+  }
+);
+
+Then(/^the logo preview is displayed$/, async () => {
+  const logoSection = await $("[data-test=customize-logo-upload]")
+    .parentElement();
+  const previewImg = await logoSection.$("img");
+  await previewImg.waitForDisplayed({ timeout: 5000 });
+});
+
+Then(/^the hero preview is displayed$/, async () => {
+  const heroSection = await $("[data-test=customize-hero-upload]")
+    .parentElement();
+  const previewImg = await heroSection.$("img");
+  await previewImg.waitForDisplayed({ timeout: 5000 });
+});
+
+When(/^the user click the customize save button$/, async () => {
+  const saveBtn = await $('[data-test="customize-save"]');
+  await saveBtn.waitForDisplayed({ timeout: 5000 });
+  await saveBtn.click();
+});
+
+Then(/^a success message is shown$/, async () => {
+  const successAlert = await $('[data-test="customize-success"]');
+  await successAlert.waitForDisplayed({ timeout: 10000 });
+  const text = await successAlert.getText();
+  expect(text.toLowerCase()).toContain("success");
+});
+
+Then(/^an error message is shown: (.+)$/, async (errorMsg: string) => {
+  const errorAlert = await $('[data-test="customize-error"]');
+  await errorAlert.waitForDisplayed({ timeout: 10000 });
+  const text = await errorAlert.getText();
+  expect(text).toContain(errorMsg);
+});
+
+Then(/^no preview is displayed for logo$/, async () => {
+  const logoSection = await $("[data-test=customize-logo-upload]")
+    .parentElement();
+  const previewImg = await logoSection.$("img");
+  const isDisplayed = await previewImg.isDisplayed().catch(() => false);
+  expect(isDisplayed).toBeFalsy();
+});
+
+Then(
+  /^the user is redirected to wallet details$/,
+  async () => {
+    const detailsPage = await $("[data-test=wallet-details-page]");
+    await detailsPage.waitForDisplayed({ timeout: 10000 });
+  }
+);
+
+Then(/^the display name is updated to: (.+)$/, async (expectedName: string) => {
+  const displayNameElement = await $('[data-test="wallet-details-name"]');
+  await displayNameElement.waitForDisplayed({ timeout: 5000 });
+  const actualName = await displayNameElement.getText();
+  expect(actualName).toContain(expectedName);
+});
+
+//#endregion CUSTOMIZE

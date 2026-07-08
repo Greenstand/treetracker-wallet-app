@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
+import PaletteIcon from "@mui/icons-material/Palette";
 import {
   useGetTokens,
   useGetWallets,
@@ -68,16 +69,30 @@ function WalletDetails() {
         >
           {wallet?.display_name || name}
         </Typography>
-        <Button
-          variant="text"
-          startIcon={<EditIcon />}
-          onClick={() => setEditOpen(true)}
-          disabled={!wallet?.id}
-          sx={{ color: "green" }}
-          data-test="wallet-edit-open"
-        >
-          Edit
-        </Button>
+        <Stack direction="row" gap={1}>
+          <Button
+            variant="text"
+            startIcon={<PaletteIcon />}
+            onClick={() =>
+              router.push(`/wallet/customize?name=${encodeURIComponent(name)}`)
+            }
+            disabled={!wallet?.id}
+            sx={{ color: "green" }}
+            data-test="wallet-customize-open"
+          >
+            Customize
+          </Button>
+          <Button
+            variant="text"
+            startIcon={<EditIcon />}
+            onClick={() => setEditOpen(true)}
+            disabled={!wallet?.id}
+            sx={{ color: "green" }}
+            data-test="wallet-edit-open"
+          >
+            Edit
+          </Button>
+        </Stack>
       </Stack>
       {wallet?.about && (
         <Typography
