@@ -640,4 +640,150 @@ Then(/^there is the token sent by the user 1$/, async () => {
   );
 });
 
+// Then: user logs in and opens the /transfers page directly (no bottom-nav
+// entry exists for it — the app only reaches it via the post-send redirect).
+Then(
+  /^(\S+) login and view the transfers page$/,
+  async (email: string) => {
+    const acct = seededAccounts[email];
+    await switchUser(acct.email, acct.password);
+    await browser.url(`${baseUrl()}/transfers`);
+    await $("[data-test=transfers-page]").waitForDisplayed({ timeout: 15000 });
+  },
+);
+
+// Then: an incoming transfer (Accept/Decline row) is visible; capture its id.
+Then(/^there is an incoming pending transfer to respond to$/, async () => {
+  await $("[data-test=transfers-page]").waitForDisplayed({ timeout: 15000 });
+  const countItems = () =>
+    browser.execute(
+      () => document.querySelectorAll("[data-test^='transfer-decline-']").length,
+    );
+  await browser.waitUntil(
+    async () => {
+      if ((await countItems()) > 0) return true;
+      await browser.refresh();
+      await browser.pause(2000);
+      return (await countItems()) > 0;
+    },
+    {
+      timeout: 45000,
+      interval: 1000,
+      timeoutMsg: "no incoming pending transfer appeared",
+    },
+  );
+  const btn = await $("[data-test^='transfer-decline-']");
+  const dt = (await btn.getAttribute("data-test")) || "";
+  sendTokenTransferId = dt.replace("transfer-decline-", "");
+});
+
+// When: user clicks decline on the captured transfer.
+When(/^the user click the decline button$/, async () => {
+  const btn = await $(`[data-test=transfer-decline-${sendTokenTransferId}]`);
+  await btn.waitForDisplayed({ timeout: 15000 });
+  await btn.waitForEnabled({ timeout: 15000 });
+  await btn.click();
+});
+
+// Then: an outgoing transfer (Cancel row) is visible; capture its id. Navigates
+// directly to /transfers rather than relying on the app's own post-send
+// setTimeout redirect, so this is robust to redirect timing.
+Then(/^there is an outgoing pending transfer to cancel$/, async () => {
+  await browser.url(`${baseUrl()}/transfers`);
+  await $("[data-test=transfers-page]").waitForDisplayed({ timeout: 15000 });
+  const countItems = () =>
+    browser.execute(
+      () => document.querySelectorAll("[data-test^='transfer-cancel-']").length,
+    );
+  await browser.waitUntil(
+    async () => {
+      if ((await countItems()) > 0) return true;
+      await browser.refresh();
+      await browser.pause(2000);
+      return (await countItems()) > 0;
+    },
+    {
+      timeout: 45000,
+      interval: 1000,
+      timeoutMsg: "no outgoing pending transfer appeared",
+    },
+  );
+  const btn = await $("[data-test^='transfer-cancel-']");
+  const dt = (await btn.getAttribute("data-test")) || "";
+  sendTokenTransferId = dt.replace("transfer-cancel-", "");
+});
+
+// When: user clicks cancel on the captured transfer.
+When(/^the user click the cancel button$/, async () => {
+  const btn = await $(`[data-test=transfer-cancel-${sendTokenTransferId}]`);
+  await btn.waitForDisplayed({ timeout: 15000 });
+  await btn.waitForEnabled({ timeout: 15000 });
+  await btn.click();
+});
+
+// Then: the acted-on row is no longer in the active list (it moves to the
+// history section or its state changes, so it's not in incoming/outgoing anymore).
+Then(/^the transfer is no longer listed$/, async () => {
+  const sel = `[data-test=transfer-item-${sendTokenTransferId}]`;
+  // Poll for the row to no longer exist in the incoming/outgoing sections.
+  // After decline/cancel, the backend moves it to history (state=cancelled/declined),
+  // so it disappears from the active list. If it still exists after waiting, it's
+  // a backend/sync issue.
+  await browser.waitUntil(
+    async () => {
+      const incomingCount = await browser.execute(
+        () => document.querySelectorAll("[data-test='transfers-incoming'] [data-test^='transfer-item-']").length,
+      );
+      const outgoingCount = await browser.execute(
+        () => document.querySelectorAll("[data-test='transfers-outgoing'] [data-test^='transfer-item-']").length,
+      );
+      // If neither section has any items, the row is gone.
+      if (incomingCount === 0 && outgoingCount === 0) return true;
+      await browser.refresh();
+      await browser.pause(2000);
+      return false;
+    },
+    {
+      timeout: 45000,
+      interval: 1000,
+      timeoutMsg: `transfer ${sendTokenTransferId} still in active list`,
+    },
+  );
+});
+
+// And: declined transfer must not have moved any token into the receiver's wallet.
+Then(/^there is no token from \S+ in the wallet$/, async () => {
+  // Let the wallet's token-list fetch settle before asserting absence — a
+  // waitUntil that exits as soon as count===0 could pass on a still-loading
+  // page that would shortly render a token.
+  await browser.pause(3000);
+  const count = await browser.execute(
+    () => document.querySelectorAll("[data-test^='token-item-']").length,
+  );
+  if (count !== 0) {
+    throw new Error(`expected wallet to have no tokens, found ${count}`);
+  }
+});
+
+// And: a cancelled transfer must leave the token in the sender's wallet.
+Then(/^there is the token still in the wallet$/, async () => {
+  const countItems = () =>
+    browser.execute(
+      () => document.querySelectorAll("[data-test^='token-item-']").length,
+    );
+  await browser.waitUntil(
+    async () => {
+      if ((await countItems()) > 0) return true;
+      await browser.refresh();
+      await browser.pause(2000);
+      return (await countItems()) > 0;
+    },
+    {
+      timeout: 45000,
+      interval: 1000,
+      timeoutMsg: "expected wallet to still contain a token, but none found",
+    },
+  );
+});
+
 //#endregion SEND-TOKEN
