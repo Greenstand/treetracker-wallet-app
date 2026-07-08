@@ -456,7 +456,8 @@ When(
     await amt.addValue(amount);
     const submit = await $("[data-test=send-submit]");
     await submit.waitForEnabled({ timeout: 10000 });
-    await submit.click();
+    // Use JavaScript click to avoid element overlay issues (send icon SVG on top of button)
+    await browser.execute((el) => (el as HTMLElement).click(), submit);
 
     // Success either flashes the snackbar or redirects to /transfers (the page
     // navigates ~1.2s after success). Treat either as done; fail fast on error.

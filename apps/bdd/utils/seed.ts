@@ -8,6 +8,7 @@
 //                                  because that package is bundled by the web frontend and
 //                                  cannot import `pg`.
 import "dotenv/config";
+import { randomUUID } from "crypto";
 import { Client } from "pg";
 // Import package functions by subpath. The package index files use `export *`
 // re-exports (and @treetracker/wallet's index also pulls in React hooks → core/
@@ -50,6 +51,68 @@ async function userToken(username: string, password: string): Promise<string> {
     throw new Error(`password grant failed for ${username}: HTTP ${res.status}`);
   }
   return data.access_token;
+}
+
+// Create a wallet directly in the database (bypasses wallet-api).
+// Returns the wallet ID.
+async function createWalletInDB(
+  keycloakId: string,
+  walletName: string,
+): Promise<string> {
+  const client = new Client({
+    connectionString: DB_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+  await client.connect();
+  try {
+    await client.query(`SET search_path TO ${DB_SCHEMA}`);
+    const result = await client.query(
+      `INSERT INTO wallet (keycloak_account_id, name, created_at)
+       VALUES ($1, $2, NOW())
+       RETURNING id`,
+      [keycloakId, walletName],
+    );
+    return result.rows[0].id;
+  } finally {
+    await client.end();
+  }
+}
+
+// Create a token directly in the database and assign it to a wallet.
+// Finds an existing tree with a capture_id and no token, then creates a token for it.
+async function createTokenInDB(walletId: string): Promise<string> {
+  const client = new Client({
+    connectionString: DB_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+  await client.connect();
+  try {
+    // Find an existing tree with a uuid that doesn't have a token yet
+    const treeResult = await client.query(`
+      SELECT uuid FROM public.trees
+      WHERE uuid IS NOT NULL AND token_id IS NULL
+      LIMIT 1
+    `);
+
+    if (treeResult.rows.length === 0) {
+      throw new Error('No available trees with uuid and no token found in public.trees table');
+    }
+
+    const captureId = treeResult.rows[0].uuid;
+    const tokenId = randomUUID();
+
+    // Create token linked to the capture and assign to wallet
+    await client.query(`SET search_path TO ${DB_SCHEMA}`);
+    await client.query(
+      `INSERT INTO token (id, wallet_id, capture_id, created_at)
+       VALUES ($1, $2, $3, NOW())`,
+      [tokenId, walletId, captureId],
+    );
+
+    return tokenId;
+  } finally {
+    await client.end();
+  }
 }
 
 // Find a Keycloak user id by username (admin API). Returns null if absent.
@@ -131,9 +194,8 @@ async function deleteWalletByName(name: string): Promise<void> {
   }
 }
 
-// Delete (if present) then recreate the Keycloak user + wallet. When
-// requireToken is true (the sender), poll until the wallet holds ≥1 token
-// (the first-wallet gift).
+// Delete (if present) then recreate the Keycloak user + wallet.
+// Creates wallet and token directly in the database (no API call, no polling).
 export async function seedAccount(
   acct: SeededAccount,
   requireToken: boolean,
@@ -161,22 +223,18 @@ export async function seedAccount(
     adminToken,
   );
 
-  // 4. create the wallet as that user (first wallet → server gift)
-  const token = await userToken(email, password);
-  await createWallet({ name: walletName }, token);
+  // 4. get the Keycloak ID of the newly created user
+  const keycloakId = await findUserId(adminToken, email);
+  if (!keycloakId) {
+    throw new Error(`Failed to find Keycloak ID for user ${email}`);
+  }
 
-  // 5. sender must actually hold a token before the scenario sends it
+  // 5. create wallet directly in database (bypasses wallet-api, no gift poll)
+  const walletId = await createWalletInDB(keycloakId, walletName);
+
+  // 6. if requireToken, create a token directly in the wallet (bypasses gift mechanism)
   if (requireToken) {
-    const deadline = Date.now() + 30_000;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const res = await getTokens(token, walletName, 10);
-      if ((res.tokens?.length ?? 0) >= 1) break;
-      if (Date.now() > deadline) {
-        throw new Error(`wallet ${walletName} never received its gift token`);
-      }
-      await new Promise((r) => setTimeout(r, 1500));
-    }
+    await createTokenInDB(walletId);
   }
 }
 
