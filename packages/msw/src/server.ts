@@ -1,4 +1,8 @@
 import { setupServer } from "msw/node";
-import { handlers } from "./handlers";
+import { authHandlers, keycloakHandlers, walletHandlers } from "./handlers";
 
-export const server = setupServer(...handlers);
+export const server = setupServer(
+  ...authHandlers,
+  ...keycloakHandlers,
+  ...walletHandlers,
+);

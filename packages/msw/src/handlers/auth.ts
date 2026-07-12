@@ -1,12 +1,7 @@
 import { http, HttpResponse } from "msw";
+import { mockUser } from "../mocks";
 
-export const mockUser = {
-  userId: "mock-user-id",
-  username: "mockuser",
-  email: "mock@example.com",
-};
-
-export const authHandlers = [
+const authHandlers = [
   http.post("*/login", () =>
     HttpResponse.json({
       token: "mock-access-token",
@@ -22,3 +17,5 @@ export const authHandlers = [
     }),
   ),
 ];
+
+export default authHandlers;

@@ -1,14 +1,3 @@
-import { authHandlers } from "./authHandlers";
-import { walletHandlers } from "./walletHandlers";
-import { keycloakHandlers } from "./keycloakHandlers";
-
-export const handlers = [
-  ...authHandlers,
-  ...walletHandlers,
-  ...keycloakHandlers,
-];
-
-export { authHandlers, walletHandlers, keycloakHandlers };
-export { mockUser } from "./authHandlers";
-export { mockWallets, mockTokens, mockTransfers } from "./walletHandlers";
-export { mockKeycloakToken } from "./keycloakHandlers";
+export { default as authHandlers } from "./auth";
+export { default as walletHandlers } from "./wallet";
+export { default as keycloakHandlers } from "./keycloak";
