@@ -4,7 +4,7 @@ const path = require("path");
 const nextConfig = {
   reactStrictMode: true,
   output: "export",
-  transpilePackages: ["wallet_state"],
+  transpilePackages: ["wallet_state", "@treetracker/msw"],
   serverExternalPackages: ["expo-constants", "expo-modules-core"],
   turbopack: {},
   webpack: (config, { isServer }) => {
