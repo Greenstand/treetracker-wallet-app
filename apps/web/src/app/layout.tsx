@@ -6,6 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "@/theme";
 import { KeycloakProvider } from "@/components/KeycloakProvider";
+import { MSWProvider } from "@/components/MSWProvider";
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
@@ -14,7 +15,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <KeycloakProvider>{props.children}</KeycloakProvider>
+            <MSWProvider>
+              <KeycloakProvider>{props.children}</KeycloakProvider>
+            </MSWProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
