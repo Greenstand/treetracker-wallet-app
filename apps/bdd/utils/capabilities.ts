@@ -10,7 +10,10 @@ export const CAPABILITY_WEB_CHROME = [
         "--no-sandbox",
         "--disable-dev-shm-usage",
         "--start-maximized",
-        "--headless=new",
+        // Headless by default so CI (which has no display) can launch Chrome.
+        // Set HEADED=1 locally to watch the browser while the test runs.
+        // (Explicit "1" check: any non-empty env value — e.g. "0" — is truthy.)
+        ...(process.env.HEADED === "1" ? [] : ["--headless=new"]),
         "--window-size=1920,1080",
       ],
     },

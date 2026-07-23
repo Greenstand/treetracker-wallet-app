@@ -107,7 +107,9 @@ export const baseConfig: CustomTestrunner = {
     snippets: true,
     source: true,
     strict: false,
-    timeout: 60000,
+    // Lift the per-step timeout when BDD_PAUSE is set so a manual-inspection
+    // pause (e.g. on the notifications page) doesn't trip Cucumber's timeout.
+    timeout: process.env.BDD_PAUSE ? 86_400_000 : 60_000,
     ignoreUndefinedDefinitions: false,
     format: ["progress"],
   },

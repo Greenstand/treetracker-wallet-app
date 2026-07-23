@@ -50,7 +50,7 @@ export default [
         ecmaVersion: 2024,
         sourceType: "module",
         ecmaFeatures: { jsx: true },
-        tsconfigRootDir: new URL(".", import.meta.url).pathname,
+        tsconfigRootDir: __dirname,
         project: tsProjects.length > 0 ? tsProjects : undefined,
       },
     },

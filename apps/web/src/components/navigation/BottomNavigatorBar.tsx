@@ -14,10 +14,6 @@ export default function BottomNavigationBar() {
   const router = useRouter();
 
   const handleNavigation = (newValue: number) => {
-    // Send/Notifications/Settings aren't implemented yet — disabled everywhere.
-    if (newValue === 2 || newValue === 3 || newValue === 4) {
-      return;
-    }
     setValue(newValue);
     switch (newValue) {
       case 0:
@@ -25,6 +21,15 @@ export default function BottomNavigationBar() {
         break;
       case 1:
         router.push("/wallet");
+        break;
+      case 2:
+        router.push("/send");
+        break;
+      case 3:
+        router.push("/notifications");
+        break;
+      case 4:
+        router.push("/settings");
         break;
       default:
         break;
@@ -62,7 +67,6 @@ export default function BottomNavigationBar() {
           <BottomNavigationAction
             label=""
             data-test="bottom-nav-send"
-            disabled
             icon={
               <Image
                 src="/assets/images/send.svg"
@@ -72,7 +76,6 @@ export default function BottomNavigationBar() {
                 style={{
                   position: "relative",
                   top: "-10px", // Move the image up
-                  opacity: 0.4, // Indicate disabled (not implemented yet)
                 }}
               />
             }
@@ -84,12 +87,12 @@ export default function BottomNavigationBar() {
           />
           <BottomNavigationAction
             label="Notifications"
-            disabled
+            data-test="bottom-nav-notifications"
             icon={<NotificationsIcon />}
           />
           <BottomNavigationAction
             label="Settings"
-            disabled
+            data-test="bottom-nav-settings"
             icon={<SettingsIcon />}
           />
         </BottomNavigation>
