@@ -83,9 +83,13 @@ Given(/^I am on the (\w+) page$/, async (page: string) => {
 //#region LOGIN
 
 When(/^I login with (\w+) and (.+)$/, async (username, password) => {
-  await $('input[name="username"]').setValue(username);
-  await $('input[name="password"]').setValue(password);
-  await $('button[type="submit"]').click();
+  // The app /login redirects to Keycloak's hosted login page. Use the same
+  // selectors as keycloakLogin(): the submit is <input id="kc-login">, not the
+  // <button type="submit"> the old custom form used.
+  await $("#username").waitForDisplayed({ timeout: 20000 });
+  await $("#username").setValue(username);
+  await $("#password").setValue(password);
+  await $("#kc-login").click();
 });
 
 Then(/^I should see text (.*)$/, async message => {
@@ -339,15 +343,17 @@ Then(
   async () => {
     // A new tab opens for the map. Headed Chrome also exposes devtools:// tabs as
     // window handles, so don't assume which handle is the map — scan every handle
-    // and land on the one whose URL carries /tokens/<id>. (The external map app may
-    // return an error page, but the URL still carries the token id.)
+    // and land on the one whose URL carries /tokens/<id>, then verify the page
+    // itself displays that token id.
     await browser.waitUntil(
       async () => {
         const handles = await browser.getWindowHandles();
         for (const h of handles) {
           await browser.switchToWindow(h);
           if ((await browser.getUrl()).includes("/tokens/" + selectedTokenId)) {
-            return true;
+            const body = $("body");
+            await body.waitForDisplayed({ timeout: 10000 });
+            return (await body.getText()).includes(selectedTokenId);
           }
         }
         return false;
@@ -355,10 +361,7 @@ Then(
       {
         timeout: 20000,
         interval: 1000,
-        timeoutMsg:
-          "No tab navigated to the token map page (/tokens/" +
-          selectedTokenId +
-          ")",
+        timeoutMsg: "No map tab displayed token id " + selectedTokenId,
       },
     );
   },
@@ -1008,18 +1011,17 @@ Then(/^the user is on the customize wallet page$/, async () => {
 });
 
 When(/^the user enter display name: (.+)$/, async (displayName: string) => {
-  const input = await $('[data-test="customize-display-name"]');
+  // data-test is on the MUI TextField root, so target the inner <input> and drive
+  // it with real events — setting .value + a synthetic "change" does not trigger
+  // React's controlled onChange, so setDisplayName never runs and the name is lost.
+  // The field is prefilled with the current display name; clear it first (select-all
+  // + delete), mirroring the working /send amount handling.
+  const input = await $('[data-test="customize-display-name"] input');
   await input.waitForDisplayed({ timeout: 5000 });
-  await browser.execute(
-    (elem, val) => {
-      (elem as HTMLInputElement).value = val;
-      (elem as HTMLInputElement).dispatchEvent(
-        new Event("change", { bubbles: true }),
-      );
-    },
-    input,
-    displayName,
-  );
+  await input.click();
+  await browser.keys([process.platform === "darwin" ? "Meta" : "Control", "a"]);
+  await browser.keys("Backspace");
+  await input.addValue(displayName);
 });
 
 When(/^the user enter about text: (.+)$/, async (aboutText: string) => {
@@ -1242,8 +1244,16 @@ Then(/^the user is redirected to wallet details$/, async () => {
 Then(/^the display name is updated to: (.+)$/, async (expectedName: string) => {
   const displayNameElement = await $('[data-test="wallet-details-name"]');
   await displayNameElement.waitForDisplayed({ timeout: 5000 });
-  const actualName = await displayNameElement.getText();
-  expect(actualName).toContain(expectedName);
+  // After the redirect the details page may briefly show the pre-update name until
+  // its refetch resolves; poll until the updated name appears rather than reading once.
+  await browser.waitUntil(
+    async () => (await displayNameElement.getText()).includes(expectedName),
+    {
+      timeout: 10000,
+      interval: 500,
+      timeoutMsg: `display name did not update to "${expectedName}"`,
+    },
+  );
 });
 
 //#endregion CUSTOMIZE

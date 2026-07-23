@@ -8,16 +8,10 @@ export const config: Options.Testrunner = {
   capabilities: CAPABILITY_WEB_CHROME,
   cacheDir: "../../.yarn/.cache/webdriver",
 
-  services: [
-    [
-      "chromedriver",
-      {
-        // Use the chromedriver npm binary (pinned to match local Chrome major,
-        // currently 149). Bump the chromedriver devDep when Chrome auto-updates.
-        version: "149",
-      },
-    ],
-  ],
+  // WebdriverIO v9 has built-in browser-driver management: it auto-resolves and
+  // downloads the Chromedriver matching the locally installed Chrome. The legacy
+  // wdio-chromedriver-service pinned an older driver (148) which broke once local
+  // Chrome auto-updated (150), so it's intentionally omitted here.
 
   cucumberOpts: {
     ...baseConfig.cucumberOpts,

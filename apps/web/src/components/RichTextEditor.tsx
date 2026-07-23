@@ -32,12 +32,19 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const [activeFormats, setActiveFormats] = useState<Record<string, boolean>>({});
 
-  // Initialize editor content
+  // Sync external value into the editor. Runs on mount and whenever `value`
+  // changes (e.g. the parent loads the wallet's existing `about` asynchronously,
+  // after this component has already mounted). Skips writing while the editor is
+  // focused so a re-render can't clobber what the user is typing or jump the caret.
   useEffect(() => {
-    if (editorRef.current && value && !editorRef.current.innerHTML) {
+    if (
+      editorRef.current &&
+      value !== editorRef.current.innerHTML &&
+      document.activeElement !== editorRef.current
+    ) {
       editorRef.current.innerHTML = value;
     }
-  }, []);
+  }, [value]);
 
   // Handle input changes
   const handleInput = () => {

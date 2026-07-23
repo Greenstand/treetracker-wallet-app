@@ -5,7 +5,7 @@ Feature: Wallet app login
   Scenario: Wrong login
     Given I am on the login page
     When I login with foobar and barfoo
-    Then I should see text Login failed
+    Then I should see text Invalid username or password
 
   @skip
   Scenario: Correct login
