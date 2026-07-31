@@ -13,10 +13,21 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import AddIcon from "@mui/icons-material/Add";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
 import WalletItem from "@/components/WalletItem";
 import GenericDrawer from "@/components/GenericDrawer";
 import WalletCreateDrawer from "@/components/WalletCreateDrawer";
-import { useCreateWallet, useGetWallets, Wallet } from "@treetracker/wallet";
+import {
+  useCreateWallet,
+  useGetWallets,
+  redeemActionToken,
+  Wallet,
+} from "@treetracker/wallet";
+import {
+  readPendingActionToken,
+  clearPendingActionToken,
+} from "@/utils/actionToken";
 
 export default function WalletPage() {
   const router = useRouter();
@@ -30,6 +41,7 @@ export default function WalletPage() {
   const normalize = (s: string) => s.trim().toLowerCase();
 
   const { createWallet } = useCreateWallet();
+  const authToken = useAtomValue(tokenAtom);
 
   useEffect(() => {
     if (serverWallets.length > 0) {
@@ -74,6 +86,22 @@ export default function WalletPage() {
       setNotification(
         "Thansk you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details",
       );
+    }
+
+    // If the user arrived via a shared token link, redeem it into this wallet.
+    const pending = readPendingActionToken();
+    if (pending && authToken) {
+      try {
+        await redeemActionToken(authToken, pending);
+        clearPendingActionToken();
+        setNotification(
+          "Your shared token has been claimed and added to your wallet.",
+        );
+      } catch (e) {
+        setNotification(
+          e instanceof Error ? e.message : "Could not claim your shared token.",
+        );
+      }
     }
   };
 

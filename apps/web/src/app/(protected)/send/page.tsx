@@ -12,18 +12,31 @@ import {
   Alert,
   FormControlLabel,
   Checkbox,
+  Paper,
 } from "@mui/material";
-import { useGetWallets, useSendTransfer, Wallet } from "@treetracker/wallet";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
+import {
+  useGetWallets,
+  useSendTransfer,
+  generateActionToken,
+  Wallet,
+} from "@treetracker/wallet";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
 export default function SendPage() {
   const router = useRouter();
   const { wallets, isWalletLoading } = useGetWallets();
   const { sendTransfer } = useSendTransfer();
+  const authToken = useAtomValue(tokenAtom);
 
   const [sender, setSender] = useState("");
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("1");
   const [claim, setClaim] = useState(false);
+  const [shareByLink, setShareByLink] = useState(false);
+  const [shareLink, setShareLink] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -36,32 +49,73 @@ export default function SendPage() {
   }, [wallets, sender]);
 
   const amountNum = Number(amount);
-  const valid =
-    Boolean(sender) &&
-    Boolean(recipient.trim()) &&
-    Number.isInteger(amountNum) &&
-    amountNum >= 1 &&
-    recipient.trim() !== sender;
+  const amountValid = Number.isInteger(amountNum) && amountNum >= 1;
+  const valid = shareByLink
+    ? Boolean(sender) && amountValid
+    : Boolean(sender) &&
+      Boolean(recipient.trim()) &&
+      amountValid &&
+      recipient.trim() !== sender;
 
   async function onSend() {
     if (!valid || submitting) return;
     setSubmitting(true);
     setError(null);
     try {
-      await sendTransfer({
-        sender_wallet: sender,
-        receiver_wallet: recipient.trim(),
-        bundle_size: amountNum,
-        claim,
-      });
-      setSuccess(true);
-      // Give the snackbar a beat, then go to the pending list.
-      setTimeout(() => router.push("/transfers"), 1200);
+      if (shareByLink) {
+        // No receiver: issue an action token and show a claim link on the next
+        // view. Whoever opens the link claims the tokens on first wallet creation.
+        if (!authToken) throw new Error("User not authenticated");
+        const res = await generateActionToken(authToken, {
+          bundle_size: amountNum,
+          recipient_email: "link-recipient@greenstand.org",
+        });
+        const base =
+          BASE_URL ||
+          (typeof window !== "undefined" ? window.location.origin : "");
+        setShareLink(`${base}/claim?action_token=${res.action_token}`);
+      } else {
+        await sendTransfer({
+          sender_wallet: sender,
+          receiver_wallet: recipient.trim(),
+          bundle_size: amountNum,
+          claim,
+        });
+        setSuccess(true);
+        // Give the snackbar a beat, then go to the pending list.
+        setTimeout(() => router.push("/transfers"), 1200);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to send");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  // "Next page": once a link is generated, show it instead of the form.
+  if (shareLink) {
+    return (
+      <Box sx={{ p: 2 }} data-test="share-result-page">
+        <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+          Share this link
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          Anyone who opens this link can claim the tokens when they create a
+          wallet.
+        </Typography>
+        <Paper sx={{ p: 1.5, wordBreak: "break-all" }} data-test="share-link">
+          {shareLink}
+        </Paper>
+        <Button
+          variant="text"
+          onClick={() => router.push("/home")}
+          sx={{ mt: 2, color: "green" }}
+          data-test="share-done"
+        >
+          Done
+        </Button>
+      </Box>
+    );
   }
 
   return (
@@ -93,15 +147,17 @@ export default function SendPage() {
         })}
       </TextField>
 
-      <TextField
-        fullWidth
-        label="Recipient wallet"
-        placeholder="Recipient wallet name"
-        value={recipient}
-        onChange={(e) => setRecipient(e.target.value)}
-        sx={{ mb: 2 }}
-        data-test="send-recipient"
-      />
+      {!shareByLink && (
+        <TextField
+          fullWidth
+          label="Recipient wallet"
+          placeholder="Recipient wallet name"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+          sx={{ mb: 2 }}
+          data-test="send-recipient"
+        />
+      )}
 
       <TextField
         fullWidth
@@ -114,15 +170,28 @@ export default function SendPage() {
         data-test="send-amount"
       />
 
+      {!shareByLink && (
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={claim}
+              onChange={(e) => setClaim(e.target.checked)}
+              data-test="send-claim"
+            />
+          }
+          label="Claim tokens (transfer ownership)"
+        />
+      )}
+
       <FormControlLabel
         control={
           <Checkbox
-            checked={claim}
-            onChange={(e) => setClaim(e.target.checked)}
-            data-test="send-claim"
+            checked={shareByLink}
+            onChange={(e) => setShareByLink(e.target.checked)}
+            data-test="send-share-qr"
           />
         }
-        label="Claim tokens (transfer ownership)"
+        label="Share by QR code"
       />
 
       {error && (
@@ -140,7 +209,7 @@ export default function SendPage() {
         sx={{ mt: 2, textTransform: "uppercase" }}
         data-test="send-submit"
       >
-        {submitting ? "Sending…" : "Send"}
+        {submitting ? "Sending…" : shareByLink ? "Create link" : "Send"}
       </Button>
 
       <Snackbar

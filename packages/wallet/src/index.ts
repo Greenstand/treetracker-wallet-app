@@ -9,6 +9,8 @@ export * from "./api/getTransferTokens";
 export * from "./api/acceptTransfer";
 export * from "./api/declineTransfer";
 export * from "./api/cancelTransfer";
+export * from "./api/generateActionToken";
+export * from "./api/redeemActionToken";
 export * from "./api/getTokenTransactions";
 export * from "./api/updateWallet";
 export * from "./hooks/useCreateWallet";
