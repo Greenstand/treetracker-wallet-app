@@ -1,5 +1,7 @@
 import Keycloak from "keycloak-js";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 // Single keycloak-js instance for the app (browser-only). Mirrors the pattern used
 // by treetracker-admin-client: a public client + PKCE, hosted login/registration.
 let keycloak: Keycloak | null = null;
@@ -33,7 +35,7 @@ export function initKeycloak(): Promise<boolean> {
 
 const callbackUri = () =>
   typeof window !== "undefined"
-    ? `${window.location.origin}/auth/callback`
+    ? `${window.location.origin}${basePath}/auth/callback`
     : undefined;
 
 export function login(): void {
@@ -47,7 +49,7 @@ export function register(): void {
 export function logout(): void {
   const redirectUri =
     typeof window !== "undefined"
-      ? `${window.location.origin}/login`
+      ? `${window.location.origin}${basePath}/login`
       : undefined;
   getKeycloak()?.logout({ redirectUri });
 }
