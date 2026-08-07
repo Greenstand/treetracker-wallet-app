@@ -7,10 +7,13 @@ import {
   useState,
   ReactNode,
 } from "react";
+import axios from "axios";
 import { useSetAtom } from "jotai";
 import { tokenAtom } from "core";
 import { getKeycloak, initKeycloak } from "@/auth/keycloak";
 import LoadingSpinner from "@/components/LoadingSpinner";
+
+const WALLET_API = process.env.NEXT_PUBLIC_TREETRACKER_WALLET_API ?? "";
 
 type AuthState = { ready: boolean; authenticated: boolean };
 const KeycloakContext = createContext<AuthState>({
@@ -24,6 +27,31 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
   const setToken = useSetAtom(tokenAtom);
   const [ready, setReady] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+
+  // On any wallet API 401 the token is no longer accepted, so clear it and send
+  // the user to /login?expired=1. Scoped to the wallet API URL; one shared axios
+  // interceptor covers every call.
+  useEffect(() => {
+    const interceptorId = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        const status = error?.response?.status;
+        const url = `${error?.config?.baseURL ?? ""}${error?.config?.url ?? ""}`;
+        if (status === 401 && WALLET_API && url.startsWith(WALLET_API)) {
+          try {
+            sessionStorage.removeItem("token");
+          } catch {
+            /* ignore */
+          }
+          window.location.assign("/login?expired=1");
+        }
+        return Promise.reject(error);
+      },
+    );
+    return () => {
+      axios.interceptors.response.eject(interceptorId);
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
