@@ -123,6 +123,9 @@ export default function Header() {
     <>
       <Box
         sx={{
+          position: "sticky",
+          top: 0,
+          zIndex: (theme) => theme.zIndex.appBar,
           width: "100%",
           backgroundColor:
             pathname === "/notifications"
