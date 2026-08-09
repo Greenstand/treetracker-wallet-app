@@ -3,6 +3,7 @@
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Box } from "@mui/material";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { tokenAtom } from "core";
 import Header from "@/components/header/Header";
@@ -69,7 +70,9 @@ export default function ProtectedLayout({
     <SnackbarProvider>
       <HeaderProvider>
         <Header />
-        {children}
+        <Box sx={{ pb: "calc(56px + env(safe-area-inset-bottom))" }}>
+          {children}
+        </Box>
         <BottomNavigationBar />
       </HeaderProvider>
     </SnackbarProvider>
