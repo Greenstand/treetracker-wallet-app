@@ -25,6 +25,11 @@ const KC_REALM = process.env.PRIVATE_KEYCLOAK_REALM ?? "";
 const KC_PUBLIC_CLIENT = process.env.KEYCLOAK_PUBLIC_CLIENT_ID ?? "wallet-app-web";
 const DB_URL = process.env.WALLET_DATABASE_URL ?? "";
 const DB_SCHEMA = process.env.WALLET_DATABASE_SCHEMA ?? "wallet";
+// Local Postgres doesn't offer SSL; enable it only for remote (dev/CI) hosts.
+const DB_SSL: false | { rejectUnauthorized: boolean } =
+  /@(localhost|127\.0\.0\.1)[:/]/.test(DB_URL)
+    ? false
+    : { rejectUnauthorized: false };
 const SENDER_WALLET_ID = process.env.SENDER_WALLET_ID ?? "";
 
 export type SeededAccount = {
@@ -34,7 +39,10 @@ export type SeededAccount = {
 };
 
 // Mint an end-user access token via the Keycloak direct password grant.
-async function userToken(username: string, password: string): Promise<string> {
+export async function userToken(
+  username: string,
+  password: string,
+): Promise<string> {
   const url = `${KC_BASE}/realms/${KC_REALM}/protocol/openid-connect/token`;
   const res = await fetch(url, {
     method: "POST",
@@ -61,7 +69,7 @@ async function createWalletInDB(
 ): Promise<string> {
   const client = new Client({
     connectionString: DB_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: DB_SSL,
   });
   await client.connect();
   try {
@@ -83,7 +91,7 @@ async function createWalletInDB(
 async function createTokenInDB(walletId: string): Promise<string> {
   const client = new Client({
     connectionString: DB_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: DB_SSL,
   });
   await client.connect();
   try {
@@ -133,10 +141,10 @@ async function findUserId(
 // Destructively wipe a wallet (by its globally-unique name) and everything that
 // references it. Tokens are RE-HOMED to SENDER_WALLET_ID (not deleted) so the
 // gift pool (test-wallet-08) doesn't drain across runs. FK-safe order.
-async function deleteWalletByName(name: string): Promise<void> {
+export async function deleteWalletByName(name: string): Promise<void> {
   const client = new Client({
     connectionString: DB_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: DB_SSL,
   });
   await client.connect();
   try {
@@ -241,4 +249,84 @@ export async function seedAccount(
 // Mint a token for an already-seeded account (used by steps that query the API).
 export async function tokenFor(acct: SeededAccount): Promise<string> {
   return userToken(acct.email, acct.password);
+}
+
+// Insert one token directly into the wallet with the given (globally-unique)
+// name and return its id. The token table has no foreign keys, so a random
+// capture_id is fine. Used to fund a UI-registered sender with a shareable token
+// without depending on the wallet-api gift mechanism / a funded gift pool.
+export async function seedTokenIntoWalletByName(
+  walletName: string,
+  tokenId?: string,
+): Promise<string> {
+  const client = new Client({
+    connectionString: DB_URL,
+    ssl: DB_SSL,
+  });
+  await client.connect();
+  try {
+    await client.query(`SET search_path TO ${DB_SCHEMA}`);
+    // The wallet is created via a UI POST whose round-trip may still be in
+    // flight; poll briefly for the row before inserting.
+    let walletId: string | undefined;
+    for (let attempt = 0; attempt < 15 && !walletId; attempt++) {
+      const { rows } = await client.query(
+        "SELECT id FROM wallet WHERE name = $1",
+        [walletName],
+      );
+      if (rows.length > 0) {
+        walletId = rows[0].id;
+        break;
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    if (!walletId) {
+      throw new Error(
+        `seedTokenIntoWalletByName: wallet "${walletName}" not found`,
+      );
+    }
+    const id = tokenId ?? randomUUID();
+    // A fixed token id (from the BDD) may linger from a previous run — free it,
+    // and clear any transactions referencing it, so the insert is deterministic.
+    if (tokenId) {
+      await client.query("DELETE FROM transaction WHERE token_id = $1", [id]);
+      await client.query("DELETE FROM token WHERE id = $1", [id]);
+    }
+    await client.query(
+      `INSERT INTO token (id, capture_id, wallet_id, transfer_pending, created_at, updated_at, claim)
+       VALUES ($1, $2, $3, false, NOW(), NOW(), false)`,
+      [id, randomUUID(), walletId],
+    );
+    return id;
+  } finally {
+    await client.end();
+  }
+}
+
+// Cleanup helper: delete the Keycloak user (if present) and wipe the named
+// wallet, so a UI-registered recipient can register + create that wallet fresh
+// on re-runs. Mirrors the delete half of seedAccount, without recreating.
+export async function resetAccount(
+  email: string,
+  walletName?: string,
+): Promise<void> {
+  const { access_token: adminToken } = await fetchTokenFromKeycloak();
+  // Match by email (robust: the UI registers username = email local-part, not
+  // the full email) and by username == email (seedAccount convention).
+  const byEmailRes = await fetch(
+    `${KC_BASE}/admin/realms/${KC_REALM}/users?email=${encodeURIComponent(
+      email,
+    )}&exact=true`,
+    { headers: { Authorization: `Bearer ${adminToken}` } },
+  );
+  const byEmail = (await byEmailRes.json()) as Array<{ id: string }>;
+  const ids = new Set<string>(
+    Array.isArray(byEmail) ? byEmail.map(u => u.id) : [],
+  );
+  const byUser = await findUserId(adminToken, email);
+  if (byUser) ids.add(byUser);
+  for (const id of ids) {
+    await deleteAccountFromKeycloak(adminToken, id);
+  }
+  if (walletName) await deleteWalletByName(walletName);
 }
