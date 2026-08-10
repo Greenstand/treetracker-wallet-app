@@ -12,7 +12,7 @@ Feature: Share Token to Others
     Then the user create a wallet: share-token-recieve-wallet-1
     Then the shared token is in the wallet
 
-  @web @skip 
+  @web
   Scenario: Share token by QR code
     Given There is a registered account: share-token-test-1@greenstand.org, and there is an wallet named: share-token-test-1-wallet, and there is one token:6593b5ff-576c-4969-86b4-7fe2aa4af1a1 in this wallet
     And There is one person A who has no account on Greenstand

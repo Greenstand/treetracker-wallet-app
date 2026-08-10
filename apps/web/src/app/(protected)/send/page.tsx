@@ -14,6 +14,7 @@ import {
   Checkbox,
   Paper,
 } from "@mui/material";
+import { QRCodeSVG } from "qrcode.react";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
 import {
@@ -103,6 +104,12 @@ export default function SendPage() {
           Anyone who opens this link can claim the tokens when they create a
           wallet.
         </Typography>
+        <Box
+          data-test="share-qr"
+          sx={{ display: "inline-block", p: 1.5, mb: 1, bgcolor: "#fff" }}
+        >
+          <QRCodeSVG value={shareLink} size={200} />
+        </Box>
         <Paper sx={{ p: 1.5, wordBreak: "break-all" }} data-test="share-link">
           {shareLink}
         </Paper>
