@@ -47,7 +47,10 @@ async function clearSession(): Promise<void> {
 }
 
 // Drive Keycloak's hosted login form, then wait for the app to load logged-in.
-async function keycloakLogin(username: string, password: string): Promise<void> {
+async function keycloakLogin(
+  username: string,
+  password: string,
+): Promise<void> {
   await $("#username").waitForDisplayed({ timeout: 25000 });
   await $("#username").setValue(username);
   await $("#password").setValue(password);
@@ -96,7 +99,9 @@ async function registerAs(email: string, password: string): Promise<void> {
 
 async function createWalletUI(name: string): Promise<void> {
   await browser.url(`${base()}/wallet`);
-  await $("[data-test=wallet-create-open]").waitForDisplayed({ timeout: 15000 });
+  await $("[data-test=wallet-create-open]").waitForDisplayed({
+    timeout: 15000,
+  });
   await $("[data-test=wallet-create-open]").click();
   await $('[data-test="wallet-create-name"]').waitForDisplayed({
     timeout: 30000,
@@ -218,4 +223,10 @@ Then(/^the shared token is in the wallet$/, async () => {
       timeoutMsg: `shared token ${sharedTokenId} not found in wallet ${receiverWallet}`,
     },
   );
+});
+
+Then(/^the QR code picture shows up on the next page$/, async () => {
+  await $("[data-test=share-qr]").waitForDisplayed({ timeout: 30000 });
+  // the QR is rendered as an inline SVG inside the container
+  await $("[data-test=share-qr] svg").waitForExist({ timeout: 10000 });
 });
