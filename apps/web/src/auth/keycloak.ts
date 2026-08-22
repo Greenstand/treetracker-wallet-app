@@ -45,27 +45,11 @@ export function register(): void {
 }
 
 export function logout(): void {
-  const kc = getKeycloak();
   const redirectUri =
     typeof window !== "undefined"
       ? `${window.location.origin}/login`
       : undefined;
-
-  // End the Keycloak session only with a live id_token; otherwise kc.logout()
-  // sends id_token_hint=undefined and Keycloak errors. Fall back to a local clear.
-  if (kc?.authenticated && kc.idToken) {
-    kc.logout({ redirectUri });
-    return;
-  }
-
-  try {
-    sessionStorage.removeItem("token");
-  } catch {
-    /* ignore */
-  }
-  if (typeof window !== "undefined") {
-    window.location.assign("/login");
-  }
+  getKeycloak()?.logout({ redirectUri });
 }
 
 export function accountUrl(): string | undefined {
