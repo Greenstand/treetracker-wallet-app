@@ -1,5 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+  Pressable,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import WalletSvg from "../../../assets/svg/wallet.svg";
 
 // Mock notification data
@@ -73,7 +82,8 @@ const NotificationItem = ({
       style={[
         styles.notificationItem,
         { backgroundColor: getBackgroundColor() },
-      ]}>
+      ]}
+    >
       {/* Icon container */}
       <View style={styles.iconContainer}>
         <Text style={styles.iconText}>{notification.icon}</Text>
@@ -105,16 +115,19 @@ const EmptyState = () => (
 // Main notifications screen component
 export default function NotificationsLayout() {
   const hasNotifications = notifications.length > 0;
+  const router = useRouter();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header - commented out because header should not be implemented but ready to be added back or replaced.
       <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#666" />
+        <Pressable onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#666" />
+        </Pressable>
         <Text style={styles.headerTitle}>Notifications</Text>
-        <Ionicons name="settings-outline" size={24} color="#666" />
+        <Pressable onPress={() => router.push("/(tabs)/settings")}>
+          <MaterialIcons name="settings" size={24} color="#666" />
+        </Pressable>
       </View>
-      */}
 
       {/* Conditional rendering: show notifications list or empty state */}
       {hasNotifications ? (
@@ -139,20 +152,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  // Header styles
-  // header: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   backgroundColor: "#f5f5f5",
-  // },
-  // headerTitle: {
-  //   fontSize: 18,
-  //   fontWeight: "600",
-  //   color: "#333",
-  // },
+  header: {
+    height: 56,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  headerTitle: {
+    fontFamily: "Roboto_500Medium",
+    fontSize: 20,
+    lineHeight: 32,
+    letterSpacing: 0.15,
+    color: "rgba(34, 38, 41, 0.56)",
+  },
   scrollContainer: {
     flex: 1,
     paddingHorizontal: 16,
