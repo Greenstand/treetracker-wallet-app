@@ -3,7 +3,6 @@ const log = require("loglevel");
 require("dotenv").config();
 
 const connectionString = process.env.DATABASE_URL;
-console.log(connectionString);
 if (!connectionString) {
   log.warn("DATABASE_URL is not set!");
 }
