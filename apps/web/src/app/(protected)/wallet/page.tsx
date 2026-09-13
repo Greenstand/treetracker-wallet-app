@@ -29,6 +29,16 @@ import {
   clearPendingActionToken,
 } from "@/utils/actionToken";
 
+type Notification = { severity: "success" | "error"; message: string };
+
+// Map raw backend redeem errors to user-friendly claim messages.
+function claimErrorMessage(raw: string): string {
+  if (/expired/i.test(raw)) return "This link has expired.";
+  if (/not verified/i.test(raw)) return "This link is not valid.";
+  if (/no longer owned/i.test(raw)) return "This link has already been used.";
+  return "Could not claim your shared token.";
+}
+
 export default function WalletPage() {
   const router = useRouter();
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -36,7 +46,7 @@ export default function WalletPage() {
   const { wallets: serverWallets, isWalletLoading, error } = useGetWallets();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
+  const [notification, setNotification] = useState<Notification | null>(null);
 
   const { createWallet } = useCreateWallet();
   const authToken = useAtomValue(tokenAtom);
@@ -78,9 +88,11 @@ export default function WalletPage() {
     ]);
 
     if (isFirstWallet) {
-      setNotification(
-        "Thansk you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details",
-      );
+      setNotification({
+        severity: "success",
+        message:
+          "Thansk you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details",
+      });
     }
 
     // If the user arrived via a shared token link, redeem it into this wallet.
@@ -89,13 +101,19 @@ export default function WalletPage() {
       try {
         await redeemActionToken(authToken, pending);
         clearPendingActionToken();
-        setNotification(
-          "Your shared token has been claimed and added to your wallet.",
-        );
+        setNotification({
+          severity: "success",
+          message:
+            "Your shared token has been claimed and added to your wallet.",
+        });
       } catch (e) {
-        setNotification(
-          e instanceof Error ? e.message : "Could not claim your shared token.",
-        );
+        // The token is single-use: clear it so a retry does not re-run a
+        // doomed claim on the next wallet-creation attempt.
+        clearPendingActionToken();
+        setNotification({
+          severity: "error",
+          message: claimErrorMessage(e instanceof Error ? e.message : ""),
+        });
       }
     }
   };
@@ -170,11 +188,11 @@ export default function WalletPage() {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
-          severity="success"
+          severity={notification?.severity ?? "success"}
           onClose={() => setNotification(null)}
           data-test="wallet-create-notification"
         >
-          {notification}
+          {notification?.message}
         </Alert>
       </Snackbar>
     </Box>
