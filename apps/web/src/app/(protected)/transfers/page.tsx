@@ -15,8 +15,10 @@ import {
   useGetWallets,
   usePendingTransfers,
   useGetTransfers,
+  useActionTokens,
   Wallet,
   Transfer,
+  ActionTokenSummary,
 } from "@treetracker/wallet";
 
 function TransferRow({
@@ -147,6 +149,55 @@ function ListStatus({
   return null;
 }
 
+function ShareLinkRow({
+  link,
+  onCancel,
+}: {
+  link: ActionTokenSummary;
+  onCancel?: () => void;
+}) {
+  return (
+    <Paper sx={{ p: 2 }} data-test={`share-link-item-${link.id}`}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={1}
+      >
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="body2" fontWeight={600} noWrap>
+            {link.token_count} token(s)
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {link.state === "active"
+              ? `Expires ${new Date(link.expires_at).toLocaleString()}`
+              : link.redeemed_at
+                ? `Redeemed ${new Date(link.redeemed_at).toLocaleString()}`
+                : `Created ${new Date(link.created_at).toLocaleString()}`}
+          </Typography>
+        </Box>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Chip
+            size="small"
+            label={link.state}
+            data-test={`share-link-state-${link.id}`}
+          />
+          {onCancel && link.state === "active" && (
+            <Button
+              size="small"
+              color="error"
+              onClick={onCancel}
+              data-test={`share-link-cancel-${link.id}`}
+            >
+              Cancel
+            </Button>
+          )}
+        </Stack>
+      </Stack>
+    </Paper>
+  );
+}
+
 export default function TransfersPage() {
   const router = useRouter();
   const { wallets } = useGetWallets();
@@ -165,6 +216,13 @@ export default function TransfersPage() {
     error: historyError,
     reload: reloadHistory,
   } = useGetTransfers(20);
+  const {
+    links,
+    isLoading: isLinksLoading,
+    error: linksError,
+    reload: reloadLinks,
+    cancel: cancelLink,
+  } = useActionTokens();
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -259,6 +317,26 @@ export default function TransfersPage() {
         />
         {outgoing.map((t) => (
           <TransferRow key={t.id} t={t} onCancel={() => run(cancel)(t.id)} />
+        ))}
+      </Stack>
+
+      <Typography variant="subtitle1" fontWeight={500} sx={{ mt: 3 }}>
+        Share links
+      </Typography>
+      <Stack spacing={1} sx={{ mt: 1 }} data-test="transfers-share-links">
+        <ListStatus
+          isLoading={isLinksLoading}
+          error={linksError}
+          empty={links.length === 0 ? "No share links." : null}
+          onRetry={reloadLinks}
+          testId="transfers-share-links-error"
+        />
+        {links.map((link) => (
+          <ShareLinkRow
+            key={link.id}
+            link={link}
+            onCancel={() => run(cancelLink)(link.id)}
+          />
         ))}
       </Stack>
 
