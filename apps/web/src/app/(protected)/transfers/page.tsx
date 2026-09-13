@@ -113,12 +113,60 @@ function TransferRow({
   );
 }
 
+function ListStatus({
+  isLoading,
+  error,
+  empty,
+  onRetry,
+  testId,
+}: {
+  isLoading: boolean;
+  error: string | null;
+  empty: string | null;
+  onRetry: () => void;
+  testId: string;
+}) {
+  if (isLoading) return <Typography variant="body2">Loading…</Typography>;
+  if (error)
+    return (
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Typography variant="body2" color="error" data-test={testId}>
+          {error}
+        </Typography>
+        <Button size="small" onClick={onRetry} data-test={`${testId}-retry`}>
+          Retry
+        </Button>
+      </Stack>
+    );
+  if (empty)
+    return (
+      <Typography variant="body2" color="text.secondary">
+        {empty}
+      </Typography>
+    );
+  return null;
+}
+
 export default function TransfersPage() {
   const router = useRouter();
   const { wallets } = useGetWallets();
-  const { transfers: pending, accept, decline, cancel } = usePendingTransfers();
-  const { transfers: history, reload: reloadHistory } = useGetTransfers(20);
+  const {
+    transfers: pending,
+    isLoading: isPendingLoading,
+    error: pendingError,
+    reload: reloadPending,
+    accept,
+    decline,
+    cancel,
+  } = usePendingTransfers();
+  const {
+    transfers: history,
+    isTransfersLoading,
+    error: historyError,
+    reload: reloadHistory,
+  } = useGetTransfers(20);
   const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const myWallets = useMemo(
     () => new Set(wallets.map((w) => (w as Wallet).name).filter(Boolean)),
@@ -135,10 +183,15 @@ export default function TransfersPage() {
   const run = (fn: (id: string) => Promise<void>) => async (id: string) => {
     if (busy) return;
     setBusy(true);
+    setActionError(null);
     try {
       await fn(id);
       // The pending hook reloads itself; the history list needs telling.
       await reloadHistory();
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : "Action failed. Please try again.",
+      );
     } finally {
       setBusy(false);
     }
@@ -159,15 +212,28 @@ export default function TransfersPage() {
         </Button>
       </Stack>
 
+      {actionError && (
+        <Typography
+          variant="body2"
+          color="error"
+          sx={{ mt: 1 }}
+          data-test="transfers-action-error"
+        >
+          {actionError}
+        </Typography>
+      )}
+
       <Typography variant="subtitle1" fontWeight={500} sx={{ mt: 2 }}>
         Incoming (awaiting your action)
       </Typography>
       <Stack spacing={1} sx={{ mt: 1 }} data-test="transfers-incoming">
-        {incoming.length === 0 && (
-          <Typography variant="body2" color="text.secondary">
-            No incoming transfers.
-          </Typography>
-        )}
+        <ListStatus
+          isLoading={isPendingLoading}
+          error={pendingError}
+          empty={incoming.length === 0 ? "No incoming transfers." : null}
+          onRetry={reloadPending}
+          testId="transfers-incoming-error"
+        />
         {incoming.map((t) => (
           <TransferRow
             key={t.id}
@@ -182,11 +248,15 @@ export default function TransfersPage() {
         Outgoing (pending)
       </Typography>
       <Stack spacing={1} sx={{ mt: 1 }} data-test="transfers-outgoing">
-        {outgoing.length === 0 && (
-          <Typography variant="body2" color="text.secondary">
-            No outgoing pending transfers.
-          </Typography>
-        )}
+        <ListStatus
+          isLoading={isPendingLoading}
+          error={pendingError}
+          empty={
+            outgoing.length === 0 ? "No outgoing pending transfers." : null
+          }
+          onRetry={reloadPending}
+          testId="transfers-outgoing-error"
+        />
         {outgoing.map((t) => (
           <TransferRow key={t.id} t={t} onCancel={() => run(cancel)(t.id)} />
         ))}
@@ -198,11 +268,13 @@ export default function TransfersPage() {
         Recent transfers
       </Typography>
       <Stack spacing={1} sx={{ mt: 1 }} data-test="transfers-history">
-        {history.length === 0 && (
-          <Typography variant="body2" color="text.secondary">
-            No transfers yet.
-          </Typography>
-        )}
+        <ListStatus
+          isLoading={isTransfersLoading}
+          error={historyError}
+          empty={history.length === 0 ? "No transfers yet." : null}
+          onRetry={reloadHistory}
+          testId="transfers-history-error"
+        />
         {history.map((t) => (
           <TransferRow
             key={t.id}
