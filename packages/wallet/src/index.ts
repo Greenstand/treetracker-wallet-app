@@ -21,6 +21,7 @@ export * from "./hooks/useGetTransfers";
 export * from "./hooks/useSendTransfer";
 export * from "./hooks/useGetTransfer";
 export * from "./hooks/usePendingTransfers";
+export * from "./hooks/useIncomingTransfers";
 export * from "./hooks/useGetTokenTransactions";
 export * from "./hooks/useUpdateWallet";
 export * from "./types/wallet";

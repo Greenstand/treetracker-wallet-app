@@ -1,17 +1,24 @@
 "use client";
 import React from "react";
-import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
+import {
+  Badge,
+  BottomNavigation,
+  BottomNavigationAction,
+  Paper,
+} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useIncomingTransfers } from "@treetracker/wallet";
 
 export default function BottomNavigationBar() {
   const [value, setValue] = React.useState(0);
 
   const router = useRouter();
+  const { incoming } = useIncomingTransfers();
 
   const handleNavigation = (newValue: number) => {
     setValue(newValue);
@@ -88,7 +95,15 @@ export default function BottomNavigationBar() {
           <BottomNavigationAction
             label="Notifications"
             data-test="bottom-nav-notifications"
-            icon={<NotificationsIcon />}
+            icon={
+              <Badge
+                badgeContent={incoming.length}
+                color="error"
+                data-test="bottom-nav-notifications-badge"
+              >
+                <NotificationsIcon />
+              </Badge>
+            }
           />
           <BottomNavigationAction
             label="Settings"

@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Container,
@@ -11,29 +10,14 @@ import {
   Avatar,
 } from "@mui/material";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import { useGetWallets, useGetTransfers, Wallet } from "@treetracker/wallet";
+import { useIncomingTransfers } from "@treetracker/wallet";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
-// Notifications = pending transfers into one of this user's wallets.
 export default function Notifications() {
   const router = useRouter();
-  const { wallets, isWalletLoading } = useGetWallets();
-  const { transfers, isTransfersLoading } = useGetTransfers(50);
+  const { incoming, isLoading } = useIncomingTransfers();
 
-  const myWallets = useMemo(
-    () => new Set(wallets.map((w) => (w as Wallet).name).filter(Boolean)),
-    [wallets],
-  );
-
-  const incoming = transfers.filter(
-    (t) =>
-      (t.state === "pending" || t.state === "requested") &&
-      t.destination_wallet &&
-      myWallets.has(t.destination_wallet),
-  );
-
-  // Wait for both fetches, or an empty list just means wallets have not loaded.
-  if (isWalletLoading || isTransfersLoading) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 1 }} data-test="notifications-page">
