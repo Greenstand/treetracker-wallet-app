@@ -58,7 +58,11 @@ function TransferRow({
           </Typography>
         </Box>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Chip size="small" label={t.state} data-test={`transfer-state-${t.id}`} />
+          <Chip
+            size="small"
+            label={t.state}
+            data-test={`transfer-state-${t.id}`}
+          />
           {onAccept && (
             <Button
               size="small"
@@ -113,12 +117,11 @@ export default function TransfersPage() {
   const router = useRouter();
   const { wallets } = useGetWallets();
   const { transfers: pending, accept, decline, cancel } = usePendingTransfers();
-  const { transfers: history } = useGetTransfers(20);
+  const { transfers: history, reload: reloadHistory } = useGetTransfers(20);
   const [busy, setBusy] = useState(false);
 
   const myWallets = useMemo(
-    () =>
-      new Set(wallets.map((w) => (w as Wallet).name).filter(Boolean)),
+    () => new Set(wallets.map((w) => (w as Wallet).name).filter(Boolean)),
     [wallets],
   );
 
@@ -134,6 +137,8 @@ export default function TransfersPage() {
     setBusy(true);
     try {
       await fn(id);
+      // The pending hook reloads itself; the history list needs telling.
+      await reloadHistory();
     } finally {
       setBusy(false);
     }
@@ -145,7 +150,11 @@ export default function TransfersPage() {
         <Typography variant="h6" fontWeight={600}>
           Transfers
         </Typography>
-        <Button variant="text" onClick={() => router.push("/send")} sx={{ color: "green" }}>
+        <Button
+          variant="text"
+          onClick={() => router.push("/send")}
+          sx={{ color: "green" }}
+        >
           + Send
         </Button>
       </Stack>
