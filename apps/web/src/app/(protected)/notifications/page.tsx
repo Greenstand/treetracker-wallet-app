@@ -12,13 +12,12 @@ import {
 } from "@mui/material";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { useGetWallets, useGetTransfers, Wallet } from "@treetracker/wallet";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-// Notifications = pending tokens waiting for this user to accept. Built from the
-// recent-transfers feed (same source as the home page's activity), filtered to
-// pending/requested transfers coming INTO one of the user's wallets.
+// Notifications = pending transfers into one of this user's wallets.
 export default function Notifications() {
   const router = useRouter();
-  const { wallets } = useGetWallets();
+  const { wallets, isWalletLoading } = useGetWallets();
   const { transfers, isTransfersLoading } = useGetTransfers(50);
 
   const myWallets = useMemo(
@@ -26,18 +25,15 @@ export default function Notifications() {
     [wallets],
   );
 
-  // Pending/requested transfers awaiting action. Prefer the ones coming INTO one
-  // of my wallets, but the wallet list is a separately-fetched piece of state and
-  // can lag/mismatch the transfers list — so if the incoming filter comes up empty
-  // while pending transfers exist, fall back to showing them rather than letting
-  // stale wallet state hide a real pending token.
-  const pending = transfers.filter(
-    (t) => t.state === "pending" || t.state === "requested",
+  const incoming = transfers.filter(
+    (t) =>
+      (t.state === "pending" || t.state === "requested") &&
+      t.destination_wallet &&
+      myWallets.has(t.destination_wallet),
   );
-  const incomingMatch = pending.filter(
-    (t) => t.destination_wallet && myWallets.has(t.destination_wallet),
-  );
-  const incoming = incomingMatch.length > 0 ? incomingMatch : pending;
+
+  // Wait for both fetches, or an empty list just means wallets have not loaded.
+  if (isWalletLoading || isTransfersLoading) return <LoadingSpinner />;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 1 }} data-test="notifications-page">
@@ -46,7 +42,7 @@ export default function Notifications() {
       </Typography>
 
       <Stack spacing={1} data-test="notifications-list">
-        {!isTransfersLoading && incoming.length === 0 && (
+        {incoming.length === 0 && (
           <Box sx={{ textAlign: "center", color: "text.secondary", py: 6 }}>
             <NotificationsOutlinedIcon sx={{ fontSize: 48, opacity: 0.4 }} />
             <Typography variant="body2">No notifications yet.</Typography>
