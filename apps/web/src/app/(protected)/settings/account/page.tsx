@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
@@ -89,6 +90,16 @@ export default function Account() {
         paddingBottom: "100px",
       }}
     >
+      <Button
+        variant="text"
+        startIcon={<ArrowBackIcon />}
+        onClick={() => router.push("/settings")}
+        sx={{ color: "green", alignSelf: "flex-start" }}
+        data-test="settings-account-back"
+      >
+        Back
+      </Button>
+
       {/* Account Section */}
       <Box
         sx={{
