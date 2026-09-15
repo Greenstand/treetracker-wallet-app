@@ -31,6 +31,17 @@ export type Transfer = {
   closed_at?: string;
 };
 
+// A persisted share link (action token) as returned by GET /action-tokens.
+export type ActionTokenSummary = {
+  id: string;
+  recipient_email?: string;
+  token_count: number;
+  state: string; // active | redeemed | cancelled | expired
+  expires_at: string;
+  created_at: string;
+  redeemed_at?: string | null;
+};
+
 // One entry from GET /tokens/:id/transactions ({ history: [...] }).
 export type Transaction = {
   id: string;
