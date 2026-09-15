@@ -95,16 +95,16 @@ export default function WalletPage() {
       });
     }
 
-    // If the user arrived via a shared token link, redeem it into this wallet.
+    // If the user arrived via a shared token link, redeem it into the wallet
+    // they just created (not their login wallet, which redeem defaults to).
     const pending = readPendingActionToken();
     if (pending && authToken) {
       try {
-        await redeemActionToken(authToken, pending);
+        await redeemActionToken(authToken, pending, name);
         clearPendingActionToken();
         setNotification({
           severity: "success",
-          message:
-            "Your shared token has been claimed and added to your wallet.",
+          message: `Your shared token has been claimed and added to "${name}".`,
         });
       } catch (e) {
         // The token is single-use: clear it so a retry does not re-run a
