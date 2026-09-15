@@ -13,11 +13,14 @@ export type RedeemActionTokenResult = {
 export async function redeemActionToken(
   token: string,
   actionToken: string,
+  wallet?: string,
 ): Promise<RedeemActionTokenResult> {
   try {
     const response = await axios.post(
       `${TREETRACKER_WALLET_API}/action-tokens/redeem`,
-      { action_token: actionToken },
+      wallet
+        ? { action_token: actionToken, wallet }
+        : { action_token: actionToken },
       {
         headers: {
           "Content-Type": "application/json",
