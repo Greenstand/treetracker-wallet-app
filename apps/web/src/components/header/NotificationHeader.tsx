@@ -21,16 +21,18 @@ export default function NotificationHeader({
         alignItems: "center",
         justifyContent: "space-between",
         width: "100%",
-      }}>
+      }}
+    >
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <IconButton
           onClick={() => {
             onCollapse();
-            router.push("/");
+            router.push("/home");
           }}
           sx={{
-            "&:hover": { backgroundColor: theme => theme.palette.grey[300] },
-          }}>
+            "&:hover": { backgroundColor: (theme) => theme.palette.grey[300] },
+          }}
+        >
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h5" noWrap sx={{ color: "text.secondary" }}>
@@ -40,8 +42,9 @@ export default function NotificationHeader({
 
       <IconButton
         sx={{
-          "&:hover": { backgroundColor: theme => theme.palette.grey[300] },
-        }}>
+          "&:hover": { backgroundColor: (theme) => theme.palette.grey[300] },
+        }}
+      >
         <SettingsIcon />
       </IconButton>
     </Box>

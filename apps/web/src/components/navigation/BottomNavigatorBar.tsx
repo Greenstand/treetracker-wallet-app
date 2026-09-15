@@ -24,7 +24,7 @@ export default function BottomNavigationBar() {
     setValue(newValue);
     switch (newValue) {
       case 0:
-        router.push("/");
+        router.push("/home");
         break;
       case 1:
         router.push("/wallet");
