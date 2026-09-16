@@ -59,7 +59,7 @@ export default function SendPage() {
       recipient.trim() !== sender;
 
   async function onSend() {
-    if (!valid || submitting) return;
+    if (!valid || submitting || success) return;
     setSubmitting(true);
     setError(null);
     try {
@@ -211,7 +211,7 @@ export default function SendPage() {
         fullWidth
         size="large"
         variant="contained"
-        disabled={!valid || submitting}
+        disabled={!valid || submitting || success}
         onClick={onSend}
         sx={{ mt: 2, textTransform: "uppercase" }}
         data-test="send-submit"
