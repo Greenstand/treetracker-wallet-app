@@ -12,12 +12,6 @@ import {
   Divider,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/Person";
-import NotificationsIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import PrivacyTipIcon from "@mui/icons-material/PrivacyTipOutlined";
-import GavelIcon from "@mui/icons-material/ClassOutlined";
-import SupportIcon from "@mui/icons-material/ContactSupportOutlined";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
-import FeedbackIcon from "@mui/icons-material/CommentOutlined";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useRouter } from "next/navigation";
 
@@ -30,25 +24,6 @@ export default function Settings() {
       text: "Account",
       route: "/settings/account",
       testId: "settings-account-item",
-    },
-    {
-      icon: <NotificationsIcon />,
-      text: "Notifications",
-      route: "/settings/notifications",
-    },
-    {
-      icon: <PrivacyTipIcon />,
-      text: "Data and Privacy",
-      route: "/settings/data-privacy",
-    },
-    { icon: <GavelIcon />, text: "Legal", route: "/settings/legal" },
-    { icon: <SupportIcon />, text: "Support", route: "/settings/support" },
-    { icon: <InfoIcon />, text: "About", route: "/settings/about" },
-    {
-      icon: <FeedbackIcon />,
-      text: "Send Feedback",
-      secondaryText: "Version 1.0",
-      route: "/settings/feedback",
     },
   ];
 
@@ -75,14 +50,10 @@ export default function Settings() {
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText
                   primary={item.text}
-                  secondary={item.secondaryText || null}
                   primaryTypographyProps={{
                     sx: {
-                      fontWeight: item.secondaryText ? "normal" : "inherit",
+                      fontWeight: "inherit",
                     },
-                  }}
-                  secondaryTypographyProps={{
-                    sx: { fontSize: "0.8em", color: "gray" },
                   }}
                 />
                 <ChevronRightIcon />
