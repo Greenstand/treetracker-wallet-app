@@ -1037,15 +1037,14 @@ When(/^the user enter display name: (.+)$/, async (displayName: string) => {
 });
 
 When(/^the user enter about text: (.+)$/, async (aboutText: string) => {
-  const editor = await $('[data-test="customize-about"]');
-  await editor.waitForDisplayed({ timeout: 5000 });
-  // Clear existing content
-  await browser.execute(elem => {
-    (elem as HTMLElement).innerHTML = "";
-  }, editor);
-  // Set new content
-  await editor.click();
-  await browser.keys(aboutText.split(""));
+  // Same shape as the display name step: data-test sits on the MUI root, so
+  // drive the inner textarea with real events or React's onChange never runs.
+  const input = await $('[data-test="customize-about"] textarea');
+  await input.waitForDisplayed({ timeout: 5000 });
+  await input.click();
+  await browser.keys([process.platform === "darwin" ? "Meta" : "Control", "a"]);
+  await browser.keys("Backspace");
+  await input.addValue(aboutText);
 });
 
 When(/^the user enter about text with formatting:$/, async (table: any) => {

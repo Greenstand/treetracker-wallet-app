@@ -14,18 +14,21 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { toPlainText } from "@/utils/plainText";
 import {
   useGetWallets,
   useUpdateWallet,
   Wallet,
   WalletProfileUpdate,
 } from "@treetracker/wallet";
-import RichTextEditor from "@/components/RichTextEditor";
 
 // Must match the wallet-api multer limit (server/routes/walletRouter.js).
 // Anything larger is rejected there with a 500 before it can be saved.
 const MAX_FILE_SIZE = 1000000;
 const MAX_FILE_SIZE_LABEL = "1MB";
+
+// Matches the API
+const MAX_ABOUT_LENGTH = 250;
 
 function CustomizeWallet() {
   const params = useSearchParams();
@@ -55,7 +58,7 @@ function CustomizeWallet() {
   useEffect(() => {
     if (wallet) {
       setDisplayName(wallet.display_name || "");
-      setAbout(wallet.about || "");
+      setAbout(toPlainText(wallet.about || ""));
       if (wallet.logo_url) {
         setLogoPreview(wallet.logo_url);
       }
@@ -244,11 +247,17 @@ function CustomizeWallet() {
           <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
             About the Wallet
           </Typography>
-          <RichTextEditor
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            placeholder="This text will be visible when you share your wallet."
             value={about}
-            onChange={setAbout}
+            onChange={(e) => setAbout(e.target.value)}
             disabled={saving}
             data-test="customize-about"
+            inputProps={{ maxLength: MAX_ABOUT_LENGTH }}
+            helperText={`${about.length}/${MAX_ABOUT_LENGTH}`}
           />
         </Box>
 

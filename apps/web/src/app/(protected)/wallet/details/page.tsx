@@ -24,6 +24,7 @@ import {
   WalletProfileUpdate,
 } from "@treetracker/wallet";
 import WalletProfileDrawer from "@/components/WalletProfileDrawer";
+import { toPlainText } from "@/utils/plainText";
 
 function WalletDetails() {
   const params = useSearchParams();
@@ -131,7 +132,7 @@ function WalletDetails() {
           color="text.secondary"
           data-test="wallet-details-about"
         >
-          {wallet.about}
+          {toPlainText(wallet.about)}
         </Typography>
       )}
       <Typography
