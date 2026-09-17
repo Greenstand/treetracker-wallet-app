@@ -39,6 +39,10 @@ function claimErrorMessage(raw: string): string {
   return "Could not claim your shared token.";
 }
 
+// The API enforces no wallet count, so this is the only place the limit holds.
+// Advertised by the Good-to-know drawer below, which reads the same constant.
+const MAX_WALLETS = 2;
+
 export default function WalletPage() {
   const router = useRouter();
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -118,6 +122,8 @@ export default function WalletPage() {
     }
   };
 
+  const atWalletLimit = wallets.length >= MAX_WALLETS;
+
   // if (isWalletLoading) return <div>Loading wallets...</div>;
   // if (error) return <div>Error: {error}</div>;
 
@@ -129,6 +135,7 @@ export default function WalletPage() {
           variant="text"
           startIcon={<AddIcon />}
           onClick={() => setIsCreateOpen(true)}
+          disabled={atWalletLimit}
           sx={{ color: "green", fontSize: "1rem", fontWeight: 500 }}
         >
           CREATE WALLET
@@ -141,6 +148,16 @@ export default function WalletPage() {
           <InfoIcon sx={{ width: "20px" }} />
         </IconButton>
       </Box>
+
+      {atWalletLimit && (
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          data-test="wallet-limit-reached"
+        >
+          You have reached the limit of {MAX_WALLETS} wallets.
+        </Typography>
+      )}
 
       <Box sx={{ height: 10 }} />
 
@@ -171,7 +188,7 @@ export default function WalletPage() {
         onClose={() => setIsInfoOpen(false)}
       >
         <Typography variant="body1" color="textPrimary">
-          You can have up to 2 wallets.
+          You can have up to {MAX_WALLETS} wallets.
         </Typography>
       </GenericDrawer>
 
