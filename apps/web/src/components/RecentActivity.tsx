@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Typography, Box, Skeleton, Tooltip } from "@mui/material";
+import { Typography, Box, Skeleton, Link } from "@mui/material";
+import NextLink from "next/link";
 import { ActivityList } from "./ActivityList";
 
 export type ActivityEntry = {
@@ -21,23 +22,16 @@ export function RecentActivity({
     <Box sx={{ mt: 4 }}>
       <Box display="flex" justifyContent="space-between">
         <Typography variant="h6">Recent Activity</Typography>
-        {/* No transactions-list page exists yet — keep the affordance but make it
-            visibly disabled and non-clickable. */}
-        <Tooltip title="Coming soon">
-          <Typography
-            variant="body2"
-            color="text.disabled"
-            aria-disabled="true"
-            sx={{
-              cursor: "not-allowed",
-              pointerEvents: "none",
-              opacity: 0.5,
-              alignSelf: "center",
-            }}
-          >
-            View all
-          </Typography>
-        </Tooltip>
+        <Link
+          component={NextLink}
+          href="/transfers"
+          variant="body2"
+          underline="hover"
+          sx={{ color: "green", alignSelf: "center" }}
+          data-test="recent-activity-view-all"
+        >
+          View all
+        </Link>
       </Box>
 
       {isLoading ? (
