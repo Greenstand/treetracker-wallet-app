@@ -6,13 +6,11 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 export default function WalletItem({
   name,
-  display_name,
   created_at,
   tokens_in_wallet,
   logo_url,
 }: {
   name: string;
-  display_name?: string;
   created_at?: string | undefined;
   tokens_in_wallet?: number | undefined;
   logo_url?: string | undefined;
@@ -36,7 +34,7 @@ export default function WalletItem({
         </Avatar>
         <Box>
           <Typography variant="body2" data-test={`wallet-item-name-${name}`}>
-            {display_name || name}
+            {name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {created_at}
