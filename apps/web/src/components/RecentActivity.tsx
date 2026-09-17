@@ -4,13 +4,8 @@ import * as React from "react";
 import { Typography, Box, Skeleton, Link } from "@mui/material";
 import NextLink from "next/link";
 import { ActivityList } from "./ActivityList";
-
-export type ActivityEntry = {
-  title: string;
-  amount?: number;
-  status?: string;
-  showAmount?: boolean;
-};
+import type { ActivityEntry } from "./activity.types";
+export type { ActivityEntry } from "./activity.types";
 
 export function RecentActivity({
   activityData,

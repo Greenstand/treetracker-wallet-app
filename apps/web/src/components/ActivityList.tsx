@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Box } from "@mui/material";
 import { ActivityItem } from "./ActivityItem";
-import type { ActivityEntry } from "./RecentActivity";
+import type { ActivityEntry } from "./activity.types";
 
 export function ActivityList({
   activityData,

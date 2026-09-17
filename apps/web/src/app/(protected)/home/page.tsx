@@ -9,10 +9,8 @@ import {
 } from "@treetracker/wallet";
 import { TokenBalance } from "@/components/TokenBalance";
 import { WalletBalance } from "@/components/WalletBalance";
-import {
-  RecentActivity,
-  type ActivityEntry,
-} from "@/components/RecentActivity";
+import { RecentActivity } from "@/components/RecentActivity";
+import type { ActivityEntry } from "@/components/activity.types";
 import { useSnackbar } from "@/context/SnackbarContext";
 import { TransactionSnackbar } from "@/components/TransactionSnackbar";
 
@@ -36,20 +34,21 @@ function toActivityEntry(
     failed: "Failed",
   };
   const status = statusByState[transfer.state] ?? "Unknown";
+  const showAmount = transfer.state === "completed";
 
   if (sentByMe) {
     return {
       title: `Sent to ${transfer.destination_wallet ?? "unknown"}`,
       amount: -amount,
       status,
-      showAmount: transfer.state === "completed",
+      showAmount,
     };
   }
   return {
     title: `Received from ${transfer.source_wallet ?? "unknown"}`,
     amount,
     status,
-    showAmount: transfer.state === "completed",
+    showAmount,
   };
 }
 
