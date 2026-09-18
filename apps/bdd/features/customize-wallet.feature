@@ -44,7 +44,9 @@ Feature: Customize Wallet
     Then an error message is shown: Logo file must be less than 1MB
     And no preview is displayed for logo
 
-  @web
+  # Skipped since #858: About is a plain text field, so there is no rich text
+  # editor to drive. Kept for the rich text work if it is picked up again.
+  @web @skip
   Scenario: Use rich text editor formatting
     Given There is a registered account: customize-test-5@greenstand.org, and there is an wallet named: customize-test-5-wallet
     When customize-test-5@greenstand.org login and navigate to wallet details
