@@ -9,6 +9,7 @@ import {
   TextField,
   MenuItem,
   Snackbar,
+  Stack,
   Alert,
   FormControlLabel,
   Checkbox,
@@ -41,6 +42,7 @@ export default function SendPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Default the source wallet to the first one once wallets load.
   useEffect(() => {
@@ -93,6 +95,21 @@ export default function SendPage() {
     }
   }
 
+  // Prefer the system share sheet on a phone, since this link is usually sent
+  // through a messaging app. Fall back to the clipboard elsewhere.
+  const onShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ url: shareLink });
+        return;
+      }
+      await navigator.clipboard.writeText(shareLink);
+      setCopied(true);
+    } catch {
+      // A cancelled share sheet lands here too, so say nothing.
+    }
+  };
+
   // "Next page": once a link is generated, show it instead of the form.
   if (shareLink) {
     return (
@@ -113,14 +130,30 @@ export default function SendPage() {
         <Paper sx={{ p: 1.5, wordBreak: "break-all" }} data-test="share-link">
           {shareLink}
         </Paper>
-        <Button
-          variant="text"
-          onClick={() => router.push("/home")}
-          sx={{ mt: 2, color: "green" }}
-          data-test="share-done"
+        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+          <Button variant="contained" onClick={onShare} data-test="share-copy">
+            Share link
+          </Button>
+          <Button
+            variant="text"
+            onClick={() => router.push("/home")}
+            sx={{ color: "green" }}
+            data-test="share-done"
+          >
+            Done
+          </Button>
+        </Stack>
+
+        <Snackbar
+          open={copied}
+          autoHideDuration={3000}
+          onClose={() => setCopied(false)}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          Done
-        </Button>
+          <Alert severity="success" data-test="share-copied">
+            Link copied
+          </Alert>
+        </Snackbar>
       </Box>
     );
   }
