@@ -48,6 +48,7 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    const kc = getKeycloak();
 
     // The only two things that end a session: Keycloak refusing to refresh, and
     // an explicit logout. Never an HTTP status from a resource call, which may
@@ -57,10 +58,35 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
       clearStoredTokens();
     };
 
+    // No-op while the access token is good for another 30s; otherwise renews it
+    // from the refresh token. Only Keycloak refusing that ends the session.
+    const refresh = () => {
+      if (!kc?.authenticated) return;
+      kc.updateToken(30)
+        .then((refreshed) => {
+          if (refreshed && kc.token) {
+            setToken(kc.token);
+            saveStoredTokens();
+          }
+        })
+        .catch(endSession);
+    };
+
+    // Must be set before init(): keycloak-js arms the expiry timer inside
+    // setToken() only for a handler that already exists (dist/keycloak.js:1666),
+    // and never arms one later. Each refresh re-arms it the same way.
+    if (kc) kc.onTokenExpired = refresh;
+
+    // Background tabs throttle timers and sleep stops them, so also renew when
+    // the user comes back rather than trusting the timer alone.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
     withTimeout(initKeycloak(), INIT_TIMEOUT_MS)
       .then((auth) => {
         if (!active) return;
-        const kc = getKeycloak();
         setAuthenticated(Boolean(auth));
         if (auth && kc?.token) {
           // Mirror the Keycloak token into tokenAtom so existing consumers
@@ -68,16 +94,6 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
           // persist the pair so the next page load can resume this session.
           setToken(kc.token ?? null);
           saveStoredTokens();
-          kc.onTokenExpired = () => {
-            kc.updateToken(30)
-              .then((refreshed) => {
-                if (refreshed && kc.token) {
-                  setToken(kc.token);
-                  saveStoredTokens();
-                }
-              })
-              .catch(endSession);
-          };
         } else {
           // Keycloak reports no session. Anything still in storage is dead, so
           // drop it rather than let the data hooks send it and collect 401s.
@@ -94,6 +110,7 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
       });
     return () => {
       active = false;
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [setToken]);
 
