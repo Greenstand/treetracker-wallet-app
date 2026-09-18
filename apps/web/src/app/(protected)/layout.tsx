@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Box } from "@mui/material";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { tokenAtom } from "core";
+import { onLogout } from "@/auth/sessionChannel";
 import Header from "@/components/header/Header";
 import BottomNavigationBar from "@/components/navigation/BottomNavigatorBar";
 import { HeaderProvider } from "@/context/HeaderContext";
@@ -37,32 +38,14 @@ export default function ProtectedLayout({
     }
   }, [checked, token, router]);
 
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.storageArea === sessionStorage) {
-        if (e.key === "token" && e.newValue === null) {
-          setToken(null);
-          router.replace("/login");
-        } else if (e.key === null) {
-          setToken(null);
-          router.replace("/login");
-        }
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [router, setToken]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const currentToken = sessionStorage.getItem("token");
-      if (token && !currentToken) {
+  useEffect(
+    () =>
+      onLogout(() => {
         setToken(null);
         router.replace("/login");
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [token, router, setToken]);
+      }),
+    [router, setToken],
+  );
 
   if (!mounted || !checked || !token) return <LoadingSpinner />;
 
