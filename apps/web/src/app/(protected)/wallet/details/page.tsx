@@ -32,7 +32,7 @@ function WalletDetails() {
   const name = params?.get("name") ?? "";
 
   const { tokens, isTokensLoading, error } = useGetTokens(name);
-  const { wallets } = useGetWallets();
+  const { wallets, reload } = useGetWallets();
   const { updateWallet } = useUpdateWallet();
 
   const [editOpen, setEditOpen] = useState(false);
@@ -44,9 +44,21 @@ function WalletDetails() {
     [wallets, name],
   );
 
+  // Loading state changes must not reset an open drawer's edits or errors.
+  const initialProfile = useMemo(
+    () => ({ display_name: wallet?.display_name, about: wallet?.about }),
+    [wallet?.display_name, wallet?.about],
+  );
+
   async function handleSave(fields: WalletProfileUpdate) {
     if (!wallet?.id) throw new Error("Wallet id not found");
+    setSaved(false);
     await updateWallet(wallet.id, fields);
+    if (!(await reload())) {
+      throw new Error(
+        "Wallet profile was saved, but could not be refreshed. Reopen this page to see your changes.",
+      );
+    }
     setSaved(true);
   }
 
@@ -180,10 +192,7 @@ function WalletDetails() {
       <WalletProfileDrawer
         open={editOpen}
         onClose={() => setEditOpen(false)}
-        initial={{
-          display_name: wallet?.display_name,
-          about: wallet?.about,
-        }}
+        initial={initialProfile}
         onSave={handleSave}
       />
 
