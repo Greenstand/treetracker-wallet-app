@@ -2,30 +2,109 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Box, Typography, CircularProgress } from "@mui/material";
-import { savePendingActionToken } from "@/utils/actionToken";
+import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
+import { redeemActionToken } from "@treetracker/wallet";
+import {
+  savePendingActionToken,
+  clearPendingActionToken,
+} from "@/utils/actionToken";
 
 // Public landing for a shared token link: {BASE_URL}/claim?action_token=<jwt>.
 // The recipient may not be registered, so this route is intentionally outside
-// the (protected)/(public) auth gates. It captures the action token, then sends
-// the visitor to register; the token is redeemed on their first wallet creation.
+// the (protected)/(public) auth gates. A signed-out visitor is sent to register
+// and the token is redeemed on their first wallet creation; a signed-in visitor
+// redeems here, because /signup would bounce them to Home and strand the token.
 function Claim() {
   const params = useSearchParams();
   const router = useRouter();
-  const [saved, setSaved] = useState(false);
+  const authToken = useAtomValue(tokenAtom);
+  const [status, setStatus] = useState<"working" | "claimed" | "failed">(
+    "working",
+  );
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const actionToken = params?.get("action_token");
-    if (actionToken) {
+    if (!actionToken) {
+      router.replace("/login");
+      return undefined;
+    }
+
+    if (!authToken) {
       savePendingActionToken(actionToken);
-      setSaved(true);
       const t = setTimeout(() => router.replace("/signup"), 3000);
       return () => clearTimeout(t);
     }
-    // Nothing to claim — send to login.
-    router.replace("/login");
-    return undefined;
-  }, [params, router]);
+
+    let active = true;
+    (async () => {
+      try {
+        await redeemActionToken(authToken, actionToken);
+        if (!active) return;
+        // Redeemed here, so nothing must be left for a later wallet creation.
+        clearPendingActionToken();
+        setStatus("claimed");
+      } catch (e) {
+        if (!active) return;
+        setError(
+          e instanceof Error ? e.message : "Could not claim the tokens.",
+        );
+        setStatus("failed");
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [params, router, authToken]);
+
+  if (status === "failed") {
+    return (
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
+        <Typography variant="h6" fontWeight={600} color="error">
+          This link could not be claimed
+        </Typography>
+        <Typography
+          variant="body1"
+          color="error"
+          sx={{ mt: 1 }}
+          data-test="claim-error"
+        >
+          {error}
+        </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => router.replace("/home")}
+          sx={{ mt: 3, color: "green", borderColor: "green" }}
+          data-test="claim-home"
+        >
+          Go to Home
+        </Button>
+      </Box>
+    );
+  }
+
+  if (status === "claimed") {
+    return (
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
+        <Typography variant="h6" fontWeight={600}>
+          Tokens claimed
+        </Typography>
+        <Typography variant="body1" sx={{ mt: 1 }} data-test="claim-message">
+          The tokens have been added to your wallet.
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => router.replace("/wallet")}
+          sx={{ mt: 3 }}
+          data-test="claim-view-wallet"
+        >
+          View your wallets
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
@@ -33,13 +112,13 @@ function Claim() {
         You&apos;ve received tokens!
       </Typography>
       <Typography variant="body1" sx={{ mt: 1 }} data-test="claim-message">
-        Register and create a wallet to claim your tokens.
+        {authToken
+          ? "Claiming your tokens…"
+          : "Register and create a wallet to claim your tokens."}
       </Typography>
-      {saved && (
-        <Box sx={{ mt: 3 }} data-test="claim-saved">
-          <CircularProgress />
-        </Box>
-      )}
+      <Box sx={{ mt: 3 }} data-test="claim-saved">
+        <CircularProgress />
+      </Box>
     </Box>
   );
 }
