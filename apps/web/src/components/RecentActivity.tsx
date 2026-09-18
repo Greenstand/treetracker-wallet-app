@@ -5,7 +5,6 @@ import { Typography, Box, Skeleton, Link } from "@mui/material";
 import NextLink from "next/link";
 import { ActivityList } from "./ActivityList";
 import type { ActivityEntry } from "./activity.types";
-export type { ActivityEntry } from "./activity.types";
 
 export function RecentActivity({
   activityData,

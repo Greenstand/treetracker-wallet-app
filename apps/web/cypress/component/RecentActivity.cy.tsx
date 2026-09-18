@@ -17,11 +17,10 @@ describe("RecentActivity Component", () => {
     cy.contains("Restaurant XY").should("exist");
   });
 
-  it("disables the unfinished View All affordance", () => {
+  it("links View all to the transfers page", () => {
     cy.mount(<RecentActivity activityData={activityData} />);
     cy.contains("View all")
       .should("exist")
-      .and("have.attr", "aria-disabled", "true")
-      .and("have.css", "pointer-events", "none");
+      .and("have.attr", "href", "/transfers");
   });
 });
