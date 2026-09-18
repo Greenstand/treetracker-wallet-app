@@ -7,6 +7,7 @@ export type GenerateActionTokenInput = {
   tokens?: string[]; // specific token ids, OR
   bundle_size?: number; // a bundle of N generic tokens
   recipient_email?: string; // informational (the intended recipient)
+  sender_wallet?: string; // source wallet; defaults to the login wallet
 };
 
 export type GenerateActionTokenResult = {
@@ -21,10 +22,15 @@ export async function generateActionToken(
 ): Promise<GenerateActionTokenResult> {
   const body =
     input.tokens && input.tokens.length > 0
-      ? { tokens: input.tokens, recipient_email: input.recipient_email }
+      ? {
+          tokens: input.tokens,
+          recipient_email: input.recipient_email,
+          sender_wallet: input.sender_wallet,
+        }
       : {
           bundle: { bundle_size: input.bundle_size },
           recipient_email: input.recipient_email,
+          sender_wallet: input.sender_wallet,
         };
 
   try {

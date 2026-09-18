@@ -69,6 +69,7 @@ export default function SendPage() {
         if (!authToken) throw new Error("User not authenticated");
         const res = await generateActionToken(authToken, {
           bundle_size: amountNum,
+          sender_wallet: sender,
           recipient_email: "link-recipient@greenstand.org",
         });
         const base =
