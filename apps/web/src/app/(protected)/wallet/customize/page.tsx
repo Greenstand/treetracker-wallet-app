@@ -15,6 +15,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { toPlainText } from "@/utils/plainText";
+import { walletFieldError } from "@/utils/walletFields";
 import {
   useGetWallets,
   useUpdateWallet,
@@ -115,6 +116,23 @@ function CustomizeWallet() {
       reader.readAsDataURL(file);
     }
   };
+
+  const displayNameError = walletFieldError(
+    "Display name",
+    wallet?.display_name ?? "",
+    displayName,
+    2,
+    30,
+  );
+  const aboutError = walletFieldError(
+    "About",
+    toPlainText(wallet?.about ?? ""),
+    about,
+    5,
+    MAX_ABOUT_LENGTH,
+  );
+  const canSave =
+    Boolean(wallet?.id) && !saving && !displayNameError && !aboutError;
 
   const handleSave = async () => {
     if (!wallet?.id) {
@@ -239,6 +257,8 @@ function CustomizeWallet() {
             onChange={(e) => setDisplayName(e.target.value)}
             data-test="customize-display-name"
             disabled={saving}
+            error={Boolean(displayNameError)}
+            helperText={displayNameError}
           />
         </Box>
 
@@ -257,7 +277,8 @@ function CustomizeWallet() {
             disabled={saving}
             data-test="customize-about"
             inputProps={{ maxLength: MAX_ABOUT_LENGTH }}
-            helperText={`${about.length}/${MAX_ABOUT_LENGTH}`}
+            error={Boolean(aboutError)}
+            helperText={aboutError ?? `${about.length}/${MAX_ABOUT_LENGTH}`}
           />
         </Box>
 
@@ -367,7 +388,7 @@ function CustomizeWallet() {
           variant="contained"
           size="large"
           onClick={handleSave}
-          disabled={saving || !wallet?.id}
+          disabled={!canSave}
           sx={{ mt: 3 }}
           data-test="customize-save"
         >

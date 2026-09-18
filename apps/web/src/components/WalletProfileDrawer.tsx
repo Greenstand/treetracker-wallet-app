@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CustomTextField from "@/components/common/CustomTextField";
+import { toPlainText } from "@/utils/plainText";
+import { walletFieldError } from "@/utils/walletFields";
 import { WalletProfileUpdate } from "@treetracker/wallet";
 
 export interface WalletProfileDrawerProps {
@@ -45,14 +47,21 @@ const WalletProfileDrawer: React.FC<WalletProfileDrawerProps> = ({
     }
   }, [open, initial]);
 
-  // The API constrains display_name 2-30 and about 5-250; mirror so we don't 400.
-  const displayNameValid =
-    displayName.length === 0 ||
-    (displayName.trim().length >= 2 && displayName.trim().length <= 30);
-  const aboutValid =
-    about.length === 0 ||
-    (about.trim().length >= 5 && about.trim().length <= 250);
-  const canSave = displayNameValid && aboutValid && !saving;
+  const displayNameError = walletFieldError(
+    "Display name",
+    initial?.display_name ?? "",
+    displayName,
+    2,
+    30,
+  );
+  const aboutError = walletFieldError(
+    "About",
+    toPlainText(initial?.about ?? ""),
+    about,
+    5,
+    250,
+  );
+  const canSave = !displayNameError && !aboutError && !saving;
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -107,10 +116,8 @@ const WalletProfileDrawer: React.FC<WalletProfileDrawerProps> = ({
             setDisplayName(e.target.value)
           }
           testId="profile-display-name"
-          error={!displayNameValid}
-          helperText={
-            !displayNameValid ? "Must be 2-30 characters." : undefined
-          }
+          error={Boolean(displayNameError)}
+          helperText={displayNameError}
         />
 
         <CustomTextField
@@ -122,8 +129,8 @@ const WalletProfileDrawer: React.FC<WalletProfileDrawerProps> = ({
             setAbout(e.target.value)
           }
           testId="profile-about"
-          error={!aboutValid}
-          helperText={!aboutValid ? "Must be 5-250 characters." : undefined}
+          error={Boolean(aboutError)}
+          helperText={aboutError}
         />
 
         <FormControlLabel
