@@ -7,7 +7,6 @@ import {
   Keyboard,
   Platform,
   LayoutAnimation,
-  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomSubmitButton from "@/components/ui/common/CustomSubmitButton";
@@ -19,7 +18,7 @@ import { Colors } from "@/constants/Colors";
 interface Props {
   visible: boolean;
   onRequestClose: (isDirty: boolean) => void;
-  onSubmit: (data: { name: string; description: string }) => void;
+  onSubmit: (data: { name: string; description: string }) => Promise<void>;
   existingWalletNames: string[];
   showDiscardPrompt?: boolean;
   onDiscardConfirm?: () => void;
@@ -38,13 +37,15 @@ export const WalletCreateDrawer: React.FC<Props> = ({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [bottomOffset, setBottomOffset] = useState(0);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const normalizedName = name.trim().toLowerCase();
 
   const isDuplicate = useMemo(() => {
     if (!normalizedName) return false;
     return existingWalletNames.some(
-      (n) => n.trim().toLowerCase() === normalizedName,
+      n => n.trim().toLowerCase() === normalizedName,
     );
   }, [normalizedName, existingWalletNames]);
 
@@ -59,8 +60,14 @@ export const WalletCreateDrawer: React.FC<Props> = ({
     if (!visible) {
       setName("");
       setDescription("");
+      setSubmitError("");
+      setIsSubmitting(false);
     }
   }, [visible]);
+
+  useEffect(() => {
+    setSubmitError("");
+  }, [name, description]);
 
   // Keyboard animation
   useEffect(() => {
@@ -69,7 +76,7 @@ export const WalletCreateDrawer: React.FC<Props> = ({
     const hideEvent =
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
-    const showSub = Keyboard.addListener(showEvent, (e) => {
+    const showSub = Keyboard.addListener(showEvent, e => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setBottomOffset(e.endCoordinates.height);
     });
@@ -85,13 +92,24 @@ export const WalletCreateDrawer: React.FC<Props> = ({
     };
   }, []);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!isValidName) return;
 
-    onSubmit({
-      name: name.trim(),
-      description: description.trim(),
-    });
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      await onSubmit({
+        name: name.trim(),
+        description: description.trim(),
+      });
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to create wallet",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -103,8 +121,7 @@ export const WalletCreateDrawer: React.FC<Props> = ({
     <CustomModal
       visible={visible}
       onClose={handleClose}
-      containerStyle={{ bottom: bottomOffset, height: "60%" }}
-    >
+      containerStyle={{ bottom: bottomOffset, height: "60%" }}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Provide wallet details</Text>
@@ -134,10 +151,17 @@ export const WalletCreateDrawer: React.FC<Props> = ({
           />
         </View>
 
+        {submitError ? (
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle" size={16} color={Colors.red} />
+            <Text style={styles.errorText}>{submitError}</Text>
+          </View>
+        ) : null}
+
         <CustomSubmitButton
-          title="CREATE WALLET"
+          title={isSubmitting ? "CREATING..." : "CREATE WALLET"}
           onPress={handleCreate}
-          disabled={isValidName}
+          disabled={isValidName && !isSubmitting}
           style={styles.submitButton}
         />
       </View>
@@ -164,4 +188,15 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 20, fontWeight: "600" },
   submitButton: { marginTop: 30 },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  errorText: {
+    flex: 1,
+    color: Colors.red,
+    fontSize: 12,
+    marginLeft: 6,
+  },
 });

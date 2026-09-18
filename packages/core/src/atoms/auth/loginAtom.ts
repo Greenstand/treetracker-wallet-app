@@ -4,6 +4,7 @@ import { User } from "../../types/auth";
 import { TREETRACKER_USER_API } from "../../utils/config";
 import { trimInputs, handleValidationError } from "../../utils/validation";
 import { loadingAtom } from "./loadingAtom";
+import { tokenAtom } from "./tokenAtom";
 
 export const loginAtom = atom(null, async (get, set, formValues: User) => {
   const trimmed = trimInputs(formValues);
@@ -27,6 +28,9 @@ export const loginAtom = atom(null, async (get, set, formValues: User) => {
 
     const data = await response.json();
     if (response.ok) {
+      if (data?.access_token) {
+        set(tokenAtom, data.access_token);
+      }
       return data;
     } else {
       return { error: data?.message || "Login failed" };
