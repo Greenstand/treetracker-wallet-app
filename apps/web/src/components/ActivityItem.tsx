@@ -19,11 +19,13 @@ export function ActivityItem({
   title,
   amount,
   status,
+  showAmount = true,
   onClick,
 }: {
   title: string;
   amount?: number;
   status?: string;
+  showAmount?: boolean;
   onClick?: () => void;
 }) {
   return (
@@ -41,7 +43,8 @@ export function ActivityItem({
         "&:hover": onClick ? { backgroundColor: "grey.50" } : {},
       }}
       onClick={onClick}
-      variant="outlined">
+      variant="outlined"
+    >
       <CardContent sx={{ py: 0.5, "&:last-child": { pb: 0.5 } }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar sx={{ width: 40, height: 40 }}>{getInitials(title)}</Avatar>
@@ -56,13 +59,12 @@ export function ActivityItem({
             </Typography>
           </Box>
 
-          {amount !== undefined && (
+          {amount !== undefined && showAmount && (
             <Typography
               variant="h6"
-              color={
-                amount > 0 && status !== "Pending" ? "green" : "textSecondary"
-              }>
-              {status === "Pending" ? "" : amount > 0 ? "+" : ""}
+              color={amount > 0 ? "green" : "textSecondary"}
+            >
+              {amount > 0 ? "+" : ""}
               {amount}
             </Typography>
           )}

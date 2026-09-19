@@ -2,7 +2,12 @@ import React from "react";
 import { RecentActivity } from "../../src/components/RecentActivity";
 
 const activityData = [
-  { title: "Restaurant XY", amount: 100, status: "Received" },
+  {
+    title: "Restaurant XY",
+    amount: 100,
+    status: "Received",
+    showAmount: true,
+  },
 ];
 
 describe("RecentActivity Component", () => {
@@ -12,8 +17,10 @@ describe("RecentActivity Component", () => {
     cy.contains("Restaurant XY").should("exist");
   });
 
-  it("has a clickable View All button", () => {
+  it("links View all to the transfers page", () => {
     cy.mount(<RecentActivity activityData={activityData} />);
-    cy.contains("View all").should("exist").click();
+    cy.contains("View all")
+      .should("exist")
+      .and("have.attr", "href", "/transfers");
   });
 });

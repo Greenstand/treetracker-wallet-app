@@ -9,10 +9,8 @@ import {
 } from "@treetracker/wallet";
 import { TokenBalance } from "@/components/TokenBalance";
 import { WalletBalance } from "@/components/WalletBalance";
-import {
-  RecentActivity,
-  type ActivityEntry,
-} from "@/components/RecentActivity";
+import { RecentActivity } from "@/components/RecentActivity";
+import type { ActivityEntry } from "@/components/activity.types";
 import { useSnackbar } from "@/context/SnackbarContext";
 import { TransactionSnackbar } from "@/components/TransactionSnackbar";
 
@@ -23,24 +21,34 @@ function toActivityEntry(
   transfer: Transfer,
   ownWalletNames: Set<string>,
 ): ActivityEntry {
-  const isPending =
-    transfer.state === "pending" || transfer.state === "requested";
   const amount = transfer.token_count ?? 0;
   const sentByMe = transfer.source_wallet
     ? ownWalletNames.has(transfer.source_wallet)
     : false;
 
+  const statusByState: Record<string, string> = {
+    pending: "Pending",
+    requested: "Pending",
+    completed: sentByMe ? "Sent" : "Received",
+    cancelled: "Cancelled",
+    failed: "Failed",
+  };
+  const status = statusByState[transfer.state] ?? "Unknown";
+  const showAmount = transfer.state === "completed";
+
   if (sentByMe) {
     return {
       title: `Sent to ${transfer.destination_wallet ?? "unknown"}`,
       amount: -amount,
-      status: isPending ? "Pending" : "Sent",
+      status,
+      showAmount,
     };
   }
   return {
     title: `Received from ${transfer.source_wallet ?? "unknown"}`,
     amount,
-    status: isPending ? "Pending" : "Received",
+    status,
+    showAmount,
   };
 }
 
