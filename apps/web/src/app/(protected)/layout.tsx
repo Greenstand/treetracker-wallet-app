@@ -11,6 +11,8 @@ import Header from "@/components/header/Header";
 import BottomNavigationBar from "@/components/navigation/BottomNavigatorBar";
 import { HeaderProvider } from "@/context/HeaderContext";
 import { SnackbarProvider } from "@/context/SnackbarContext";
+import PendingClaimHandler from "@/components/PendingClaimHandler";
+import { readPendingActionToken } from "@/utils/actionToken";
 
 export default function ProtectedLayout({
   children,
@@ -18,12 +20,16 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
+  // Read once on mount: mounting the handler unconditionally would add a
+  // wallet fetch to every protected page.
+  const [hasPendingClaim, setHasPendingClaim] = useState(false);
   const [token, setToken] = useAtom(tokenAtom);
   const [checked, setChecked] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
+    setHasPendingClaim(Boolean(readPendingActionToken()));
   }, []);
 
   useEffect(() => {
@@ -57,6 +63,7 @@ export default function ProtectedLayout({
           {children}
         </Box>
         <BottomNavigationBar />
+        {hasPendingClaim && <PendingClaimHandler />}
       </HeaderProvider>
     </SnackbarProvider>
   );
