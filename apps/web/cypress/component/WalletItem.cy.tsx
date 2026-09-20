@@ -37,4 +37,31 @@ describe("WalletItem Component", () => {
     cy.contains("Empty Wallet").should("exist");
     cy.contains("0").should("exist");
   });
+
+  it("names the pending count when a transfer is holding tokens", () => {
+    cy.mount(
+      <WalletItem
+        name="Wallet A"
+        created_at="1 Jan 2026"
+        tokens_in_wallet={5}
+        tokens_pending={3}
+      />,
+    );
+    cy.get('[data-test="wallet-item-pending-Wallet A"]').should(
+      "contain.text",
+      "3 pending",
+    );
+  });
+
+  it("shows no pending line when nothing is reserved", () => {
+    cy.mount(
+      <WalletItem
+        name="Wallet B"
+        created_at="1 Jan 2026"
+        tokens_in_wallet={5}
+        tokens_pending={0}
+      />,
+    );
+    cy.get('[data-test="wallet-item-pending-Wallet B"]').should("not.exist");
+  });
 });

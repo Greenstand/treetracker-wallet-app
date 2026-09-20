@@ -51,8 +51,25 @@ export default function SendPage() {
     }
   }, [wallets, sender]);
 
+  const senderWallet = wallets.find((w) => (w as Wallet).name === sender) as
+    | Wallet
+    | undefined;
+  const available = senderWallet?.tokens_available;
+  const pending = senderWallet?.tokens_pending ?? 0;
+
   const amountNum = Number(amount);
-  const amountValid = Number.isInteger(amountNum) && amountNum >= 1;
+  const overAvailable =
+    available !== undefined &&
+    Number.isInteger(amountNum) &&
+    amountNum > available;
+  // Say why before the request, rather than after the API's 409.
+  const amountError = overAvailable
+    ? pending > 0
+      ? `Only ${available} available, ${pending} are in a pending transfer`
+      : `Only ${available} available`
+    : undefined;
+  const amountValid =
+    Number.isInteger(amountNum) && amountNum >= 1 && !overAvailable;
   const valid = shareByLink
     ? Boolean(sender) && amountValid
     : Boolean(sender) &&
@@ -180,9 +197,11 @@ export default function SendPage() {
           return (
             <MenuItem key={i} value={name} data-test={`send-source-${name}`}>
               {name}
-              {(w as Wallet).tokens_in_wallet !== undefined
-                ? ` (${(w as Wallet).tokens_in_wallet} tokens)`
-                : ""}
+              {(w as Wallet).tokens_available !== undefined
+                ? ` (${(w as Wallet).tokens_available} available)`
+                : (w as Wallet).tokens_in_wallet !== undefined
+                  ? ` (${(w as Wallet).tokens_in_wallet} tokens)`
+                  : ""}
             </MenuItem>
           );
         })}
@@ -207,6 +226,8 @@ export default function SendPage() {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         inputProps={{ min: 1, step: 1 }}
+        error={Boolean(amountError)}
+        helperText={amountError}
         sx={{ mb: 1 }}
         data-test="send-amount"
       />

@@ -152,7 +152,9 @@ function WalletDetails() {
         color="text.secondary"
         data-test="wallet-details-balance"
       >
-        Token balance: {tokens.length}
+        Token balance: {wallet?.tokens_in_wallet ?? tokens.length}
+        {Boolean(wallet?.tokens_pending) &&
+          ` (${wallet?.tokens_pending} in a pending transfer)`}
       </Typography>
 
       <Divider sx={{ my: 2 }} />
@@ -169,7 +171,7 @@ function WalletDetails() {
       )}
 
       <Stack spacing={0.5} sx={{ mt: 1 }} data-test="token-list">
-        {tokens.map((t: { id: string }) => (
+        {tokens.map((t: { id: string; transfer_pending?: boolean }) => (
           <Paper
             key={t.id}
             sx={{
@@ -185,6 +187,15 @@ function WalletDetails() {
             }
           >
             <Typography variant="body2">{t.id}</Typography>
+            {t.transfer_pending && (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                data-test={`token-pending-${t.id}`}
+              >
+                In a pending transfer
+              </Typography>
+            )}
           </Paper>
         ))}
       </Stack>
