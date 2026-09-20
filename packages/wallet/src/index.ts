@@ -10,6 +10,7 @@ export * from "./api/acceptTransfer";
 export * from "./api/declineTransfer";
 export * from "./api/cancelTransfer";
 export * from "./api/generateActionToken";
+export * from "./api/errors";
 export * from "./api/redeemActionToken";
 export * from "./api/getActionTokens";
 export * from "./api/cancelActionToken";

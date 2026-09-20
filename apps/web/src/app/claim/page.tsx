@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
-import { redeemActionToken } from "@treetracker/wallet";
+import { isNoWalletError, redeemActionToken } from "@treetracker/wallet";
 import {
   savePendingActionToken,
   clearPendingActionToken,
@@ -23,13 +23,14 @@ import {
 // and chooses sign in or register; PendingClaimHandler redeems it once they are
 // signed in with a wallet, or wallet creation does on their first wallet. A
 // signed-in visitor redeems here, because /signup would bounce them to Home and
-// strand the token.
+// strand the token. A signed-in visitor with no wallet yet gets the link saved
+// and is sent to create one; wallet creation redeems it.
 function Claim() {
   const params = useSearchParams();
   const router = useRouter();
   const authToken = useAtomValue(tokenAtom);
   const [status, setStatus] = useState<
-    "working" | "claimed" | "failed" | "needsAuth"
+    "working" | "claimed" | "failed" | "needsAuth" | "needsWallet"
   >("working");
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +60,13 @@ function Claim() {
         setStatus("claimed");
       } catch (e) {
         if (!active) return;
+        // Signed in, token fine, no wallet yet. Keep the link and send them
+        // to create one: wallet creation redeems a pending token into it.
+        if (isNoWalletError(e)) {
+          savePendingActionToken(actionToken);
+          setStatus("needsWallet");
+          return;
+        }
         setError(
           e instanceof Error ? e.message : "Could not claim the tokens.",
         );
@@ -122,6 +130,27 @@ function Claim() {
             Create an account
           </Button>
         </Stack>
+      </Box>
+    );
+  }
+
+  if (status === "needsWallet") {
+    return (
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
+        <Typography variant="h6" fontWeight={600}>
+          You&apos;ve received tokens!
+        </Typography>
+        <Typography variant="body1" sx={{ mt: 1 }} data-test="claim-message">
+          Create a wallet to claim these tokens.
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => router.replace("/wallet")}
+          sx={{ mt: 3 }}
+          data-test="claim-create-wallet"
+        >
+          Create a wallet
+        </Button>
       </Box>
     );
   }
