@@ -35,6 +35,8 @@ export const useGetWallets = () => {
             year: "numeric",
           }),
           tokens_in_wallet: w.tokens_in_wallet,
+          tokens_available: w.tokens_available,
+          tokens_pending: w.tokens_pending,
         })),
       );
       return true;

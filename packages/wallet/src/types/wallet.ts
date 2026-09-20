@@ -7,6 +7,10 @@ export type Wallet = {
   cover_url?: string;
   created_at?: string;
   tokens_in_wallet?: number;
+  // Sendable now: not claimed and not reserved by a pending transfer.
+  tokens_available?: number;
+  // Reserved by a pending outgoing transfer.
+  tokens_pending?: number;
 };
 
 // A transfer record as returned by the wallet-api GET /transfers* endpoints.

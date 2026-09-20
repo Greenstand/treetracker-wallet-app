@@ -8,11 +8,13 @@ export default function WalletItem({
   name,
   created_at,
   tokens_in_wallet,
+  tokens_pending,
   logo_url,
 }: {
   name: string;
   created_at?: string | undefined;
   tokens_in_wallet?: number | undefined;
+  tokens_pending?: number | undefined;
   logo_url?: string | undefined;
 }) {
   return (
@@ -43,9 +45,20 @@ export default function WalletItem({
       </Box>
 
       <Box display="flex" alignItems="center" gap={1}>
-        <Typography color="green" data-test={`wallet-item-tokens-${name}`}>
-          {tokens_in_wallet}
-        </Typography>
+        <Box sx={{ textAlign: "right" }}>
+          <Typography color="green" data-test={`wallet-item-tokens-${name}`}>
+            {tokens_in_wallet}
+          </Typography>
+          {Boolean(tokens_pending) && (
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              data-test={`wallet-item-pending-${name}`}
+            >
+              {tokens_pending} pending
+            </Typography>
+          )}
+        </Box>
         <Button variant="text" sx={{ color: "green", minWidth: "auto" }}>
           <ChevronRightIcon fontSize="small" />
         </Button>

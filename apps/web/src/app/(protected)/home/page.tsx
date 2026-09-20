@@ -61,6 +61,11 @@ export default function Page() {
       sum + (w.tokens_in_wallet ?? 0),
     0,
   );
+  const pendingCount = wallets.reduce(
+    (sum: number, w: { tokens_pending?: number }) =>
+      sum + (w.tokens_pending ?? 0),
+    0,
+  );
   const walletAmount = wallets.length;
 
   const ownWalletNames = React.useMemo(
@@ -105,7 +110,11 @@ export default function Page() {
         alignItems="center"
         width="100%"
       >
-        <TokenBalance tokenCount={tokenCount} isLoading={isWalletLoading} />
+        <TokenBalance
+          tokenCount={tokenCount}
+          pendingCount={pendingCount}
+          isLoading={isWalletLoading}
+        />
         <WalletBalance
           walletAmount={walletAmount}
           isLoading={isWalletLoading}
