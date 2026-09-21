@@ -1,5 +1,6 @@
 import axios, { isAxiosError } from "axios";
 import { TREETRACKER_WALLET_API } from "../utils/config";
+import { WalletApiError } from "./errors";
 
 // Redeem an action token from the caller's wallet: the named tokens move from
 // the sender wallet to the caller as a single completed transfer.
@@ -33,7 +34,7 @@ export async function redeemActionToken(
     if (isAxiosError(error) && error.response) {
       const errorMessage =
         error.response.data?.message || "Failed to redeem action token";
-      throw new Error(errorMessage);
+      throw new WalletApiError(errorMessage, error.response.data?.reason);
     }
     throw error;
   }
