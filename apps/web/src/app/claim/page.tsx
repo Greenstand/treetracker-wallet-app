@@ -8,8 +8,6 @@ import {
   CircularProgress,
   Button,
   Stack,
-  TextField,
-  MenuItem,
 } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { tokenAtom } from 'core';
@@ -23,6 +21,7 @@ import {
   savePendingActionToken,
   clearPendingActionToken,
 } from '@/utils/actionToken';
+import { ClaimWalletPicker } from '@/components/ClaimWalletPicker';
 
 // Public landing for a shared token link: {BASE_URL}/claim?action_token=<jwt>.
 // The recipient may not be registered, so this route is intentionally outside
@@ -239,8 +238,6 @@ function Claim() {
   }
 
   if (showWalletChoice || status === 'choosing') {
-    const walletToClaim = selectedWallet || wallets[0]?.name || '';
-
     return (
       <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600}>
@@ -249,30 +246,14 @@ function Claim() {
         <Typography variant="body1" sx={{ mt: 1 }}>
           Choose which wallet should receive these tokens.
         </Typography>
-        <TextField
-          select
-          fullWidth
-          label="Receive tokens in"
-          value={walletToClaim}
-          onChange={(event) => setSelectedWallet(event.target.value)}
-          sx={{ mt: 3, textAlign: 'left' }}
-          data-test="claim-wallet-select"
-        >
-          {wallets.map((wallet) => (
-            <MenuItem key={wallet.name} value={wallet.name}>
-              {wallet.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <Button
-          variant="contained"
-          disabled={!walletToClaim}
-          onClick={() => void claimIntoWallet(walletToClaim)}
-          sx={{ mt: 3 }}
-          data-test="claim-confirm"
-        >
-          Claim tokens
-        </Button>
+        <ClaimWalletPicker
+          wallets={wallets}
+          selectedWallet={selectedWallet}
+          onWalletChange={setSelectedWallet}
+          onConfirm={() =>
+            void claimIntoWallet(selectedWallet || wallets[0]?.name || '')
+          }
+        />
       </Box>
     );
   }
