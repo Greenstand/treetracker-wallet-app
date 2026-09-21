@@ -85,7 +85,8 @@ export default function WalletPage() {
 
     // Redeem into the wallet just created, rather than the login wallet that
     // redeem defaults to. PendingClaimHandler covers users who already had
-    // one; the two cannot both fire, since either clears the pending link.
+    // one; claimPendingToken takes the link out of storage before it calls
+    // the API, so only one of the two can ever redeem it.
     if (authToken) {
       const outcome = await claimPendingToken(authToken, name);
       if (outcome) setNotification(outcome);

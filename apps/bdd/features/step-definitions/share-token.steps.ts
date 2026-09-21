@@ -184,7 +184,11 @@ Then(
   async (email: string) => {
     // Free the Keycloak user so re-runs can register this fixed email.
     await resetAccount(email);
-    // The /claim page auto-forwards to /signup → Keycloak registration.
+    // Signed out, the /claim page offers "sign in" or "create an account"
+    // (#892). Person A is new, so pick register → /signup → Keycloak form.
+    const registerButton = $("[data-test=claim-register]");
+    await registerButton.waitForDisplayed({ timeout: 25000 });
+    await registerButton.click();
     await registerAs(email, RECEIVER_PASSWORD);
   },
 );

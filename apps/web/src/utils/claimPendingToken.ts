@@ -16,23 +16,26 @@ function claimErrorMessage(raw: string): string {
 
 // Redeem a link saved before the user was able to claim it. Returns null when
 // there is nothing pending, so callers can stay quiet in the common case.
+//
+// The link leaves storage before the request goes out. It is single use, so a
+// failed redeem must not be retried forever, and both callers
+// (PendingClaimHandler and wallet creation) can be alive in the same session:
+// the first to read the link takes it, and the other finds nothing pending.
 export async function claimPendingToken(
   authToken: string,
   walletName: string,
 ): Promise<ClaimOutcome> {
   const pending = readPendingActionToken();
   if (!pending) return null;
+  clearPendingActionToken();
 
   try {
     await redeemActionToken(authToken, pending, walletName);
-    clearPendingActionToken();
     return {
       severity: "success",
       message: `Your shared token has been claimed and added to "${walletName}".`,
     };
   } catch (e) {
-    // Single use: clear it either way, so a dead link is not retried forever.
-    clearPendingActionToken();
     return {
       severity: "error",
       message: claimErrorMessage(e instanceof Error ? e.message : ""),

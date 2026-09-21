@@ -19,9 +19,11 @@ import {
 
 // Public landing for a shared token link: {BASE_URL}/claim?action_token=<jwt>.
 // The recipient may not be registered, so this route is intentionally outside
-// the (protected)/(public) auth gates. A signed-out visitor is sent to register
-// and the token is redeemed on their first wallet creation; a signed-in visitor
-// redeems here, because /signup would bounce them to Home and strand the token.
+// the (protected)/(public) auth gates. A signed-out visitor gets the link saved
+// and chooses sign in or register; PendingClaimHandler redeems it once they are
+// signed in with a wallet, or wallet creation does on their first wallet. A
+// signed-in visitor redeems here, because /signup would bounce them to Home and
+// strand the token.
 function Claim() {
   const params = useSearchParams();
   const router = useRouter();
