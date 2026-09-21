@@ -13,31 +13,15 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import AddIcon from "@mui/icons-material/Add";
-import { useAtomValue } from "jotai";
-import { tokenAtom } from "core";
 import WalletItem from "@/components/WalletItem";
 import GenericDrawer from "@/components/GenericDrawer";
 import WalletCreateDrawer from "@/components/WalletCreateDrawer";
-import {
-  useCreateWallet,
-  useGetWallets,
-  redeemActionToken,
-  Wallet,
-} from "@treetracker/wallet";
-import {
-  readPendingActionToken,
-  clearPendingActionToken,
-} from "@/utils/actionToken";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
+import { useCreateWallet, useGetWallets, Wallet } from "@treetracker/wallet";
+import { claimPendingToken } from "@/utils/claimPendingToken";
 
 type Notification = { severity: "success" | "error"; message: string };
-
-// Map raw backend redeem errors to user-friendly claim messages.
-function claimErrorMessage(raw: string): string {
-  if (/expired/i.test(raw)) return "This link has expired.";
-  if (/not verified/i.test(raw)) return "This link is not valid.";
-  if (/no longer owned/i.test(raw)) return "This link has already been used.";
-  return "Could not claim your shared token.";
-}
 
 // The API enforces no wallet count, so this is the only place the limit holds.
 // Advertised by the Good-to-know drawer below, which reads the same constant.
@@ -99,26 +83,13 @@ export default function WalletPage() {
       });
     }
 
-    // If the user arrived via a shared token link, redeem it into the wallet
-    // they just created (not their login wallet, which redeem defaults to).
-    const pending = readPendingActionToken();
-    if (pending && authToken) {
-      try {
-        await redeemActionToken(authToken, pending, name);
-        clearPendingActionToken();
-        setNotification({
-          severity: "success",
-          message: `Your shared token has been claimed and added to "${name}".`,
-        });
-      } catch (e) {
-        // The token is single-use: clear it so a retry does not re-run a
-        // doomed claim on the next wallet-creation attempt.
-        clearPendingActionToken();
-        setNotification({
-          severity: "error",
-          message: claimErrorMessage(e instanceof Error ? e.message : ""),
-        });
-      }
+    // Redeem into the wallet just created, rather than the login wallet that
+    // redeem defaults to. PendingClaimHandler covers users who already had
+    // one; claimPendingToken takes the link out of storage before it calls
+    // the API, so only one of the two can ever redeem it.
+    if (authToken) {
+      const outcome = await claimPendingToken(authToken, name);
+      if (outcome) setNotification(outcome);
     }
   };
 

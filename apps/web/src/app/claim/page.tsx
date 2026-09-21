@@ -2,7 +2,13 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Button,
+  Stack,
+} from "@mui/material";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
 import { redeemActionToken } from "@treetracker/wallet";
@@ -13,16 +19,18 @@ import {
 
 // Public landing for a shared token link: {BASE_URL}/claim?action_token=<jwt>.
 // The recipient may not be registered, so this route is intentionally outside
-// the (protected)/(public) auth gates. A signed-out visitor is sent to register
-// and the token is redeemed on their first wallet creation; a signed-in visitor
-// redeems here, because /signup would bounce them to Home and strand the token.
+// the (protected)/(public) auth gates. A signed-out visitor gets the link saved
+// and chooses sign in or register; PendingClaimHandler redeems it once they are
+// signed in with a wallet, or wallet creation does on their first wallet. A
+// signed-in visitor redeems here, because /signup would bounce them to Home and
+// strand the token.
 function Claim() {
   const params = useSearchParams();
   const router = useRouter();
   const authToken = useAtomValue(tokenAtom);
-  const [status, setStatus] = useState<"working" | "claimed" | "failed">(
-    "working",
-  );
+  const [status, setStatus] = useState<
+    "working" | "claimed" | "failed" | "needsAuth"
+  >("working");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,9 +41,12 @@ function Claim() {
     }
 
     if (!authToken) {
+      // The session is per tab, so a link opened from a messaging app looks
+      // signed out even for an existing user. Offer both, rather than
+      // assuming they are new and sending them to register.
       savePendingActionToken(actionToken);
-      const t = setTimeout(() => router.replace("/signup"), 3000);
-      return () => clearTimeout(t);
+      setStatus("needsAuth");
+      return undefined;
     }
 
     let active = true;
@@ -85,6 +96,36 @@ function Claim() {
     );
   }
 
+  if (status === "needsAuth") {
+    return (
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
+        <Typography variant="h6" fontWeight={600}>
+          You&apos;ve received tokens!
+        </Typography>
+        <Typography variant="body1" sx={{ mt: 1 }} data-test="claim-message">
+          Sign in to claim them, or create an account if you are new.
+        </Typography>
+        <Stack spacing={1.5} sx={{ mt: 3 }}>
+          <Button
+            variant="contained"
+            onClick={() => router.replace("/login")}
+            data-test="claim-sign-in"
+          >
+            I already have an account
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => router.replace("/signup")}
+            sx={{ color: "green", borderColor: "green" }}
+            data-test="claim-register"
+          >
+            Create an account
+          </Button>
+        </Stack>
+      </Box>
+    );
+  }
+
   if (status === "claimed") {
     return (
       <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
@@ -112,9 +153,7 @@ function Claim() {
         You&apos;ve received tokens!
       </Typography>
       <Typography variant="body1" sx={{ mt: 1 }} data-test="claim-message">
-        {authToken
-          ? "Claiming your tokens…"
-          : "Register and create a wallet to claim your tokens."}
+        Claiming your tokens…
       </Typography>
       <Box sx={{ mt: 3 }} data-test="claim-saved">
         <CircularProgress />
