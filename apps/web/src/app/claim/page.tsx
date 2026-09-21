@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Typography,
   CircularProgress,
   Button,
   Stack,
-} from '@mui/material';
-import { useAtomValue } from 'jotai';
-import { tokenAtom } from 'core';
+} from "@mui/material";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "core";
 import {
   isNoWalletError,
   redeemActionToken,
   useGetWallets,
   type Wallet,
-} from '@treetracker/wallet';
+} from "@treetracker/wallet";
 import {
   savePendingActionToken,
   clearPendingActionToken,
-} from '@/utils/actionToken';
-import { ClaimWalletPicker } from '@/components/ClaimWalletPicker';
+} from "@/utils/actionToken";
+import { ClaimWalletPicker } from "@/components/ClaimWalletPicker";
 
 // Public landing for a shared token link: {BASE_URL}/claim?action_token=<jwt>.
 // The recipient may not be registered, so this route is intentionally outside
@@ -41,11 +41,11 @@ function Claim() {
   } = useGetWallets();
   const wallets = loadedWallets as Wallet[];
   const [status, setStatus] = useState<
-    'working' | 'choosing' | 'claimed' | 'failed' | 'needsAuth' | 'needsWallet'
-  >('working');
+    "working" | "choosing" | "claimed" | "failed" | "needsAuth" | "needsWallet"
+  >("working");
   const [error, setError] = useState<string | null>(null);
-  const [selectedWallet, setSelectedWallet] = useState('');
-  const [claimedWallet, setClaimedWallet] = useState('');
+  const [selectedWallet, setSelectedWallet] = useState("");
+  const [claimedWallet, setClaimedWallet] = useState("");
   const claimInProgress = useRef(false);
   // Read the action token after mount so this page does not remain stuck in a
   // useSearchParams Suspense fallback while resolving a share link.
@@ -54,7 +54,7 @@ function Claim() {
 
   useEffect(() => {
     setActionToken(
-      new URLSearchParams(window.location.search).get('action_token'),
+      new URLSearchParams(window.location.search).get("action_token"),
     );
     setParamsReady(true);
   }, []);
@@ -63,30 +63,30 @@ function Claim() {
     !walletError &&
     !isWalletLoading &&
     wallets.length > 1 &&
-    status !== 'claimed' &&
-    status !== 'failed';
+    status !== "claimed" &&
+    status !== "failed";
 
   const claimIntoWallet = useCallback(
     async (walletName: string) => {
       if (!authToken || !actionToken || claimInProgress.current) return;
 
       claimInProgress.current = true;
-      setStatus('working');
+      setStatus("working");
       try {
         await redeemActionToken(authToken, actionToken, walletName);
         clearPendingActionToken();
         setClaimedWallet(walletName);
-        setStatus('claimed');
+        setStatus("claimed");
       } catch (e) {
         if (isNoWalletError(e)) {
           savePendingActionToken(actionToken);
-          setStatus('needsWallet');
+          setStatus("needsWallet");
           return;
         }
         setError(
-          e instanceof Error ? e.message : 'Could not claim the tokens.',
+          e instanceof Error ? e.message : "Could not claim the tokens.",
         );
-        setStatus('failed');
+        setStatus("failed");
       }
     },
     [actionToken, authToken],
@@ -96,7 +96,7 @@ function Claim() {
     if (!paramsReady) return undefined;
 
     if (!actionToken) {
-      router.replace('/login');
+      router.replace("/login");
       return undefined;
     }
 
@@ -105,19 +105,19 @@ function Claim() {
       // signed out even for an existing user. Offer both, rather than
       // assuming they are new and sending them to register.
       savePendingActionToken(actionToken);
-      setStatus('needsAuth');
+      setStatus("needsAuth");
       return undefined;
     }
 
     if (isWalletLoading) return undefined;
     if (walletError) {
       setError(walletError);
-      setStatus('failed');
+      setStatus("failed");
       return undefined;
     }
     if (wallets.length === 0) {
       savePendingActionToken(actionToken);
-      setStatus('needsWallet');
+      setStatus("needsWallet");
       return undefined;
     }
     if (wallets.length === 1) {
@@ -126,7 +126,7 @@ function Claim() {
     }
 
     setSelectedWallet((current) => current || wallets[0].name);
-    setStatus('choosing');
+    setStatus("choosing");
     return undefined;
   }, [
     actionToken,
@@ -139,9 +139,9 @@ function Claim() {
     wallets,
   ]);
 
-  if (status === 'failed') {
+  if (status === "failed") {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600} color="error">
           This link could not be claimed
         </Typography>
@@ -155,8 +155,8 @@ function Claim() {
         </Typography>
         <Button
           variant="outlined"
-          onClick={() => router.replace('/home')}
-          sx={{ mt: 3, color: 'green', borderColor: 'green' }}
+          onClick={() => router.replace("/home")}
+          sx={{ mt: 3, color: "green", borderColor: "green" }}
           data-test="claim-home"
         >
           Go to Home
@@ -165,9 +165,9 @@ function Claim() {
     );
   }
 
-  if (status === 'needsAuth') {
+  if (status === "needsAuth") {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600}>
           You&apos;ve received tokens!
         </Typography>
@@ -177,15 +177,15 @@ function Claim() {
         <Stack spacing={1.5} sx={{ mt: 3 }}>
           <Button
             variant="contained"
-            onClick={() => router.replace('/login')}
+            onClick={() => router.replace("/login")}
             data-test="claim-sign-in"
           >
             I already have an account
           </Button>
           <Button
             variant="outlined"
-            onClick={() => router.replace('/signup')}
-            sx={{ color: 'green', borderColor: 'green' }}
+            onClick={() => router.replace("/signup")}
+            sx={{ color: "green", borderColor: "green" }}
             data-test="claim-register"
           >
             Create an account
@@ -195,9 +195,9 @@ function Claim() {
     );
   }
 
-  if (status === 'needsWallet') {
+  if (status === "needsWallet") {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600}>
           You&apos;ve received tokens!
         </Typography>
@@ -206,7 +206,7 @@ function Claim() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.replace('/wallet')}
+          onClick={() => router.replace("/wallet")}
           sx={{ mt: 3 }}
           data-test="claim-create-wallet"
         >
@@ -216,9 +216,9 @@ function Claim() {
     );
   }
 
-  if (status === 'claimed') {
+  if (status === "claimed") {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600}>
           Tokens claimed
         </Typography>
@@ -227,7 +227,7 @@ function Claim() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.replace('/wallet')}
+          onClick={() => router.replace("/wallet")}
           sx={{ mt: 3 }}
           data-test="claim-view-wallet"
         >
@@ -237,9 +237,9 @@ function Claim() {
     );
   }
 
-  if (showWalletChoice || status === 'choosing') {
+  if (showWalletChoice || status === "choosing") {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
+      <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600}>
           Choose a wallet
         </Typography>
@@ -251,7 +251,7 @@ function Claim() {
           selectedWallet={selectedWallet}
           onWalletChange={setSelectedWallet}
           onConfirm={() =>
-            void claimIntoWallet(selectedWallet || wallets[0]?.name || '')
+            void claimIntoWallet(selectedWallet || wallets[0]?.name || "")
           }
         />
       </Box>
@@ -259,7 +259,7 @@ function Claim() {
   }
 
   return (
-    <Box sx={{ p: 3, textAlign: 'center' }} data-test="claim-page">
+    <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
       <Typography variant="h6" fontWeight={600}>
         You&apos;ve received tokens!
       </Typography>
