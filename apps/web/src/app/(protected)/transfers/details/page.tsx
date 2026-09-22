@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useGetTransfer } from "@treetracker/wallet";
+import TransferActions from "@/components/TransferActions";
 
 function TransferDetails() {
   const params = useSearchParams();
@@ -41,7 +42,11 @@ function TransferDetails() {
 
       {isLoading && <Typography variant="body2">Loading…</Typography>}
       {error && (
-        <Typography variant="body2" color="error" data-test="transfer-details-error">
+        <Typography
+          variant="body2"
+          color="error"
+          data-test="transfer-details-error"
+        >
           {error}
         </Typography>
       )}
@@ -57,7 +62,8 @@ function TransferDetails() {
               <Chip size="small" label={transfer.state} />
             </Stack>
             <Typography variant="body2" color="text.secondary">
-              {transfer.source_wallet ?? "—"} → {transfer.destination_wallet ?? "—"}
+              {transfer.source_wallet ?? "—"} →{" "}
+              {transfer.destination_wallet ?? "—"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Tokens: {transfer.token_count ?? tokens.length}
@@ -74,6 +80,15 @@ function TransferDetails() {
             )}
           </Stack>
         </Paper>
+      )}
+
+      {transfer?.state === "pending" && (
+        <TransferActions
+          transferId={id}
+          tokens={tokens}
+          backHref="/transfers"
+          isLoading={isLoading}
+        />
       )}
 
       <Typography variant="subtitle1" fontWeight={500} sx={{ mt: 2 }}>

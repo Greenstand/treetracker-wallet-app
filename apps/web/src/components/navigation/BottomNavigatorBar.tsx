@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
-import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -33,7 +33,7 @@ export default function BottomNavigationBar() {
         router.push("/send");
         break;
       case 3:
-        router.push("/notifications");
+        router.push("/transfers");
         break;
       case 4:
         router.push("/settings");
@@ -93,15 +93,15 @@ export default function BottomNavigationBar() {
             }}
           />
           <BottomNavigationAction
-            label="Notifications"
-            data-test="bottom-nav-notifications"
+            label="Transfers"
+            data-test="bottom-nav-transfers"
             icon={
               <Badge
                 badgeContent={incoming.length}
                 color="error"
-                data-test="bottom-nav-notifications-badge"
+                data-test="bottom-nav-transfers-badge"
               >
-                <NotificationsIcon />
+                <SwapHorizIcon />
               </Badge>
             }
           />

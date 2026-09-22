@@ -206,8 +206,6 @@ export default function TransfersPage() {
     isLoading: isPendingLoading,
     error: pendingError,
     reload: reloadPending,
-    accept,
-    decline,
     cancel,
   } = usePendingTransfers();
   const {
@@ -296,8 +294,9 @@ export default function TransfersPage() {
           <TransferRow
             key={t.id}
             t={t}
-            onAccept={() => run(accept)(t.id)}
-            onDecline={() => run(decline)(t.id)}
+            onClick={() =>
+              router.push(`/transfers/details?id=${encodeURIComponent(t.id)}`)
+            }
           />
         ))}
       </Stack>
