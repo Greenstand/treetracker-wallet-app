@@ -13,6 +13,10 @@ import { useRouter } from "next/navigation";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
 import { accountUrl } from "../../../../auth/keycloak";
+import {
+  formatMemberSince,
+  loadUserProfile,
+} from "../../../../utils/userProfile";
 
 export default function Account() {
   const router = useRouter();
@@ -29,47 +33,32 @@ export default function Account() {
       return;
     }
 
+    let cancelled = false;
+
     const fetchUserProfile = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_TREETRACKER_USER_API}/me`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+      setIsLoading(true);
+      setError(null);
 
-        if (!response.ok) {
-          throw new Error(
-            response.status === 401
-              ? "Session expired"
-              : "Failed to load profile",
-          );
-        }
+      const profile = await loadUserProfile(token);
+      if (cancelled) return;
 
-        const data = await response.json();
-        setEmail(data.email);
+      setEmail(profile.email);
+      setCreatedAt(formatMemberSince(profile.createdAt));
 
-        const date = new Date(data.createdAt);
-        const formattedDate = date.toLocaleString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
-        setCreatedAt(formattedDate);
-      } catch (err: any) {
-        setError(err.message || "Failed to load profile");
-      } finally {
-        setIsLoading(false);
+      if (profile.sessionExpired) {
+        setError("Session expired");
+      } else if (!profile.email && !profile.createdAt) {
+        setError("Failed to load profile");
       }
+
+      setIsLoading(false);
     };
 
     fetchUserProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   const handleSecurityClick = () => {
@@ -78,6 +67,10 @@ export default function Account() {
       window.open(url, "_blank");
     }
   };
+
+  // Show whatever could be loaded. The error box replaces the card only when
+  // nothing at all is known, so a single failing source no longer hides the email.
+  const hasAnyDetail = Boolean(email || createdAt);
 
   return (
     <Box
@@ -119,8 +112,10 @@ export default function Account() {
           >
             <CircularProgress size={40} />
           </Box>
-        ) : error ? (
-          <Alert severity="error">{error}</Alert>
+        ) : !hasAnyDetail ? (
+          <Alert severity="error" data-test="settings-account-error">
+            {error ?? "Failed to load profile"}
+          </Alert>
         ) : (
           <>
             <Typography
@@ -129,13 +124,23 @@ export default function Account() {
             >
               Email
             </Typography>
-            <Typography
-              variant="body1"
-              data-test="settings-account-email"
-              sx={{ marginBottom: "16px" }}
-            >
-              {email}
-            </Typography>
+            {email ? (
+              <Typography
+                variant="body1"
+                data-test="settings-account-email"
+                sx={{ marginBottom: "16px" }}
+              >
+                {email}
+              </Typography>
+            ) : (
+              <Typography
+                variant="body1"
+                data-test="settings-account-email-missing"
+                sx={{ marginBottom: "16px", color: "gray" }}
+              >
+                Not available
+              </Typography>
+            )}
 
             <Typography
               variant="body2"
@@ -143,13 +148,33 @@ export default function Account() {
             >
               Member Since
             </Typography>
-            <Typography
-              variant="body1"
-              data-test="settings-account-created"
-              sx={{ marginBottom: "16px" }}
-            >
-              {createdAt}
-            </Typography>
+            {createdAt ? (
+              <Typography
+                variant="body1"
+                data-test="settings-account-created"
+                sx={{ marginBottom: "16px" }}
+              >
+                {createdAt}
+              </Typography>
+            ) : (
+              <Typography
+                variant="body1"
+                data-test="settings-account-created-missing"
+                sx={{ marginBottom: "16px", color: "gray" }}
+              >
+                Not available
+              </Typography>
+            )}
+
+            {!createdAt || !email ? (
+              <Typography
+                variant="caption"
+                data-test="settings-account-partial"
+                sx={{ color: "gray" }}
+              >
+                Some account details cannot be loaded right now.
+              </Typography>
+            ) : null}
           </>
         )}
       </Box>
