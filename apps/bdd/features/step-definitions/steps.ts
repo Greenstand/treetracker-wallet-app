@@ -550,13 +550,14 @@ Then(
     const tk = await getTransferTokens(token, sendTokenTransferId);
     sendTokenReceivedTokenId = tk.tokens?.[0]?.id ?? "";
 
-    // Switch to user 2 in the browser and open Notifications.
+    // Switch to user 2 in the browser and open Transfers, which replaced the
+    // Notifications tab (#897).
     await switchUser(acct.email, acct.password);
-    await $("[data-test=bottom-nav-notifications]").waitForDisplayed({
+    await $("[data-test=bottom-nav-transfers]").waitForDisplayed({
       timeout: 15000,
     });
-    await $("[data-test=bottom-nav-notifications]").click();
-    await $("[data-test=notifications-page]").waitForDisplayed({
+    await $("[data-test=bottom-nav-transfers]").click();
+    await $("[data-test=transfers-page]").waitForDisplayed({
       timeout: 15000,
     });
   },
@@ -564,7 +565,7 @@ Then(
 
 // Then: the pending-token message is shown.
 Then(/^there is a message of pending token$/, async () => {
-  await $("[data-test=notifications-page]").waitForDisplayed({
+  await $("[data-test=transfers-page]").waitForDisplayed({
     timeout: 15000,
   });
 
@@ -572,7 +573,7 @@ Then(/^there is a message of pending token$/, async () => {
   // notifications page so you can see what it renders.
   if (process.env.BDD_PAUSE) {
     console.log(
-      "\n⏸  Paused on the notifications page — inspect the browser (Ctrl-C / kill to stop).\n",
+      "\n⏸  Paused on the transfers page, inspect the browser (Ctrl-C / kill to stop).\n",
     );
 
     while (true) {
@@ -583,7 +584,9 @@ Then(/^there is a message of pending token$/, async () => {
   const countItems = () =>
     browser.execute(
       () =>
-        document.querySelectorAll("[data-test^='notification-item-']").length,
+        document.querySelectorAll(
+          "[data-test=transfers-incoming] [data-test^='transfer-item-']",
+        ).length,
     );
   await browser.waitUntil(
     async () => {
@@ -600,21 +603,23 @@ Then(/^there is a message of pending token$/, async () => {
   );
   // Capture the rendered notification's transfer id (fresh user 2 has exactly
   // one incoming pending transfer, so the first item is the right one).
-  const item = await $("[data-test^='notification-item-']");
+  const item = await $(
+    "[data-test=transfers-incoming] [data-test^='transfer-item-']",
+  );
   const dt = (await item.getAttribute("data-test")) || "";
-  sendTokenTransferId = dt.replace("notification-item-", "");
+  sendTokenTransferId = dt.replace("transfer-item-", "");
 
   console.log(`[DIAG] notification id=${sendTokenTransferId}`);
 });
 
 // When: user clicks the message.
 When(/^the user click the message$/, async () => {
-  await $(`[data-test=notification-item-${sendTokenTransferId}]`).click();
+  await $(`[data-test=transfer-item-${sendTokenTransferId}]`).click();
 });
 
 // Then: on the message detail page.
 Then(/^the user is on the message detail page\s*$/, async () => {
-  await $("[data-test=message-detail-page]").waitForDisplayed({
+  await $("[data-test=transfer-details-page]").waitForDisplayed({
     timeout: 15000,
   });
 });
