@@ -20,6 +20,7 @@ import {
 import {
   savePendingActionToken,
   clearPendingActionToken,
+  saveClaimReturnPath,
 } from "@/utils/actionToken";
 import { ClaimWalletPicker } from "@/components/ClaimWalletPicker";
 
@@ -58,13 +59,6 @@ function Claim() {
     );
     setParamsReady(true);
   }, []);
-
-  const showWalletChoice =
-    !walletError &&
-    !isWalletLoading &&
-    wallets.length > 1 &&
-    status !== "claimed" &&
-    status !== "failed";
 
   const claimIntoWallet = useCallback(
     async (walletName: string) => {
@@ -177,14 +171,24 @@ function Claim() {
         <Stack spacing={1.5} sx={{ mt: 3 }}>
           <Button
             variant="contained"
-            onClick={() => router.replace("/login")}
+            onClick={() => {
+              saveClaimReturnPath(
+                `${window.location.pathname}${window.location.search}`,
+              );
+              router.replace("/login");
+            }}
             data-test="claim-sign-in"
           >
             I already have an account
           </Button>
           <Button
             variant="outlined"
-            onClick={() => router.replace("/signup")}
+            onClick={() => {
+              saveClaimReturnPath(
+                `${window.location.pathname}${window.location.search}`,
+              );
+              router.replace("/signup");
+            }}
             sx={{ color: "green", borderColor: "green" }}
             data-test="claim-register"
           >
@@ -237,7 +241,7 @@ function Claim() {
     );
   }
 
-  if (showWalletChoice || status === "choosing") {
+  if (status === "choosing") {
     return (
       <Box sx={{ p: 3, textAlign: "center" }} data-test="claim-page">
         <Typography variant="h6" fontWeight={600}>
