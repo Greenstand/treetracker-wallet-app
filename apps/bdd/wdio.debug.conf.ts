@@ -24,6 +24,12 @@ const chromedriverBin = fs.existsSync(snapChromedriver)
 export const config: WebdriverIO.Config = {
   ...baseConfig,
 
+  // Optional: enable Node inspector for this config only. Attach via Chrome
+  // → chrome://inspect, or VS Code "Attach to Node" (default port 9229).
+  // Uncomment exactly one line; leave both commented for normal runs.
+  // execArgv: ["--inspect"],
+  // execArgv: ["--inspect-brk"],
+
   logLevel: "debug",
   waitforTimeout: 60000,
   connectionRetryTimeout: 240000,
