@@ -40,7 +40,24 @@ export const createUser = async (userData: {
     } else if (response.status === 409) {
       return { success: false, message: "User already exists!" };
     } else {
-      const errorMessage = await response.text();
+      // Check content-type before trying to parse
+      const contentType = response.headers.get("content-type") || "";
+      let errorMessage = `HTTP ${response.status}`;
+      
+      try {
+        if (contentType.includes("application/json")) {
+          // API returned JSON error
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || JSON.stringify(errorData);
+        } else {
+          // API returned HTML or other format (don't try to JSON.parse it!)
+          const text = await response.text();
+          errorMessage = text.substring(0, 100); // Show first 100 chars
+        }
+      } catch {
+        errorMessage = `HTTP ${response.status}`;
+      }
+      
       throw new Error(`Failed to create user: ${errorMessage}`);
     }
   } catch (error: unknown) {
