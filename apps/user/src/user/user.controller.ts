@@ -28,7 +28,7 @@ export class UserController {
   }
 
   @Get("healthz")
-  check(@Body() registerUserDto: RegisterUserDto) {
+  check() {
     return "tree growing!!";
   }
 
