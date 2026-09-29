@@ -36,7 +36,6 @@ export default function SendPage() {
   const [sender, setSender] = useState("");
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("1");
-  const [claim, setClaim] = useState(false);
   const [shareByLink, setShareByLink] = useState(false);
   const [shareLink, setShareLink] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -100,7 +99,7 @@ export default function SendPage() {
           sender_wallet: sender,
           receiver_wallet: recipient.trim(),
           bundle_size: amountNum,
-          claim,
+          claim: false,
         });
         setSuccess(true);
         // Give the snackbar a beat, then go to the pending list.
@@ -231,19 +230,6 @@ export default function SendPage() {
         sx={{ mb: 1 }}
         data-test="send-amount"
       />
-
-      {!shareByLink && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={claim}
-              onChange={(e) => setClaim(e.target.checked)}
-              data-test="send-claim"
-            />
-          }
-          label="Claim tokens (transfer ownership)"
-        />
-      )}
 
       <FormControlLabel
         control={
