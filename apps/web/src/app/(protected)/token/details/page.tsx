@@ -91,11 +91,6 @@ function TokenDetails() {
             Wallet: {wallet}
           </Typography>
         )}
-        {token?.claim !== undefined && (
-          <Typography variant="body2" color="text.secondary">
-            Claimed: {token.claim ? "Yes" : "No"}
-          </Typography>
-        )}
         {token?.created_at && (
           <Typography variant="body2" color="text.secondary">
             Created: {new Date(token.created_at).toLocaleString()}
