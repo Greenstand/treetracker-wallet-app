@@ -2,14 +2,11 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
 import NotificationHeader from "./NotificationHeader";
 import { useHeader } from "@/context/HeaderContext";
-import FilterListIcon from "@mui/icons-material/FilterList";
-
-import WalletFiltersModal, { WalletFiltersValue } from "../WalletFiltersModal";
 
 const styles = {
   sharedBox: {
@@ -24,23 +21,9 @@ const styles = {
     gap: 2,
     flex: 1,
   },
-  headerActionsBox: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    gap: 1,
-  },
 };
 
-function DefaultHeaderView({
-  onSearchExpand,
-  onFilterOpen,
-  disabled = false,
-}: {
-  onSearchExpand: () => void;
-  onFilterOpen: () => void;
-  disabled?: boolean;
-}) {
+function DefaultHeaderView() {
   return (
     <Box sx={styles.sharedBox}>
       <Box sx={styles.headerLogoBox}>
@@ -48,42 +31,6 @@ function DefaultHeaderView({
         <Typography variant="h5" noWrap>
           Treetrader
         </Typography>
-      </Box>
-
-      <Box sx={styles.headerActionsBox}>
-        <HeaderSearch
-          data-cy="search-toggle"
-          onExpand={onSearchExpand}
-          isExpanded={false}
-          onCollapse={() => {}}
-          disabled={disabled}
-        />
-
-        <Tooltip title={disabled ? "Coming soon" : ""}>
-          <span>
-            <IconButton
-              disabled={disabled}
-              sx={{
-                ml: 1,
-                backgroundColor: (theme) => theme.palette.header.main,
-                "&:hover": {
-                  backgroundColor: (theme) => theme.palette.primary.dark,
-                },
-                "&.Mui-disabled": {
-                  backgroundColor: (theme) =>
-                    theme.palette.action.disabledBackground,
-                },
-              }}
-              onClick={() => {
-                console.log("filter clicked");
-              }}
-            >
-              <FilterListIcon
-                sx={{ color: (theme) => theme.palette.common.white }}
-              />
-            </IconButton>
-          </span>
-        </Tooltip>
       </Box>
     </Box>
   );
@@ -111,57 +58,32 @@ export default function Header() {
 
   const pathname = usePathname();
 
-  const [isFilterOpen, setIsFilterOpen] = React.useState(false);
-
-  const [filters, setFilters] = React.useState<WalletFiltersValue>({
-    option: "all",
-    startDate: "",
-    endDate: "",
-  });
-
   return (
-    <>
-      <Box
-        sx={{
-          position: "sticky",
-          top: 0,
-          zIndex: (theme) => theme.zIndex.appBar,
-          width: "100%",
-          backgroundColor:
-            pathname === "/notifications"
-              ? (theme) => theme.palette.secondary.main
-              : isSearchExpanded
-                ? "transparent"
-                : (theme) => theme.palette.header.main,
-          padding: isSearchExpanded
-            ? (theme) => theme.spacing(2)
-            : (theme) => theme.spacing(2, 4),
-          transition: "background-color 0.3s ease",
-        }}
-      >
-        {pathname === "/notifications" ? (
-          <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
-        ) : isSearchExpanded ? (
-          <ExpandedSearchView onSearchCollapse={toggleSearchExpanded} />
-        ) : (
-          <DefaultHeaderView
-            onSearchExpand={toggleSearchExpanded}
-            onFilterOpen={() => setIsFilterOpen(true)}
-            disabled
-          />
-        )}
-      </Box>
-
-      <WalletFiltersModal
-        open={isFilterOpen}
-        value={filters}
-        onClose={() => setIsFilterOpen(false)}
-        onChange={setFilters}
-        onApply={(v) => {
-          setFilters(v);
-          setIsFilterOpen(false);
-        }}
-      />
-    </>
+    <Box
+      sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: (theme) => theme.zIndex.appBar,
+        width: "100%",
+        backgroundColor:
+          pathname === "/notifications"
+            ? (theme) => theme.palette.secondary.main
+            : isSearchExpanded
+              ? "transparent"
+              : (theme) => theme.palette.header.main,
+        padding: isSearchExpanded
+          ? (theme) => theme.spacing(2)
+          : (theme) => theme.spacing(2, 4),
+        transition: "background-color 0.3s ease",
+      }}
+    >
+      {pathname === "/notifications" ? (
+        <NotificationHeader onCollapse={() => setIsSearchExpanded(false)} />
+      ) : isSearchExpanded ? (
+        <ExpandedSearchView onSearchCollapse={toggleSearchExpanded} />
+      ) : (
+        <DefaultHeaderView />
+      )}
+    </Box>
   );
 }
