@@ -8,6 +8,9 @@ export default ({ config }) => ({
     eas: {
       projectId: "1821c9a9-d26e-4e8a-8812-f86497886e86",
     },
+    apiBaseUrl: process.env.EXPO_PUBLIC_TREETRACKER_API,
+    EXPO_PUBLIC_TREETRACKER_API: process.env.EXPO_PUBLIC_TREETRACKER_API,
+    walletAppApi: process.env.EXPO_PUBLIC_WALLET_APP_API,
     EXPO_PUBLIC_WALLET_APP_API: process.env.EXPO_PUBLIC_WALLET_APP_API,
   },
 });

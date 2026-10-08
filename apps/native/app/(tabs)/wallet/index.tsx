@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import { useCreateWallet } from "@treetracker/wallet";
 import { WalletList } from "../../../components/wallet/WalletList";
 import { CreateWallet } from "../../../components/wallet/CreateWalletButton";
 import { WalletCreateDrawer } from "../../../components/wallet/WalletCreateDrawer";
@@ -13,11 +14,13 @@ const mockWallets = [
 
 export default function Wallet() {
   const router = useRouter();
+  const { createWallet } = useCreateWallet();
+  const [wallets, setWallets] = useState(mockWallets);
   const [isCreatingWallet, setIsCreatingWallet] = useState(false);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
 
   const handleWalletPress = (walletId: string) => {
-    const selectedWallet = mockWallets.find((wallet) => wallet.id === walletId);
+    const selectedWallet = wallets.find(wallet => wallet.id === walletId);
     router.push({
       pathname: "/(tabs)/wallet/[walletId]",
       params: {
@@ -46,8 +49,30 @@ export default function Wallet() {
 
   const handleKeep = () => setShowDiscardModal(false);
 
-  const handleFormSubmit = (data: { name: string; description: string }) => {
-    console.log("Creating wallet with:", data);
+  const handleFormSubmit = async (data: {
+    name: string;
+    description: string;
+  }) => {
+    const response = await createWallet({
+      name: data.name,
+      about: data.description,
+    });
+
+    const newWallet = {
+      id: response.id || `wallet_${Date.now()}`,
+      name: response.wallet || data.name,
+      balance: response.tokens_in_wallet ?? 0,
+      date: new Date(response.created_at ?? Date.now()).toLocaleDateString(
+        "en-US",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        },
+      ),
+    };
+
+    setWallets(prev => [newWallet, ...prev]);
     setIsCreatingWallet(false);
   };
 
@@ -55,8 +80,7 @@ export default function Wallet() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         <CreateWallet
           onPress={handleCreateWalletToggle}
           isActive={isCreatingWallet}
@@ -65,12 +89,12 @@ export default function Wallet() {
           visible={isCreatingWallet}
           onRequestClose={handleDrawerRequestClose}
           onSubmit={handleFormSubmit}
-          existingWalletNames={mockWallets.map((w) => w.name)}
+          existingWalletNames={wallets.map(w => w.name)}
           showDiscardPrompt={showDiscardModal}
           onDiscardConfirm={handleDiscard}
           onDiscardCancel={handleKeep}
         />
-        <WalletList wallets={mockWallets} onWalletPress={handleWalletPress} />
+        <WalletList wallets={wallets} onWalletPress={handleWalletPress} />
       </ScrollView>
     </SafeAreaView>
   );
