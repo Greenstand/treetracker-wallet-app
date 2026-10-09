@@ -3,7 +3,6 @@ import { LoginUserDto } from "@dtos/login-user.dto";
 import { RegisterUserDto } from "@dtos/register-user.dto";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { HttpStatusCode } from "axios";
 import { AuthService } from "../auth/auth.service";
 
 @Injectable()
@@ -142,7 +141,8 @@ export class UserService {
         undefined,
         UserService.name,
       );
-      throw new HttpException("Error creating user", HttpStatusCode.Forbidden);
+      const status = error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new HttpException(errorMessage, status);
     }
   }
 
