@@ -12,10 +12,13 @@ import {
   Snackbar,
   Alert,
   Avatar,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import PaletteIcon from "@mui/icons-material/Palette";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import {
   useGetTokens,
   useGetWallets,
@@ -25,6 +28,9 @@ import {
 } from "@treetracker/wallet";
 import WalletProfileDrawer from "@/components/WalletProfileDrawer";
 import { toPlainText } from "@/utils/plainText";
+
+const MAP_URL =
+  process.env.NEXT_PUBLIC_MAP_URL ?? "https://dev.treetracker.org";
 
 function WalletDetails() {
   const params = useSearchParams();
@@ -114,6 +120,20 @@ function WalletDetails() {
           </Typography>
         </Stack>
         <Stack direction="row" gap={1}>
+          {name && (
+            <Tooltip title="View on map">
+              <IconButton
+                component="a"
+                href={`${MAP_URL}/wallets/${encodeURIComponent(name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-test="wallet-location-link"
+                sx={{ color: "green" }}
+              >
+                <LocationOnIcon />
+              </IconButton>
+            </Tooltip>
+          )}
           <Button
             variant="text"
             startIcon={<PaletteIcon />}
