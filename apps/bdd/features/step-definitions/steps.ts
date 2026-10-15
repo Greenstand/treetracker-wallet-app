@@ -333,6 +333,10 @@ Then(/^I should see the token details page with token info$/, async () => {
   await expect(info).toHaveText(selectedTokenId, { containing: true });
 });
 
+Then(/^I should see the tree section on the token details page$/, async () => {
+  await $("[data-test=token-tree]").waitForDisplayed({ timeout: 15000 });
+});
+
 // Click the location icon — it's an anchor with target=_blank, so it opens a new tab.
 When(/^I click the location icon on the token details page$/, async () => {
   await $("[data-test=token-location-link]").click();

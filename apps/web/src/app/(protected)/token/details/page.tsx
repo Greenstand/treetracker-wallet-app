@@ -17,8 +17,10 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import {
   useGetToken,
   useGetTokenTransactions,
+  useGetTokenTree,
   Transaction,
 } from "@treetracker/wallet";
+import { TokenTree } from "@/components/TokenTree";
 
 const MAP_URL =
   process.env.NEXT_PUBLIC_MAP_URL ?? "https://dev.treetracker.org";
@@ -31,6 +33,7 @@ function TokenDetails() {
 
   const { token, isTokenLoading, error } = useGetToken(id);
   const { transactions, isLoading: isTxLoading } = useGetTokenTransactions(id);
+  const { tree, isTreeLoading, treeError } = useGetTokenTree(id);
 
   return (
     <Box sx={{ p: 2 }} data-test="token-details-page">
@@ -97,6 +100,15 @@ function TokenDetails() {
           </Typography>
         )}
       </Paper>
+
+      <Box sx={{ mt: 3 }}>
+        <TokenTree
+          imageUrl={tree?.tree_image_url}
+          speciesName={tree?.tree_species_name}
+          isLoading={isTreeLoading}
+          hasError={Boolean(treeError)}
+        />
+      </Box>
 
       <Typography variant="subtitle1" fontWeight={500} sx={{ mt: 3 }}>
         Transaction history
