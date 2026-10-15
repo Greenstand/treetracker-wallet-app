@@ -1,0 +1,291 @@
+openapi: 3.0.0
+info:
+  title: INCOMPLETE treetracker api example
+  contact: {}
+  version: '0.1'
+paths:
+  /entity:
+    get:
+      tags: 
+      - Domain entity 
+      summary: "Get all instanaces of a domain entity with some filters"
+      parameters:
+        - $ref: '#/components/parameters/treetrackerApiKeyParam'
+        - $ref: '#/components/parameters/contentTypeJsonHeader'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/walletsResponse'
+      deprecated: false
+    post:
+      tags: 
+      - Managed wallets
+      summary: "Create a new managed wallet"
+      description: "Create a new managed wallet.  Requires the manage_account role."      
+      parameters:
+        - $ref: '#/components/parameters/treetrackerApiKeyParam'
+        - $ref: '#/components/parameters/contentTypeJsonHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/accountrequest'
+            example:
+              wallet: sprinter_van_2004
+        required: true
+      responses:
+        '201':
+          description: 'A new wallet was created'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+      deprecated: false
+  /trust_relationships:
+    get:
+      tags: 
+      - Trust relationships
+      summary: 'Get a list of existing, requested, and pending trust relationships'
+      parameters:
+        - $ref: '#/components/parameters/treetrackerApiKeyParam'
+        - $ref: '#/components/parameters/contentTypeJsonHeader'
+        - name: state
+          in: query
+          description: 'Filter by state of the trust relationship'
+          required: false
+          style: form
+          schema:
+            type: string
+          examples:
+            Trusted:
+              value: trusted
+              description: Active trust relationship
+            Requested:
+              value: requested
+              description: Trust relationship pending approval
+            CancelledByOriginator:
+              value: cancelled_by_originator
+              description: Trust relationship was cancelled by the originator
+            CancelledByActor:
+              value: cancelled_by_actor
+              description: Trust relationship was cancelled by the actor
+            CancelledByTarget:
+              value: cancelled_by_target
+              description: Trust relationship was cancelled by the target
+        - name: type
+          in: query
+          description: 'Type of trust relationship'
+          required: false
+          style: form
+          schema:
+            type: string
+          examples:
+            Send:
+              value: send
+              description: Allow actor to send to target
+            Deduct:
+              value: deduct
+              description: Allow actor to deduct from wallet
+            Manage:
+              value: manage
+              description: Allow actor to move funds from target wallet to any other wallet they control
+        - name: request_type
+          in: query
+          description: 'Type of trust relationship'
+          required: false
+          style: form
+          schema:
+            type: string
+          examples:
+            Send:
+              value: send
+              description: Request to allow actor to send to target
+            Receive:
+              value: receive
+              description: Request a send priviledge to a wallet controlled by the originator on behalf of another sending wallet (opposite direction of send trust request)
+            Deduct:
+              value: deduct
+              description: Request to allow actor to deduct from wallet
+            Release:
+              value: release
+              description: Request a deduct priviledge from a wallet controlled by the originator on behalf of another deducting wallet  (opposite direction of deduct trust request)
+            Manage:
+              value: manage
+              description: Request to allow actor to move funds from target wallet to any other wallet they control
+            Yield:
+              value: manage
+              description: Request to give manage privilege on a wallet controlled by the originator to another wallet (opposite direction of manage trust request)
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustRelationshipsResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags: 
+      - Trust relationships
+      summary: 'Request a new trust relationship from another wallet'
+      parameters:
+        - $ref: '#/components/parameters/treetrackerApiKeyParam'
+        - $ref: '#/components/parameters/contentTypeJsonHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trustRequest'
+      responses:
+        '202':
+          description: 'Accepted but waiting for approval'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+  /trust_relationships/{trust_relationship_id}:
+    delete:
+      tags: 
+      - Trust relationships
+      summary: 'Remove a trust relationship linked to the autheticated wallet'
+      description: 'Remove a trust relationship linked to the autheticated wallet.  This could be either the actor wallet or the target wallet'
+      parameters:
+      - $ref: '#/components/parameters/treetrackerApiKeyParam'
+      - $ref: '#/components/parameters/contentTypeJsonHeader'
+      - name: trust_relationship_id
+        in: path
+        description: the id of the entity trust record on the server
+        required: true
+        style: simple
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: ''
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /trust_relationships/{trust_relationship_id}/accept:
+    post:
+      tags: 
+      - Trust relationships
+      summary: 'Accept a trust relationship'
+      parameters:
+        - $ref: '#/components/parameters/treetrackerApiKeyParam'
+        - $ref: '#/components/parameters/contentTypeJsonHeader'
+        - name: trust_relationship_id
+          in: path
+          description: the id of the entity trust record on the server
+          required: true
+          style: simple
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+          
+    trustRequest:
+      title: Trust Request
+      type: object
+      properties:
+        trust_request_type:
+          type: string
+        requester_wallet:
+          type: string
+          description: "This is optional, if ignore it, then the default requester_wallet should be the current logged in wallet"
+        requestee_wallet:
+          type: string
+          description: "The wallet to who this request are targetting"
+    historyResponse:
+      title: History Response
+      type: object
+      properties:
+        history:
+          type: array
+          items: 
+            $ref: "#/components/schemas/historyItem"
+    historyItem:
+      title: History Item
+      type: object
+      properties:
+        token:
+          type: string
+        sender_wallet:
+          type: string
+        receiver_wallet:
+          type: string
+        processed_at:
+          type: string
+      example:
+          token: e3cd6587-ff01-419b-b2c9-44ceed4dc749
+          sender_wallet: zaven
+          receiver_wallet: zaven2
+          processed_at: "2020-01-17T22:32:43.008Z"
+    eventStream:
+      title: Event Stream
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/eventItem"
+    eventItem:
+      title: Event Item
+      type: object
+      properties:
+        type:
+          type: string
+        wallet:
+          type: string
+        transfer_id:
+          type: integer
+        trust_relationship_id:
+          type: integer
+        created_at:
+          type: string
+    trustRelationshipsResponse:
+      title: Trust Relationship Responses
+      type: object
+      properties:
+        trust_relationships:
+          type: array
+          items:
+            $ref: "#/components/schemas/trustRelationshipItem"
+    trustRelationshipItem:
+      title: Trust Relationship Item
+      type: object
+      properties:
+        id:
+          type: integer
+        actor_wallet: 
+          type: string
+        target_wallet:
+          type: string
+        trust_type:
+          type: string
+        state:
+          type: string
+        trust_request_type:
+          type: string
+        orginating_wallet:
+          type: string
+        created_at:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Access bearer token is missing or invalid
+    ForbiddenError:
+      description: Access denied for that resource
+  securitySchemes:
+    httpBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  
+security:
+  - httpBearer: []
+
