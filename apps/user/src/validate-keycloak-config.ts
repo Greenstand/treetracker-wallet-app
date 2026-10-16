@@ -15,5 +15,21 @@ export function validateKeycloakConfig(
     }
   }
 
+  const baseUrl = config.PRIVATE_KEYCLOAK_BASE_URL as string;
+  try {
+    const url = new URL(baseUrl);
+    if (
+      baseUrl !== baseUrl.trim() ||
+      !["http:", "https:"].includes(url.protocol) ||
+      !url.hostname
+    ) {
+      throw new Error();
+    }
+  } catch {
+    throw new Error(
+      "Invalid Keycloak configuration: PRIVATE_KEYCLOAK_BASE_URL must be an absolute HTTP(S) URL",
+    );
+  }
+
   return config;
 }
