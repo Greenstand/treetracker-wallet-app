@@ -36,6 +36,7 @@ Feature: Create wallet
     Then I should see there are 1 tokens in my wallet as gift by system for creating wallet for the first time
     When I click the token item on the list of tokens in the wallet details page
     Then I should see the token details page with token info
+    And I should see the tree section on the token details page
     When I click the location icon on the token details page
     Then I should see the map page with the location of the token in a new tab
     # the map page url is like: https://map.treetracker.org/tokens/[token_id], for dev, the domain is https://dev.map.treetracker.org/tokens/[token_id]
