@@ -10,18 +10,28 @@ import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { useIncomingTransfers } from "@treetracker/wallet";
 
 export default function BottomNavigationBar() {
-  const [value, setValue] = React.useState(0);
-
   const router = useRouter();
+  const pathname = usePathname();
   const { incoming } = useIncomingTransfers();
 
+  const getActiveTab = React.useCallback((path: string | null): number => {
+    if (!path) return 0;
+    if (path.startsWith("/wallet")) return 1;
+    if (path.startsWith("/send")) return 2;
+    if (path.startsWith("/notifications")) return 3;
+    if (path.startsWith("/settings")) return 4;
+    if (path.startsWith("/home") || path === "/") return 0;
+    return -1;
+  }, []);
+
+  const value = getActiveTab(pathname);
+
   const handleNavigation = (newValue: number) => {
-    setValue(newValue);
     switch (newValue) {
       case 0:
         router.push("/home");
@@ -51,16 +61,14 @@ export default function BottomNavigationBar() {
           bottom: 0,
           left: 0,
           right: 0,
-          zIndex: (theme) => theme.zIndex.appBar,
+          zIndex: theme => theme.zIndex.appBar,
           overflow: "visible", // Allow overflow
         }}
-        elevation={3}
-      >
+        elevation={3}>
         <BottomNavigation
           value={value}
           onChange={(event, newValue) => handleNavigation(newValue)}
-          showLabels
-        >
+          showLabels>
           <BottomNavigationAction
             data-test="navigation-home"
             label="Home"
@@ -99,8 +107,7 @@ export default function BottomNavigationBar() {
               <Badge
                 badgeContent={incoming.length}
                 color="error"
-                data-test="bottom-nav-notifications-badge"
-              >
+                data-test="bottom-nav-notifications-badge">
                 <NotificationsIcon />
               </Badge>
             }
