@@ -43,11 +43,11 @@ cd treetracker-wallet-app && yarn install
 # Setup environment (first time only)
 
 # For backend user api and bdds
-cp apps/user/.env.example apps/user/.dev.env
-# → Edit .dev.env with your configuration
+cp apps/user/.env.example apps/user/.env
+# → Edit .env with your configuration
 
 # For web development and bdd
-cp apps/web/.env.example apps/user/.env
+cp apps/web/.env.example apps/web/.env
 # → Edit .env with your configuration
 
 # For keycloak package e2e testing
@@ -143,7 +143,7 @@ Sample Output:
 ![Sample Output](https://github.com/user-attachments/assets/456c64cf-b92f-4030-bf96-7b56bfdaa800)
 
 ```bash
-$ yarn test:e2e
+$ yarn bdd:e2e
 [chrome] ✔ Login - Valid credentials (4.2s)
 [chrome] ✔ Wallet Creation - Basic flow (6.1s)
 [chrome] ✔ Registration - Email signup (5.8s)
@@ -160,7 +160,7 @@ $ yarn test:e2e
 
 ### ✅ Verification Checklist
 
-- All tests pass locally (`yarn test:e2e`)
+- All tests pass locally (`yarn bdd:e2e`)
 - HTML reports generated successfully (`yarn bdd:report`)
 - Video recordings captured for failed tests
 - No production code modified
@@ -172,7 +172,7 @@ $ yarn test:e2e
 
 ### ⚠️ Requirements
 
-The backend must be running for the tests to function. You can start it with:
+The web app must be running for the tests to function. You can start it with:
 
 ```bash
 yarn workspace web dev
@@ -273,8 +273,8 @@ For API development and database work
 
 ```bash
 # Setup environment (first time only)
-cp apps/user/.env.example apps/user/.dev.env
-# → Edit .dev.env with your configuration
+cp apps/user/.env.example apps/user/.env
+# → Edit .env with your configuration
 
 yarn user:dev
 # → http://localhost:8080
