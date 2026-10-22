@@ -43,8 +43,8 @@ cd treetracker-wallet-app && yarn install
 # Setup environment (first time only)
 
 # For backend user api and bdds
-cp apps/user/.env.example apps/user/.env
-# → Edit .env with your configuration
+cp apps/user/.env.example apps/user/.dev.env
+# → Edit .dev.env with your configuration
 
 # For web development and bdd
 cp apps/web/.env.example apps/web/.env
@@ -273,8 +273,8 @@ For API development and database work
 
 ```bash
 # Setup environment (first time only)
-cp apps/user/.env.example apps/user/.env
-# → Edit .env with your configuration
+cp apps/user/.env.example apps/user/.dev.env
+# → Edit .dev.env with your configuration
 
 yarn user:dev
 # → http://localhost:8080
