@@ -1,9 +1,10 @@
 const { Client } = require("pg");
 const log = require("loglevel");
-require("dotenv").config();
+require("dotenv").config({
+  path: process.env.NODE_ENV === "dev" ? ".dev.env" : ".env",
+});
 
 const connectionString = process.env.DATABASE_URL;
-console.log(connectionString);
 if (!connectionString) {
   log.warn("DATABASE_URL is not set!");
 }
