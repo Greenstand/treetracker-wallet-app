@@ -1,0 +1,106 @@
+# Pays a contributor when their merged PR closes an issue labelled token:<n>.
+#
+# The volunteer claims with a comment, "/wallet <name>", because only the PR
+# author can be checked that way and volunteers cannot re-run workflows.
+#
+# pull_request_target, not pull_request: a fork PR gets no secrets and a
+# read-only token, and every volunteer PR comes from a fork
+
+name: Token reward
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+  issue_comment:
+    types: [created]
+
+# Comments and labels both go through the issues API, so issues: write is all
+# this needs.
+permissions:
+  contents: read
+  issues: write
+
+# A merge and a /wallet comment can arrive together; serialise them so the
+# token:paid label cannot be read as unpaid twice.
+concurrency:
+  group: token-reward-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  reward:
+    if: >
+      (github.event_name == 'pull_request_target' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       startsWith(github.event.comment.body, '/wallet '))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Work out who to pay and how much
+        id: reward
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const decide = require('./.github/scripts/reward-context.cjs');
+            return await decide({ github, context, core });
+
+      - name: Ask the author to claim
+        if: steps.reward.outputs.action == 'prompt'
+        uses: actions/github-script@v7
+        env:
+          PR: ${{ steps.reward.outputs.pr }}
+          AUTHOR: ${{ steps.reward.outputs.author }}
+          AMOUNT: ${{ steps.reward.outputs.amount }}
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.PR),
+              body: [
+                `@${process.env.AUTHOR} this PR earned ${process.env.AMOUNT} tokens.`,
+                '',
+                'Comment `/wallet <your-wallet-name>` on this PR to receive them.',
+                'No wallet yet? Create one in the wallet app, then comment.',
+              ].join('\n'),
+            });
+
+      - name: Send the tokens
+        if: steps.reward.outputs.action == 'pay'
+        env:
+          KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+          KEYCLOAK_CLIENT_ID: ${{ secrets.REWARD_CLIENT_ID }}
+          KEYCLOAK_CLIENT_SECRET: ${{ secrets.REWARD_CLIENT_SECRET }}
+          WALLET_API_URL: ${{ secrets.WALLET_API_URL }}
+          TREASURY_WALLET: ${{ secrets.TREASURY_WALLET }}
+          MAX_REWARD: ${{ vars.MAX_REWARD }}
+          WALLET: ${{ steps.reward.outputs.wallet }}
+          AMOUNT: ${{ steps.reward.outputs.amount }}
+        run: node .github/scripts/token-reward.mjs --to "$WALLET" --amount "$AMOUNT"
+
+      - name: Record the payment
+        if: steps.reward.outputs.action == 'pay'
+        uses: actions/github-script@v7
+        env:
+          PR: ${{ steps.reward.outputs.pr }}
+          ISSUES: ${{ steps.reward.outputs.issues }}
+          WALLET: ${{ steps.reward.outputs.wallet }}
+          AMOUNT: ${{ steps.reward.outputs.amount }}
+        with:
+          script: |
+            for (const issue_number of JSON.parse(process.env.ISSUES)) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number,
+                labels: ['token:paid'],
+              });
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.PR),
+              body: `Sent ${process.env.AMOUNT} tokens to wallet \`${process.env.WALLET}\`. Accept the transfer in the wallet app to receive them.`,
+            });

@@ -1,0 +1,33 @@
+# Runs the token reward decision tests when that workflow or its scripts change.
+
+name: PR CI for Token Reward
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+    paths:
+      - ".github/scripts/**"
+      - ".github/workflows/token-reward.yml"
+      - ".github/workflows/ci-cd-pr-token-reward.yml"
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Run token reward tests
+        run: node --test .github/scripts/reward-context.test.cjs
