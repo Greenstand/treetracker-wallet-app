@@ -1,28 +1,30 @@
 # Runs the token reward decision tests when that workflow or its scripts change.
+#
+# pull_request, not pull_request_target: this runs the pull request's own test
+# file, so it must not hold a writable token or any secret.
 
 name: PR CI for Token Reward
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - synchronize
       - reopened
-      - edited
     paths:
       - ".github/scripts/**"
       - ".github/workflows/token-reward.yml"
       - ".github/workflows/ci-cd-pr-token-reward.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4

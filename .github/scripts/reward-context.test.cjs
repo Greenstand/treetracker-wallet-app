@@ -3,11 +3,20 @@ const assert = require("node:assert");
 
 const decide = require("./reward-context.cjs");
 
+// closedByPr defaults to 42, the harness pull request.
+function issue(number, label, { closedByPr = 42 } = {}) {
+  return {
+    number,
+    labels: { nodes: [].concat(label).map((name) => ({ name })) },
+    timelineItems: { nodes: [{ closer: { number: closedByPr } }] },
+  };
+}
+
 function harness({
   merged = true,
   base = "main",
   authorType = "User",
-  issues = [{ number: 7, labels: { nodes: [{ name: "token:50" }] } }],
+  issues = [issue(7, "token:50")],
   comments = [],
   event = "pull_request",
   commenter = "hariclerry",
@@ -90,12 +99,7 @@ test("pays nothing for an unmerged pull request", async () => {
 
 test("pays nothing twice for the same issue", async () => {
   const h = harness({
-    issues: [
-      {
-        number: 7,
-        labels: { nodes: [{ name: "token:50" }, { name: "token:paid" }] },
-      },
-    ],
+    issues: [issue(7, ["token:50", "token:paid"])],
     comments: [claim("hariclerry", "/wallet hariet")],
   });
   await decide(h);
@@ -104,10 +108,7 @@ test("pays nothing twice for the same issue", async () => {
 
 test("adds up every unpaid issue the pull request closes", async () => {
   const harnessData = harness({
-    issues: [
-      { number: 7, labels: { nodes: [{ name: "token:50" }] } },
-      { number: 9, labels: { nodes: [{ name: "token:25" }] } },
-    ],
+    issues: [issue(7, "token:50"), issue(9, "token:25")],
     comments: [claim("hariclerry", "/wallet hariet")],
   });
   await decide(harnessData);
@@ -132,6 +133,42 @@ test("ignores a claim whose wallet name could reach a shell", async () => {
 test("pays nothing for a merge into another branch", async () => {
   const h = harness({
     base: "release/2.1",
+    comments: [claim("hariclerry", "/wallet hariet")],
+  });
+  await decide(h);
+  assert.equal(h.outputs.action, "none");
+});
+
+test("matches the labels already on the repo, Token:13 and Token: 21", async () => {
+  const h = harness({
+    issues: [issue(7, "Token:13"), issue(9, "Token: 21")],
+    comments: [claim("hariclerry", "/wallet hariet")],
+  });
+  await decide(h);
+  assert.equal(h.outputs.amount, 34);
+});
+
+test("treats Token: Paid as already paid", async () => {
+  const h = harness({
+    issues: [issue(7, ["Token: 21", "Token: Paid"])],
+    comments: [claim("hariclerry", "/wallet hariet")],
+  });
+  await decide(h);
+  assert.equal(h.outputs.action, "none");
+});
+
+test("pays nothing for an issue this pull request did not close", async () => {
+  const h = harness({
+    issues: [issue(7, "token:50", { closedByPr: 99 })],
+    comments: [claim("hariclerry", "/wallet hariet")],
+  });
+  await decide(h);
+  assert.equal(h.outputs.action, "none");
+});
+
+test("pays nothing for an issue that was never closed", async () => {
+  const h = harness({
+    issues: [{ number: 7, labels: { nodes: [{ name: "token:50" }] } }],
     comments: [claim("hariclerry", "/wallet hariet")],
   });
   await decide(h);

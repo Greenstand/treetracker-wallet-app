@@ -1,8 +1,8 @@
-
 // Only merges into this branch pay out; issue_comment carries no branch filter.
 const REWARD_BRANCH = "main";
-const AMOUNT_LABEL = /^token:(\d+)$/;
-const PAID_LABEL = "token:paid";
+// Labels were added by hand before this existed, so "Token: 21" has to match.
+const AMOUNT_LABEL = /^token:\s*(\d+)$/i;
+const PAID_LABEL = /^token:\s*paid$/i;
 
 // Wallet names only: the value reaches a shell step and a script step.
 const CLAIM = /^\/wallet\s+([A-Za-z0-9_.-]{2,30})\s*$/m;
@@ -13,7 +13,17 @@ async function closingIssues({ github, context }, prNumber) {
       repository(owner: $owner, name: $repo) {
         pullRequest(number: $pr) {
           closingIssuesReferences(first: 20) {
-            nodes { number labels(first: 50) { nodes { name } } }
+            nodes {
+              number
+              labels(first: 50) { nodes { name } }
+              timelineItems(itemTypes: CLOSED_EVENT, last: 1) {
+                nodes {
+                  ... on ClosedEvent {
+                    closer { ... on PullRequest { number } }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -24,13 +34,22 @@ async function closingIssues({ github, context }, prNumber) {
   return repository.pullRequest.closingIssuesReferences.nodes;
 }
 
-function rewardFrom(issues) {
+// The body can be edited after the merge, so a linked issue only counts when
+// this pull request is what actually closed it.
+function closedBy(issue, prNumber) {
+  const [closed] = issue.timelineItems?.nodes ?? [];
+  return closed?.closer?.number === prNumber;
+}
+
+function rewardFrom(issues, prNumber) {
   let amount = 0;
   const covered = [];
 
   for (const issue of issues) {
+    if (!closedBy(issue, prNumber)) continue;
+
     const names = issue.labels.nodes.map((label) => label.name);
-    if (names.includes(PAID_LABEL)) continue;
+    if (names.some((name) => PAID_LABEL.test(name))) continue;
 
     const labelled = names.map((n) => n.match(AMOUNT_LABEL)).find(Boolean);
     if (!labelled) continue;
@@ -87,6 +106,7 @@ module.exports = async ({ github, context, core }) => {
 
   const { amount, covered } = rewardFrom(
     await closingIssues({ github, context }, prNumber),
+    prNumber,
   );
   if (amount < 1) return none("no unpaid token:<n> issue closed by this PR");
 

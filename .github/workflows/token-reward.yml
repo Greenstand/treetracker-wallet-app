@@ -67,7 +67,27 @@ jobs:
               ].join('\n'),
             });
 
+      # Claimed before the transfer, not after: a failed transfer is undone
+      # below, but a transfer that succeeds while the label write fails would
+      # pay twice on the next /wallet comment.
+      - name: Claim the issues
+        if: steps.reward.outputs.action == 'pay'
+        uses: actions/github-script@v7
+        env:
+          ISSUES: ${{ steps.reward.outputs.issues }}
+        with:
+          script: |
+            for (const issue_number of JSON.parse(process.env.ISSUES)) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number,
+                labels: ['token:paid'],
+              });
+            }
+
       - name: Send the tokens
+        id: send
         if: steps.reward.outputs.action == 'pay'
         env:
           KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
@@ -81,26 +101,46 @@ jobs:
         run: node .github/scripts/token-reward.mjs --to "$WALLET" --amount "$AMOUNT"
 
       - name: Record the payment
-        if: steps.reward.outputs.action == 'pay'
+        if: steps.send.outcome == 'success' && steps.reward.outputs.action == 'pay'
         uses: actions/github-script@v7
         env:
           PR: ${{ steps.reward.outputs.pr }}
-          ISSUES: ${{ steps.reward.outputs.issues }}
           WALLET: ${{ steps.reward.outputs.wallet }}
           AMOUNT: ${{ steps.reward.outputs.amount }}
         with:
           script: |
-            for (const issue_number of JSON.parse(process.env.ISSUES)) {
-              await github.rest.issues.addLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number,
-                labels: ['token:paid'],
-              });
-            }
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.PR),
               body: `Sent ${process.env.AMOUNT} tokens to wallet \`${process.env.WALLET}\`. Accept the transfer in the wallet app to receive them.`,
+            });
+
+      - name: Release the claim and say what went wrong
+        if: failure() && steps.reward.outputs.action == 'pay'
+        uses: actions/github-script@v7
+        env:
+          PR: ${{ steps.reward.outputs.pr }}
+          ISSUES: ${{ steps.reward.outputs.issues }}
+          WALLET: ${{ steps.reward.outputs.wallet }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            for (const issue_number of JSON.parse(process.env.ISSUES)) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number,
+                name: 'token:paid',
+              }).catch(() => {});
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.PR),
+              body: [
+                `No tokens were sent. The wallet \`${process.env.WALLET}\` may not exist, or the treasury may be short.`,
+                '',
+                `Comment \`/wallet <your-wallet-name>\` again to retry. [Run log](${process.env.RUN}).`,
+              ].join('\n'),
             });
