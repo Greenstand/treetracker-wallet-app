@@ -1,5 +1,14 @@
-
 const MAX_AMOUNT = Number(process.env.MAX_REWARD || 1000);
+
+// Exit 2 says no transfer request was ever sent, so the caller may retry.
+// Any other failure is ambiguous and must be reconciled by hand.
+const NOT_SENT = 2;
+let attempted = false;
+
+function fail(error) {
+  console.error(error.message);
+  process.exit(attempted ? 1 : NOT_SENT);
+}
 
 function arg(name) {
   const i = process.argv.indexOf(`--${name}`);
@@ -32,26 +41,36 @@ async function keycloakToken() {
   return (await res.json()).access_token;
 }
 
+// A 4xx is the wallet API refusing before anything moved, most often a wallet
+// name that does not exist, so the volunteer can fix it and claim again.
+// Anything else leaves the transfer in doubt and must not be retried.
 async function transfer(token, to, amount) {
-  const res = await fetch(`${env("WALLET_API_URL")}/transfers`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      bundle: { bundle_size: amount },
-      sender_wallet: env("TREASURY_WALLET"),
-      receiver_wallet: to,
-      claim: false,
-    }),
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    // 404 here means the volunteer gave a name no wallet has.
-    throw new Error(`transfer failed (${res.status}): ${body}`);
+  let res;
+  try {
+    res = await fetch(`${env("WALLET_API_URL")}/transfers`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bundle: { bundle_size: amount },
+        sender_wallet: env("TREASURY_WALLET"),
+        receiver_wallet: to,
+        claim: false,
+      }),
+    });
+  } catch (error) {
+    attempted = true;
+    throw error;
   }
 
+  if (!res.ok) {
+    if (res.status >= 500) attempted = true;
+    throw new Error(`transfer failed (${res.status}): ${await res.text()}`);
+  }
+
+  attempted = true;
   return res.json();
 }
 
@@ -59,19 +78,25 @@ const to = arg("to");
 const amount = Number(arg("amount"));
 const dryRun = process.argv.includes("--dry-run");
 
-if (!to || !Number.isInteger(amount) || amount < 1) {
-  throw new Error("usage: --to <wallet> --amount <positive integer>");
-}
-// A mislabelled issue should not be able to drain the treasury.
-if (amount > MAX_AMOUNT) {
-  throw new Error(`amount ${amount} is above the cap of ${MAX_AMOUNT}`);
-}
+try {
+  if (!to || !Number.isInteger(amount) || amount < 1) {
+    throw new Error("usage: --to <wallet> --amount <positive integer>");
+  }
+  // A mislabelled issue should not be able to drain the treasury.
+  if (amount > MAX_AMOUNT) {
+    throw new Error(`amount ${amount} is above the cap of ${MAX_AMOUNT}`);
+  }
 
-if (dryRun) {
-  console.log(`dry run: would send ${amount} tokens to ${to}`);
-  process.exit(0);
-}
+  if (dryRun) {
+    console.log(`dry run: would send ${amount} tokens to ${to}`);
+    process.exit(0);
+  }
 
-const token = await keycloakToken();
-const result = await transfer(token, to, amount);
-console.log(`sent ${amount} tokens to ${to}, transfer ${result.id} (${result.state})`);
+  const token = await keycloakToken();
+  const result = await transfer(token, to, amount);
+  console.log(
+    `sent ${amount} tokens to ${to}, transfer ${result.id} (${result.state})`,
+  );
+} catch (error) {
+  fail(error);
+}
