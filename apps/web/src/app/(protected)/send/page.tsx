@@ -18,6 +18,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "core";
+import { AmountField } from "@/components/AmountField";
 import {
   useGetWallets,
   useSendTransfer,
@@ -218,17 +219,14 @@ export default function SendPage() {
         />
       )}
 
-      <TextField
-        fullWidth
-        type="number"
-        label="Amount (number of tokens)"
+      {/* Token amounts are strictly positive integers: this field rejects
+          scientific-notation characters ("e"/"E"), signs and decimals (#919). */}
+      <AmountField
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        inputProps={{ min: 1, step: 1 }}
+        onChange={setAmount}
         error={Boolean(amountError)}
         helperText={amountError}
         sx={{ mb: 1 }}
-        data-test="send-amount"
       />
 
       <FormControlLabel
