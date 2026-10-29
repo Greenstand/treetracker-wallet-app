@@ -35,15 +35,11 @@ export class AuthService {
       "Content-Type": "application/x-www-form-urlencoded",
     };
 
+    let response: KeycloakResponse;
     try {
-      const response: KeycloakResponse = await firstValueFrom(
+      response = await firstValueFrom(
         this.httpService.post(tokenApi, body, { headers }),
       );
-
-      this.bearerToken = response?.data?.access_token;
-      this.tokenExpiresAt = Date.now() + response?.data?.expires_in * 1000;
-
-      return response?.data?.access_token;
     } catch (e) {
       const status = e.response?.status || HttpStatus.SERVICE_UNAVAILABLE;
       const description =
@@ -55,6 +51,20 @@ export class AuthService {
 
       throw new HttpException(`Service account failed to authenticate`, status);
     }
+
+    const token = response?.data?.access_token;
+    if (typeof token !== "string" || !token.trim()) {
+      Logger.error("Keycloak response did not include a usable access token");
+      throw new HttpException(
+        "Service account failed to authenticate",
+        HttpStatus.BAD_GATEWAY,
+      );
+    }
+
+    this.bearerToken = token;
+    this.tokenExpiresAt = Date.now() + response?.data?.expires_in * 1000;
+
+    return token;
   }
 
   private isTokenExpired(): boolean {
