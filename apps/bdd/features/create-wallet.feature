@@ -31,7 +31,7 @@ Feature: Create wallet
     And I am on the wallet page
     When I create a new wallet
     Then I should see my new wallet in the list of wallets
-    And An notification saying: "Thansk you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details"
+    And An notification saying: "Thank you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details"
     When I click on the wallet to view its details
     Then I should see there are 1 tokens in my wallet as gift by system for creating wallet for the first time
     When I click the token item on the list of tokens in the wallet details page

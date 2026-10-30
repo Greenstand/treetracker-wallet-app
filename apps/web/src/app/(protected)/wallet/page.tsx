@@ -62,7 +62,7 @@ export default function WalletPage() {
 
     console.log(result);
 
-    setWallets((prev) => [
+    setWallets(prev => [
       {
         name,
         created_at: new Date().toLocaleString("en-US", {
@@ -79,7 +79,7 @@ export default function WalletPage() {
       setNotification({
         severity: "success",
         message:
-          "Thansk you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details",
+          "Thank you for creating your wallet, we will gift you 1 token for your first wallet, please check your wallet details",
       });
     }
 
@@ -107,15 +107,13 @@ export default function WalletPage() {
           startIcon={<AddIcon />}
           onClick={() => setIsCreateOpen(true)}
           disabled={atWalletLimit}
-          sx={{ color: "green", fontSize: "1rem", fontWeight: 500 }}
-        >
+          sx={{ color: "green", fontSize: "1rem", fontWeight: 500 }}>
           CREATE WALLET
         </Button>
         <IconButton
           aria-label="More wallet information"
           onClick={() => setIsInfoOpen(true)}
-          sx={{ color: "#2226298F" }}
-        >
+          sx={{ color: "#2226298F" }}>
           <InfoIcon sx={{ width: "20px" }} />
         </IconButton>
       </Box>
@@ -124,8 +122,7 @@ export default function WalletPage() {
         <Typography
           variant="caption"
           color="text.secondary"
-          data-test="wallet-limit-reached"
-        >
+          data-test="wallet-limit-reached">
           You have reached the limit of {MAX_WALLETS} wallets.
         </Typography>
       )}
@@ -146,8 +143,7 @@ export default function WalletPage() {
               router.push(
                 `/wallet/details?name=${encodeURIComponent(wallet.name)}`,
               )
-            }
-          >
+            }>
             <WalletItem {...(wallet as Wallet)} />
           </div>
         ))}
@@ -156,8 +152,7 @@ export default function WalletPage() {
       <GenericDrawer
         open={isInfoOpen}
         title="Good-to-know"
-        onClose={() => setIsInfoOpen(false)}
-      >
+        onClose={() => setIsInfoOpen(false)}>
         <Typography variant="body1" color="textPrimary">
           You can have up to {MAX_WALLETS} wallets.
         </Typography>
@@ -167,19 +162,17 @@ export default function WalletPage() {
         open={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onCreate={handleCreate}
-        existingNames={wallets.map((w) => w.name)}
+        existingNames={wallets.map(w => w.name)}
       />
 
       <Snackbar
         open={Boolean(notification)}
         onClose={() => setNotification(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
         <Alert
           severity={notification?.severity ?? "success"}
           onClose={() => setNotification(null)}
-          data-test="wallet-create-notification"
-        >
+          data-test="wallet-create-notification">
           {notification?.message}
         </Alert>
       </Snackbar>
