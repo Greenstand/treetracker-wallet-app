@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { QueueListenerService } from "./queue-listener.service";
 import { HttpService } from "@nestjs/axios";
 import { AuthService } from "../auth/auth.service";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import { onQueueNotification } from "./helpers/onQueueNotification";
 
 // Mock the onQueueNotification function so that its inner code is not executed
@@ -14,7 +14,7 @@ describe("QueueListenerService Integration Test", () => {
   let service: QueueListenerService;
   let httpService: HttpService;
   let authService: AuthService;
-  let queueCallback: (accountId: string) => Promise<void>;
+  let queueCallback: (walletId: string) => Promise<unknown>;
 
   beforeEach(async () => {
     // Set up required environment variables
@@ -23,12 +23,11 @@ describe("QueueListenerService Integration Test", () => {
 
     // Create mocks for HttpService and AuthService
     const httpServiceMock = {
-      get: jest.fn(),
       post: jest.fn(),
     };
 
     const authServiceMock = {
-      getToken: jest.fn().mockReturnValue("test-token"),
+      getToken: jest.fn().mockResolvedValue("test-token"),
     };
 
     // Capture the callback provided to onQueueNotification
@@ -56,38 +55,20 @@ describe("QueueListenerService Integration Test", () => {
     jest.clearAllMocks();
   });
 
-  it("should follow the flow: message received -> sendToWalletApi -> transferToken", async () => {
-    // Simulate a successful wallet API response with one wallet id
+  it("transfers the registration reward to the wallet from the queue event", async () => {
     const walletId = "wallet-123";
-    const walletsResponse = { data: [walletId] };
-    (httpService.get as jest.Mock).mockReturnValue(of(walletsResponse));
-
-    // Simulate a successful transfer response
     const postResponse = { data: { transferStatus: true } };
     (httpService.post as jest.Mock).mockReturnValue(of(postResponse));
 
-    // Simulate receiving a message on the queue
-    const accountId = "account-123";
-    await queueCallback(accountId);
+    await queueCallback(walletId);
 
-    // Verify that the wallet API was called with the correct URL and headers
-    expect(httpService.get).toHaveBeenCalledWith(
-      `/wallet/v2/wallets?account_id=${accountId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer test-token`,
-        },
-      },
-    );
-
-    // Verify that the transfer API was called with the proper parameters
+    expect(authService.getToken).toHaveBeenCalledTimes(1);
     expect(httpService.post).toHaveBeenCalledWith(
       `/wallet/v2/transfers`,
       {
         bundle: { bundle_size: process.env.REGISTER_REWARD_TOKEN_COUNT },
         sender_wallet: process.env.SENDER_WALLET_ID,
-        receive_wallet: walletId,
+        receiver_wallet: walletId,
       },
       {
         headers: {
@@ -96,5 +77,15 @@ describe("QueueListenerService Integration Test", () => {
         },
       },
     );
+  });
+
+  it("reports a failed token transfer", async () => {
+    (httpService.post as jest.Mock).mockReturnValue(
+      throwError(() => new Error("wallet API unavailable")),
+    );
+
+    await expect(service.transferToken("wallet-123")).resolves.toEqual({
+      transferStatus: false,
+    });
   });
 });

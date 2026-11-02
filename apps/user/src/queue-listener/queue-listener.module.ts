@@ -4,7 +4,12 @@ import { HttpModule } from "@nestjs/axios";
 import { AuthModule } from "../auth/auth.module";
 
 @Module({
-  imports: [HttpModule, AuthModule], // Import HTTP module for API calls
+  imports: [
+    HttpModule.registerAsync({
+      useFactory: () => ({ baseURL: process.env.WALLET_API_BASE_URL }),
+    }),
+    AuthModule,
+  ],
   providers: [QueueListenerService], // Register the service
   exports: [QueueListenerService], // Export if other modules need it
 })
