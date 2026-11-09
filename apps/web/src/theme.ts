@@ -5,7 +5,6 @@ import {
   createTheme,
   PaletteColor,
   PaletteColorOptions,
-  ThemeOptions,
 } from "@mui/material/styles";
 
 // Load Roboto font
@@ -14,7 +13,6 @@ const roboto = Roboto({
   subsets: ["latin"],
   display: "swap",
 });
-
 // ======= Add Custom Palette Types =======
 declare module "@mui/material/styles" {
   interface Palette {
