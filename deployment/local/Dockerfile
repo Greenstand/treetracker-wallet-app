@@ -12,7 +12,9 @@ RUN yarn install --immutable
 
 ARG NEXT_PUBLIC_BASE_PATH=/wallet
 ARG NEXT_PUBLIC_BASE_URL=http://localhost:8088/wallet
-ARG NEXT_PUBLIC_TREETRACKER_USER_API=https://dev-k8s.treetracker.org/wallet/user
+# Empty on purpose: dev has no routed /wallet/user service, and userProfile.ts skips the
+# source cleanly when unset rather than firing a request that is blocked by CORS.
+ARG NEXT_PUBLIC_TREETRACKER_USER_API=
 ARG NEXT_PUBLIC_TREETRACKER_WALLET_API=https://dev-k8s.treetracker.org/wallet/keycloak
 ARG NEXT_PUBLIC_KEYCLOAK_URL=https://dev-k8s.treetracker.org/keycloak
 ARG NEXT_PUBLIC_KEYCLOAK_REALM=treetracker
