@@ -7,7 +7,8 @@ RUN corepack enable && corepack prepare yarn@4.9.4 --activate
 COPY . .
 ENV HUSKY=0 \
     CYPRESS_INSTALL_BINARY=0
-RUN yarn workspaces focus web
+# Full install: apps/web's tsconfig extends @treetracker/config, which `focus` prunes.
+RUN yarn install --immutable
 
 ARG NEXT_PUBLIC_BASE_PATH=/wallet
 ARG NEXT_PUBLIC_BASE_URL=http://localhost:8088/wallet
