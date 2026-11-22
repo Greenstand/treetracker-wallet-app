@@ -1,6 +1,6 @@
 import { pgClient } from "@packages/queue/pgClient.js";
 import subscribe from "@packages/queue/subscribe.js";
-import { randomUUID } from "crypto";
+import { Logger } from "@nestjs/common";
 
 type NotificationPayload = {
   capture_id: string;
@@ -11,52 +11,32 @@ type NotificationPayload = {
 };
 
 const clientId = "user-api-client"; // unique id to identify client
+const channel = "wallets/creation";
 
-const messageObj = {
-  channel: "wallets/creation",
-  data: {
-    capture_id: randomUUID(),
-  },
-};
-
-export function onQueueNotification(callback: (accountId: string) => void) {
+export function onQueueNotification(
+  callback: (walletId: string) => Promise<unknown> | unknown,
+) {
   return subscribe({
-    pgClient: pgClient,
-    channel: messageObj.channel,
+    pgClient,
+    channel,
     clientID: clientId,
-  }).then((emitter) =>
-    emitter.on("message", (msg) => {
-      const payload: NotificationPayload = JSON.parse(msg.payload);
-      callback(payload.account_id);
+  }).then(emitter =>
+    emitter.on("message", msg => {
+      void Promise.resolve()
+        .then(async () => {
+          const payload = msg.data as NotificationPayload;
+
+          if (!payload || typeof payload.wallet_id !== "string") {
+            throw new Error("Wallet creation event is missing wallet_id");
+          }
+
+          await callback(payload.wallet_id);
+        })
+        .catch(error => {
+          Logger.error("Error handling wallet creation event:", error);
+        });
     }),
   );
 }
-
-// const subscribe = (callback: (account_id: string) => Promise<void>) => {
-//   console.log("Subscribing to PostgreSQL notifications...");
-
-//   const clientId = "user-api-client"; // unique id to identify client
-//   const channel = "wallets/creation"; // channel name
-//   pgClient.query(`LISTEN ${channel}`);
-//   pgClient.on("notification", async (msg: Notification) => {
-//     if (msg.channel === channel) {
-//       try {
-//         const payload: NotificationPayload = JSON.parse(msg.payload);
-//         const date = new Date();
-//         const dateStr = date.toISOString();
-
-//         await callback(payload.account_id);
-//         await ack({
-//           pgClient,
-//           id: payload.capture_id,
-//           dateStr,
-//           clientId,
-//         });
-//       } catch (error) {
-//         console.error("Error parsing wallet creation event:", error);
-//       }
-//     }
-//   });
-// };
 
 export default onQueueNotification;
