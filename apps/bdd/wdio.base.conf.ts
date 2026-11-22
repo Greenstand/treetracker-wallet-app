@@ -44,7 +44,13 @@ export const baseConfig: CustomTestrunner = {
   // ==================
   // Specify Test Files
   // ==================
-  specs: ["./features/**/*.feature"],
+  specs: [
+    "./features/**/*.feature",
+    "./features/**/*.ts",
+    "support/**/*.ts",
+    "utils/**/*.ts",
+    "wdio.*.ts",
+  ],
   exclude: [],
 
   // ============
