@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import HeaderSearch from "@/components/HeaderSearch";
 
 type SettingsItemType = {
   id: string;
@@ -81,7 +82,8 @@ const SettingsItem = ({
       onPress={onPress}
       android_ripple={{ color: "#e0e0e0" }}
       accessibilityRole="button"
-      accessibilityLabel={`${item.title}${item.subtitle ? `, ${item.subtitle}` : ""}`}>
+      accessibilityLabel={`${item.title}${item.subtitle ? `, ${item.subtitle}` : ""}`}
+    >
       <View style={styles.itemLeftSection}>
         <View style={styles.iconContainer}>
           <MaterialIcons name={item.icon} size={24} color="#666" />
@@ -111,14 +113,6 @@ export default function Settings() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header - commented out because header should not be implemented but ready to be added back or replaced.
-      <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="#666" />
-        <Text style={styles.headerTitle}>Settings</Text>
-        <Ionicons name="settings-outline" size={24} color="#666" />
-      </View>
-      */}
-
       <ScrollView style={styles.scrollContainer}>
         {/* Settings Title */}
         <Text style={styles.settingsTitle}>Settings</Text>
@@ -143,7 +137,8 @@ export default function Settings() {
           <Pressable
             onPress={handleLogout}
             accessibilityRole="button"
-            accessibilityLabel="Log out">
+            accessibilityLabel="Log out"
+          >
             <Text style={styles.logoutText}>LOG OUT</Text>
           </Pressable>
         </View>
@@ -157,20 +152,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  // Header styles
-  // header: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   backgroundColor: "#f5f5f5",
-  // },
-  // headerTitle: {
-  //   fontSize: 18,
-  //   fontWeight: "600",
-  //   color: "#333",
-  // },
   scrollContainer: {
     flex: 1,
     paddingHorizontal: 16,
