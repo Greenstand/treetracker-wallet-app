@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthService } from "./auth.service";
 import { HttpService } from "@nestjs/axios";
-import { HttpException } from "@nestjs/common";
+import { HttpException, HttpStatus } from "@nestjs/common";
 import { of, throwError } from "rxjs";
 
 describe("AuthService", () => {
@@ -48,6 +48,21 @@ describe("AuthService", () => {
     expect(token).toBe("mockedAccessToken");
     expect(httpService.post).toHaveBeenCalledTimes(1);
   });
+
+  it.each([undefined, "", 123])(
+    "should reject a Keycloak response with an unusable access token: %s",
+    async (accessToken) => {
+      (httpService.post as jest.Mock).mockReturnValue(
+        of({ data: { access_token: accessToken, expires_in: 3600 } }),
+      );
+
+      const tokenPromise = authService.getToken();
+      await expect(tokenPromise).rejects.toThrow(HttpException);
+      await expect(tokenPromise).rejects.toMatchObject({
+        status: HttpStatus.BAD_GATEWAY,
+      });
+    },
+  );
 
   it("should use the cached token if it is not expired", async () => {
     (authService as any).bearerToken = "alreadyCachedToken";
