@@ -50,9 +50,8 @@ export default function SendPage() {
     }
   }, [wallets, sender]);
 
-  const senderWallet = wallets.find((w) => (w as Wallet).name === sender) as
-    | Wallet
-    | undefined;
+  const senderWallet = wallets.find(w => (w as Wallet).name === sender) as
+    Wallet | undefined;
   const available = senderWallet?.tokens_available;
   const pending = senderWallet?.tokens_pending ?? 0;
 
@@ -140,8 +139,7 @@ export default function SendPage() {
         </Typography>
         <Box
           data-test="share-qr"
-          sx={{ display: "inline-block", p: 1.5, mb: 1, bgcolor: "#fff" }}
-        >
+          sx={{ display: "inline-block", p: 1.5, mb: 1, bgcolor: "#fff" }}>
           <QRCodeSVG value={shareLink} size={200} />
         </Box>
         <Paper sx={{ p: 1.5, wordBreak: "break-all" }} data-test="share-link">
@@ -155,8 +153,7 @@ export default function SendPage() {
             variant="text"
             onClick={() => router.push("/home")}
             sx={{ color: "green" }}
-            data-test="share-done"
-          >
+            data-test="share-done">
             Done
           </Button>
         </Stack>
@@ -165,8 +162,7 @@ export default function SendPage() {
           open={copied}
           autoHideDuration={3000}
           onClose={() => setCopied(false)}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
           <Alert severity="success" data-test="share-copied">
             Link copied
           </Alert>
@@ -186,16 +182,17 @@ export default function SendPage() {
         fullWidth
         label="From wallet"
         value={sender}
-        onChange={(e) => setSender(e.target.value)}
+        onChange={e => setSender(e.target.value)}
         disabled={isWalletLoading || wallets.length === 0}
         sx={{ mb: 2 }}
-        data-test="send-source-wallet"
-      >
+        data-test="send-source-wallet">
         {wallets.map((w, i) => {
           const name = (w as Wallet).name;
+          const displayName = (w as Wallet).display_name;
+          const label = displayName ? `${displayName} (${name})` : name;
           return (
             <MenuItem key={i} value={name} data-test={`send-source-${name}`}>
-              {name}
+              {label}
               {(w as Wallet).tokens_available !== undefined
                 ? ` (${(w as Wallet).tokens_available} available)`
                 : (w as Wallet).tokens_in_wallet !== undefined
@@ -212,7 +209,7 @@ export default function SendPage() {
           label="Recipient wallet"
           placeholder="Recipient wallet name"
           value={recipient}
-          onChange={(e) => setRecipient(e.target.value)}
+          onChange={e => setRecipient(e.target.value)}
           sx={{ mb: 2 }}
           data-test="send-recipient"
         />
@@ -223,7 +220,7 @@ export default function SendPage() {
         type="number"
         label="Amount (number of tokens)"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={e => setAmount(e.target.value)}
         inputProps={{ min: 1, step: 1 }}
         error={Boolean(amountError)}
         helperText={amountError}
@@ -235,7 +232,7 @@ export default function SendPage() {
         control={
           <Checkbox
             checked={shareByLink}
-            onChange={(e) => setShareByLink(e.target.checked)}
+            onChange={e => setShareByLink(e.target.checked)}
             data-test="send-share-qr"
           />
         }
@@ -255,15 +252,13 @@ export default function SendPage() {
         disabled={!valid || submitting || success}
         onClick={onSend}
         sx={{ mt: 2, textTransform: "uppercase" }}
-        data-test="send-submit"
-      >
+        data-test="send-submit">
         {submitting ? "Sending…" : shareByLink ? "Create link" : "Send"}
       </Button>
 
       <Snackbar
         open={success}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
         <Alert severity="success" data-test="send-success">
           Transfer initiated. The recipient can accept it from their pending
           transfers.
