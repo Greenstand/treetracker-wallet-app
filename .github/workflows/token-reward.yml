@@ -36,6 +36,11 @@ jobs:
        github.event.issue.pull_request != null &&
        startsWith(github.event.comment.body, '/wallet '))
     runs-on: ubuntu-latest
+    # The secrets come from a GitHub environment so that dev and prod can both
+    # exist: reward-dev (no secrets of its own, so the repository secrets, which
+    # point at dev, apply) and reward-prod. The repository variable REWARD_ENV
+    # picks one; when it is unset the bot pays on dev.
+    environment: ${{ vars.REWARD_ENV || 'reward-dev' }}
     steps:
       - uses: actions/checkout@v4
 
