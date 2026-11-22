@@ -255,6 +255,76 @@ When(/^I debug the page$/, async () => {
 
 The watcher properly terminates debug sessions when files change, allowing seamless re-runs.
 
+## Debugging TypeScript with Node inspector (#602)
+
+This section covers **breakpoints in step definitions and hooks** (Node), not the in-browser DOM. For pausing inside the automation browser session, use `browser.debug()` above.
+
+### Config files (TypeScript)
+
+WebdriverIO is configured with **`.ts` files only** (for example `wdio.web.conf.ts`, `wdio.debug.conf.ts`). There is **no** `wdio.conf.js` in this package; copy-pasted commands from older docs should use these paths.
+
+### Run from the monorepo root
+
+```bash
+yarn bdd:e2e
+yarn workspace @treetracker/bdd run test:web -- --spec ./features/register.feature
+yarn workspace @treetracker/bdd run test:web:debug
+```
+
+### Option A — `NODE_OPTIONS` (no config change)
+
+From `apps/bdd` after `yarn install` at the repo root:
+
+```bash
+cd apps/bdd
+NODE_OPTIONS="--inspect" yarn test:web -- --spec ./features/register.feature
+```
+
+Pause on the **first line** until a debugger attaches:
+
+```bash
+NODE_OPTIONS="--inspect-brk" yarn test:web -- --spec ./features/register.feature
+```
+
+Default inspector port is **9229**.
+
+### Option B — `execArgv` in `wdio.debug.conf.ts` (optional)
+
+In `wdio.debug.conf.ts`, uncomment **one** of the `execArgv` lines documented there so only debug runs enable the inspector. Leave them commented for normal `yarn test:web:debug` so the process does not wait for an attached debugger.
+
+### Attach Chrome DevTools to Node
+
+1. Start a run with `--inspect` or `--inspect-brk` (Option A or B).
+2. Open Chrome → **`chrome://inspect`**.
+3. Use **Open dedicated DevTools for Node** or select the target under **Remote Target**.
+4. In **Sources**, open files under `apps/bdd` (e.g. `features/step-definitions/steps.ts`) and set breakpoints, or use a `debugger;` statement.
+
+### Optional: VS Code attach
+
+This repo does not commit `.vscode/`. Add a **local** attach configuration, for example:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to WDIO (Node)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
+```
+
+Start tests with `NODE_OPTIONS="--inspect-brk"` (or uncommented `execArgv` in `wdio.debug.conf.ts`), then run **Attach to WDIO (Node)**.
+
+### More resources
+
+- [WebdriverIO REPL](https://webdriver.io/docs/repl)
+- Root [README](../../README.md) (BDD / WebdriverIO overview)
+
 ## Troubleshooting
 
 ### ChromeDriver Version Mismatch
