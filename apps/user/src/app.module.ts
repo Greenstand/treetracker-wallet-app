@@ -9,6 +9,7 @@ import { QueueListenerService } from "./queue-listener/queue-listener.service";
 import { QueueModule } from "./queue-listener/queue-listener.module";
 import { AuthModule } from "./auth/auth.module";
 import { AuthService } from "./auth/auth.service";
+import { validateKeycloakConfig } from "./validate-keycloak-config";
 
 dotenv.config();
 
@@ -18,7 +19,10 @@ const ENV = process.env.NODE_ENV;
     UserModule,
     HttpModule,
     QueueModule,
-    ConfigModule.forRoot({ envFilePath: ENV === "dev" ? ".dev.env" : ".env" }),
+    ConfigModule.forRoot({
+      envFilePath: ENV === "dev" ? ".dev.env" : ".env",
+      validate: validateKeycloakConfig,
+    }),
     AuthModule,
   ],
   controllers: [UserController],
