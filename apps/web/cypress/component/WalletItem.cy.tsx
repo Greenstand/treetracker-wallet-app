@@ -14,6 +14,26 @@ describe("WalletItem Component", () => {
     cy.contains("1000").should("exist");
   });
 
+  it("displays custom display_name when provided", () => {
+    cy.mount(
+      <WalletItem
+        name="wallet_handle_123"
+        display_name="Primary Savings"
+        tokens_in_wallet={1000}
+      />,
+    );
+    cy.contains("Primary Savings").should("exist");
+    cy.get('[data-test="wallet-item-name-wallet_handle_123"]').should(
+      "contain.text",
+      "Primary Savings",
+    );
+  });
+
+  it("falls back to name when display_name is not provided", () => {
+    cy.mount(<WalletItem name="wallet_handle_123" tokens_in_wallet={1000} />);
+    cy.contains("wallet_handle_123").should("exist");
+  });
+
   it("formats date correctly", () => {
     cy.mount(
       <WalletItem

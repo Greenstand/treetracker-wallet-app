@@ -6,17 +6,21 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 export default function WalletItem({
   name,
+  display_name,
   created_at,
   tokens_in_wallet,
   tokens_pending,
   logo_url,
 }: {
   name: string;
+  display_name?: string | undefined;
   created_at?: string | undefined;
   tokens_in_wallet?: number | undefined;
   tokens_pending?: number | undefined;
   logo_url?: string | undefined;
 }) {
+  const title = display_name || name;
+
   return (
     <Paper
       sx={{
@@ -24,19 +28,17 @@ export default function WalletItem({
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-      }}
-    >
+      }}>
       <Box display="flex" alignItems="center" gap={2}>
         <Avatar
           src={logo_url}
-          alt={name}
-          data-test={`wallet-item-logo-${name}`}
-        >
-          {name?.charAt(0).toUpperCase()}
+          alt={title}
+          data-test={`wallet-item-logo-${name}`}>
+          {title?.charAt(0).toUpperCase()}
         </Avatar>
         <Box>
           <Typography variant="body2" data-test={`wallet-item-name-${name}`}>
-            {name}
+            {title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {created_at}
@@ -53,8 +55,7 @@ export default function WalletItem({
             <Typography
               variant="caption"
               color="text.secondary"
-              data-test={`wallet-item-pending-${name}`}
-            >
+              data-test={`wallet-item-pending-${name}`}>
               {tokens_pending} pending
             </Typography>
           )}
