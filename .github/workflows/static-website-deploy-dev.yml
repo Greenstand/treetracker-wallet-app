@@ -73,12 +73,29 @@ jobs:
     needs: [build]
     if: github.repository == 'Greenstand/treetracker-wallet-app'
 
+    env:
+      DEV_CDN_S3_BUCKET: ${{ secrets.DEV_CDN_S3_BUCKET }}
+      DEV_CDN_DISTRIBUTION_ID: ${{ secrets.DEV_CDN_DISTRIBUTION_ID }}
+
     steps:
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: static-site-build
           path: build/
+
+      - name: Validate Deployment Configuration
+        shell: bash
+        run: |
+          if [[ -z "$DEV_CDN_S3_BUCKET" ]]; then
+            echo "::error::DEV_CDN_S3_BUCKET secret is missing or empty."
+            exit 1
+          fi
+
+          if [[ -z "$DEV_CDN_DISTRIBUTION_ID" ]]; then
+            echo "::error::DEV_CDN_DISTRIBUTION_ID secret is missing or empty."
+            exit 1
+          fi
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -87,13 +104,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Validate S3 Bucket Access
+        run: |
+          aws s3api head-bucket --bucket "$DEV_CDN_S3_BUCKET"
+
       - name: Deploy to S3 Bucket
         run: |
-          aws s3 sync build/ s3://${{ secrets.DEV_CDN_S3_BUCKET }}/ --delete
+          aws s3 sync build/ "s3://${DEV_CDN_S3_BUCKET}/" --delete
 
       - name: Invalidate CloudFront Cache
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.DEV_CDN_DISTRIBUTION_ID }} --paths "/*"
+          aws cloudfront create-invalidation \
+            --distribution-id "$DEV_CDN_DISTRIBUTION_ID" \
+            --paths "/*"
 
       - name: Deployment Complete
         run: |
